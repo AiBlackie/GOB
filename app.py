@@ -1670,7 +1670,7 @@ with col2:
     <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 20px;">
         <p style="font-weight: bold; color: var(--bb-blue);">Government of Barbados Financial Statements</p>
         <p>Financial Year Ended March 31, 2023 • Audited by Auditor General of Barbados</p>
-        <p>📞 Tel: (246) 535-4254 • ✉️ Email: audit@bao.gov.bb</p>
+        <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Report on Financial Statements • 
             Dashboard Version 2.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
@@ -1679,4 +1679,5 @@ with col2:
             ⚠️ This dashboard highlights material misstatements and adverse audit opinion
         </p>
     </div>
+
     """, unsafe_allow_html=True)
