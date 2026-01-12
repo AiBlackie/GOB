@@ -1,0 +1,5 @@
+# Barbados Government Financial Dashboard Dependencies
+streamlit
+pandas
+plotly
+numpy
