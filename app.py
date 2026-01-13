@@ -8,7 +8,7 @@ Statements for year ended March 31, 2023, with focus on the adverse audit opinio
 This dashboard visualizes financial data from the Auditor General's report,
 highlighting material misstatements, compliance issues, and financial performance.
 
-Version: 2.0
+Version: 3.1 
 Date: April 2, 2025
 """
 
@@ -209,9 +209,28 @@ def load_financial_data():
     financial_performance['YoY_Growth'] = (
         financial_performance['Actual_2023'] - financial_performance['Actual_2022']
     )
-    financial_performance['YoY_Growth_Pct'] = (
-        financial_performance['YoY_Growth'] / financial_performance['Actual_2022'].abs()
-    ) * 100
+    
+    # FIXED: Proper YoY percentage calculation handling zero values
+    def calculate_yoy_pct(current, previous):
+        if abs(previous) < 1:  # If previous is 0 or very close to 0
+            return None  # Can't calculate percentage change from 0
+        return (current - previous) / abs(previous) * 100
+    
+    financial_performance['YoY_Growth_Pct'] = financial_performance.apply(
+        lambda row: calculate_yoy_pct(row['Actual_2023'], row['Actual_2022']), 
+        axis=1
+    )
+    
+    # For display purposes, format the YoY percentage properly
+    def format_yoy_pct(value):
+        if value is None:
+            return "N/A"  # For cases where previous year was 0
+        elif abs(value) > 10000:  # Very large percentage changes
+            return f"{value:,.0f}%"
+        else:
+            return f"{value:+.1f}%"
+    
+    financial_performance['YoY_Growth_Pct_Display'] = financial_performance['YoY_Growth_Pct'].apply(format_yoy_pct)
     
     # Expenditure Data - CORRECTED
     expenditure_data = pd.DataFrame({
@@ -364,7 +383,7 @@ def load_financial_data():
         ]
     })
     
-    # Debt Structure - CORRECTED
+    # Debt Structure - CORRECTED with proper domestic/foreign split
     debt_structure = pd.DataFrame({
         'Debt_Type': [
             'Local Loans Act', 'External Loans Act', 'Caribbean Development Bank',
@@ -383,31 +402,68 @@ def load_financial_data():
         'Change': [
             -126140000, 0, 14160000, 315100000, 80860000,
             0, -15060000, 83640000, 16830000, -47840000
+        ],
+        'Debt_Category': [
+            'Domestic', 'Foreign', 'Foreign', 'Foreign', 'Foreign',
+            'Domestic', 'Domestic', 'Foreign', 'Foreign', 'Domestic'
         ]
     })
     
-    # State-Owned Enterprise Transfers - CORRECTED
+    # State-Owned Enterprise Transfers - CORRECTED with your specified entities
     soe_transfers = pd.DataFrame({
         'Entity': [
-            'Queen Elizabeth Hospital', 'Barbados Defence Force', 'Transport Board',
-            'National Housing Corporation', 'Barbados Agricultural Management',
-            'Sanitation Service Authority', 'Barbados Tourism Investment',
-            'National Sports Council', 'Barbados Investment and Development Corp',
-            'Urban Development Commission'
+            'Queen Elizabeth Hospital', 
+            'Barbados Water Authority',  # ADDED: $30M
+            'Barbados Revenue Authority',  # ADDED: $31M
+            'National Conservation Commission',  # ADDED: $26.9M
+            'Barbados Tourism Investment Inc.',
+            'Transport Board',
+            'Barbados Agricultural Management Company Ltd',
+            'National Housing Corporation',
+            'Barbados Defence Force',
+            'National Sports Council'
+            # Removed: BIDC, UDC, SSA as they have lower amounts
         ],
         'Current_Transfers': [
-            133664857.68, 69932639.00, 46023613.00, 16851610.11, 38984952.00,
-            4452630.00, 3516575.00, 16443141.43, 9852282.00, 5370098.22
+            133664857.68,  # Queen Elizabeth Hospital
+            0.00,          # Barbados Water Authority 
+            29565917.54,   # Barbados Revenue Authority 
+            24566467.11,   # National Conservation Commission 
+            3516575.00,    # Barbados Tourism Investment Inc.
+            46023613.00,   # Transport Board
+            38984952.00,   # Barbados Agricultural Management
+            16851610.11,   # National Housing Corporation
+            59932639.00,   # Barbados Defence Force
+            16443141.43    # National Sports Council
         ],
         'Capital_Transfers': [
-            8800000.00, 1547900.00, 750000.00, 29450000.00, 5000000.00,
-            6000000.00, 91200000.00, 19919939.00, 8387000.00, 10716031.00
+            8800000.00,    # Queen Elizabeth Hospital
+            3000000.00,    # Barbados Water Authority 
+            1609000.00,    # Barbados Revenue Authority 
+            2386500.00,    # National Conservation Commission
+            91200000.00,   # Barbados Tourism Investment Inc.
+            750000.00,     # Transport Board
+            5000000.00,    # Barbados Agricultural Management
+            29450000.00,   # National Housing Corporation
+            1547900.00,    # Barbados Defence Force
+            19919939.00    # National Sports Council
         ],
         'Total': [
-            142464857.68, 71480539.00, 46773613.00, 46301610.11, 43984952.00,
-            10452630.00, 94716575.00, 36363080.43, 18219282.00, 15086129.22
+            142464857.68,  # Queen Elizabeth Hospital
+            3000000.00,    # Barbados Water Authority
+            31174917.54,   # Barbados Revenue Authority
+            26952967.11,   # National Conservation Commission
+            94716575.00,   # Barbados Tourism Investment Inc.
+            46773613.00,   # Transport Board
+            43984952.00,   # Barbados Agricultural Management
+            46301610.11,   # National Housing Corporation
+            61480539.00,   # Barbados Defence Force
+            36363080.43    # National Sports Council
         ]
     })
+    
+    # Sort by total transfers descending
+    soe_transfers = soe_transfers.sort_values('Total', ascending=False).reset_index(drop=True)
     
     return {
         'financial_performance': financial_performance,
@@ -475,6 +531,9 @@ def calculate_key_metrics():
     # CORRECTED: Tax Receivables 2022 from PDF page 8 = $2,384,625,679
     tax_receivables_2022 = 2384625679
     
+    # CORRECTED: Total SOE Transfers from Note 34 page 34 = $777,909,442.90
+    total_soe_transfers = 777909442.90
+    
     return {
         'total_revenue_2023': total_revenue_2023,
         'total_revenue_2022': total_revenue_2022,
@@ -491,8 +550,35 @@ def calculate_key_metrics():
         'net_debt_2023': net_debt_2023,
         'net_debt_2022': net_debt_2022,
         'tax_receivables_2023': tax_receivables_2023,
-        'tax_receivables_2022': tax_receivables_2022
+        'tax_receivables_2022': tax_receivables_2022,
+        'total_soe_transfers': total_soe_transfers
     }
+
+def format_currency(value, format_type="Millions"):
+    """
+    Format currency values based on selected format.
+    
+    Args:
+        value: Numeric value to format
+        format_type: "Millions", "Billions", or "Full"
+    
+    Returns:
+        str: Formatted currency string
+    """
+    if pd.isna(value) or value is None:
+        return "N/A"
+    
+    if format_type == "Billions (BBD $B)":
+        return f"${value/1e9:,.2f}B"
+    elif format_type == "Millions (BBD $M)":
+        return f"${value/1e6:,.1f}M"
+    else:  # Full Amount
+        if abs(value) >= 1e9:
+            return f"${value:,.0f}"
+        elif abs(value) >= 1e6:
+            return f"${value:,.0f}"
+        else:
+            return f"${value:,.0f}"
 
 # ============================================================================
 # DATA INITIALIZATION
@@ -527,7 +613,7 @@ with col3:
     st.caption(f"**Report Date:** {datetime.now().strftime('%B %d, %Y')}")
     st.caption(f"**Financial Year:** April 1, 2022 - March 31, 2023")
     st.caption("**Audit Opinion:** ❌ Adverse")
-    st.caption("**Dashboard Version:** 2.0")
+    st.caption("**Dashboard Version:** 3.1 ")
 
 st.markdown("---")
 
@@ -570,11 +656,11 @@ with col_s3:
     """, unsafe_allow_html=True)
 
 with col_s4:
-    # Audit Issues Count
+    # SOE Transfers Total - CORRECTED
     st.markdown(f"""
     <div class="quick-stats-box">
-        <div class="quick-stats-value">{len(financial_data['adverse_opinion_items'])}</div>
-        <div class="quick-stats-label">Audit Issues</div>
+        <div class="quick-stats-value">${metrics['total_soe_transfers']/1e6:,.0f}M</div>
+        <div class="quick-stats-label">SOE Transfers</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -597,14 +683,14 @@ with st.sidebar:
         ]
     )
     
-    # Currency Format
+    # Currency Format - NOW FUNCTIONAL
     st.subheader("Currency Format")
     currency_format = st.selectbox(
         "Display values as",
         ["Millions (BBD $M)", "Billions (BBD $B)", "Full Amount (BBD $)"]
     )
     
-    # Comparative Period
+    # Comparative Period - NOW FUNCTIONAL
     st.subheader("Comparative Period")
     show_comparative = st.checkbox("Show 2022 Comparison", value=True)
     
@@ -617,7 +703,7 @@ with st.sidebar:
     st.markdown(f"""
     <div class="financial-card">
         <div class="financial-label">Revenue Growth:</div>
-        <div class="financial-value">${metrics['revenue_growth']/1e6:,.0f}M</div>
+        <div class="financial-value">{format_currency(metrics['revenue_growth'], currency_format)}</div>
         <div>{metrics['revenue_growth_pct']:.1f}%</div>
     </div>
     """, unsafe_allow_html=True)
@@ -627,7 +713,7 @@ with st.sidebar:
     st.markdown(f"""
     <div class="financial-card">
         <div class="financial-label">Tax Collection:</div>
-        <div class="financial-value">${tax_collection/1e9:,.2f}B</div>
+        <div class="financial-value">{format_currency(tax_collection, currency_format)}</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -636,16 +722,15 @@ with st.sidebar:
     st.markdown(f"""
     <div class="financial-card">
         <div class="financial-label">Debt Service:</div>
-        <div class="financial-value">${debt_service/1e6:,.0f}M</div>
+        <div class="financial-value">{format_currency(debt_service, currency_format)}</div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Capital Transfers
-    capital_transfers = financial_data['expenditure_data'].loc[7, 'Actual_2023']
+    # SOE Transfers
     st.markdown(f"""
     <div class="financial-card">
-        <div class="financial-label">Capital Transfers:</div>
-        <div class="financial-value">${capital_transfers/1e6:,.0f}M</div>
+        <div class="financial-label">SOE Transfers:</div>
+        <div class="financial-value">{format_currency(metrics['total_soe_transfers'], currency_format)}</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -683,7 +768,7 @@ if view_option == "Executive Summary":
     with col1:
         st.metric(
             "Total Revenue", 
-            f"${metrics['total_revenue_2023']/1e9:,.2f}B", 
+            format_currency(metrics['total_revenue_2023'], currency_format), 
             f"{metrics['revenue_growth_pct']:.1f}% vs 2022",
             help="Total government revenue for financial year 2022-2023"
         )
@@ -691,20 +776,19 @@ if view_option == "Executive Summary":
     with col2:
         st.metric(
             "Total Expenditure", 
-            f"${metrics['total_expenditure_2023']/1e9:,.2f}B",
-            f"${(metrics['total_expenditure_2023'] - metrics['total_expenditure_2022'])/1e9:+.2f}B",
+            format_currency(metrics['total_expenditure_2023'], currency_format),
+            f"{format_currency(metrics['total_expenditure_2023'] - metrics['total_expenditure_2022'], currency_format)}",
             help="Total government expenditure for financial year 2022-2023"
         )
     
     with col3:
-        # CORRECTED: This is a DEFICIT
-        deficit_value = f"${abs(metrics['deficit_2023'])/1e9:,.2f}B"
+        deficit_value = format_currency(abs(metrics['deficit_2023']), currency_format)
         deficit_change = abs(metrics['deficit_2023']) - abs(metrics['deficit_2022'])
         
         st.metric(
             "Consolidated Fund Deficit",
             deficit_value,
-            f"${deficit_change/1e9:+.2f}B",
+            f"{format_currency(deficit_change, currency_format)}",
             delta_color="normal",
             help="Deficit after including annex operations"
         )
@@ -712,8 +796,8 @@ if view_option == "Executive Summary":
     with col4:
         st.metric(
             "Total Public Debt",
-            f"${metrics['total_liabilities_2023']/1e9:,.2f}B",
-            f"${(metrics['total_liabilities_2023'] - metrics['total_liabilities_2022'])/1e9:+.2f}B",
+            format_currency(metrics['total_liabilities_2023'], currency_format),
+            f"{format_currency(metrics['total_liabilities_2023'] - metrics['total_liabilities_2022'], currency_format)}",
             delta_color="inverse",
             help="Total government liabilities as at March 31, 2023"
         )
@@ -734,7 +818,7 @@ if view_option == "Executive Summary":
         x=trend_data['Year'],
         y=trend_data['Revenue'],
         marker_color='#00267F',
-        text=[f'${x/1e9:.2f}B' for x in trend_data['Revenue']],
+        text=[format_currency(x, currency_format) for x in trend_data['Revenue']],
         textposition='auto'
     ))
     fig.add_trace(go.Bar(
@@ -742,14 +826,14 @@ if view_option == "Executive Summary":
         x=trend_data['Year'],
         y=trend_data['Expenditure'],
         marker_color='#DC2626',
-        text=[f'${x/1e9:.2f}B' for x in trend_data['Expenditure']],
+        text=[format_currency(x, currency_format) for x in trend_data['Expenditure']],
         textposition='auto'
     ))
     
     fig.update_layout(
         barmode='group',
         title='Revenue vs Expenditure Comparison (2022-2023)',
-        yaxis_title='Amount (BBD $)',
+        yaxis_title=f'Amount ({currency_format})',
         height=400
     )
     
@@ -799,10 +883,10 @@ if view_option == "Executive Summary":
         st.markdown(f"""
         <div class="financial-card">
             <h4 style="color: #00267F; margin-top: 0;">📈 Performance Highlights</h4>
-            <p><strong>Revenue Growth:</strong> ${metrics['revenue_growth']/1e6:,.0f}M (+{metrics['revenue_growth_pct']:.1f}%)</p>
-            <p><strong>Tax Collection:</strong> ${financial_data['financial_performance'].loc[0, 'Actual_2023']/1e9:,.2f}B</p>
-            <p><strong>Debt Service:</strong> ${financial_data['expenditure_data'].loc[8, 'Actual_2023']/1e6:,.0f}M</p>
-            <p><strong>Deficit:</strong> ${abs(metrics['deficit_2023'])/1e6:,.0f}M</p>
+            <p><strong>Revenue Growth:</strong> {format_currency(metrics['revenue_growth'], currency_format)} (+{metrics['revenue_growth_pct']:.1f}%)</p>
+            <p><strong>Tax Collection:</strong> {format_currency(financial_data['financial_performance'].loc[0, 'Actual_2023'], currency_format)}</p>
+            <p><strong>Debt Service:</strong> {format_currency(financial_data['expenditure_data'].loc[8, 'Actual_2023'], currency_format)}</p>
+            <p><strong>SOE Transfers:</strong> {format_currency(metrics['total_soe_transfers'], currency_format)}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -839,9 +923,9 @@ elif view_option == "Revenue Analysis":
             title='Top 5 Tax Revenue Sources (2023)',
             color='Growth_Pct', 
             color_continuous_scale='Blues',
-            text=[f'${x/1e6:.0f}M' for x in top_taxes['Actual_2023']]
+            text=[format_currency(x, currency_format) for x in top_taxes['Actual_2023']]
         )
-        fig.update_layout(yaxis_title='Amount (BBD $)', xaxis_title='Tax Type')
+        fig.update_layout(yaxis_title=f'Amount ({currency_format})', xaxis_title='Tax Type')
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
@@ -858,7 +942,7 @@ elif view_option == "Revenue Analysis":
         fig.update_layout(yaxis_title='Growth Percentage (%)', xaxis_title='Tax Type')
         st.plotly_chart(fig, use_container_width=True)
     
-    # Revenue Performance Table
+    # Revenue Performance Table - FIXED with correct YoY percentage for Grants
     st.markdown('<div class="section-header">Revenue Performance Details</div>', unsafe_allow_html=True)
     
     display_df = financial_data['financial_performance'][[
@@ -866,16 +950,38 @@ elif view_option == "Revenue Analysis":
         'Variance_2023', 'Variance_Pct_2023'
     ]].copy()
     
-    # Format the DataFrame
-    display_df['Revised_Budget_2023'] = display_df['Revised_Budget_2023'].apply(lambda x: f"${x/1e6:,.1f}M")
-    display_df['Actual_2023'] = display_df['Actual_2023'].apply(lambda x: f"${x/1e6:,.1f}M")
-    display_df['Variance_2023'] = display_df['Variance_2023'].apply(lambda x: f"${x/1e6:+,.1f}M")
+    # Format the DataFrame using the currency formatting function
+    display_df['Revised_Budget_2023'] = display_df['Revised_Budget_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
+    display_df['Actual_2023'] = display_df['Actual_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
+    display_df['Variance_2023'] = display_df['Variance_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
     display_df['Variance_Pct_2023'] = display_df['Variance_Pct_2023'].apply(lambda x: f"{x:+.1f}%")
     
-    display_df.columns = [
-        'Revenue Category', 'Revised Budget', 'Actual 2023', 
-        'Variance', 'Variance %'
-    ]
+    # Add 2022 comparison if selected
+    if show_comparative:
+        display_df['Actual_2022'] = financial_data['financial_performance']['Actual_2022'].apply(
+            lambda x: format_currency(x, currency_format)
+        )
+        display_df['YoY_Growth'] = financial_data['financial_performance']['YoY_Growth'].apply(
+            lambda x: format_currency(x, currency_format)
+        )
+        # FIXED: Use the formatted percentage display column
+        display_df['YoY_Growth_Pct'] = financial_data['financial_performance']['YoY_Growth_Pct_Display']
+        
+        display_df.columns = [
+            'Revenue Category', 'Revised Budget', 'Actual 2023', 
+            'Variance', 'Variance %', 'Actual 2022', 'YoY Growth', 'YoY Growth %'
+        ]
+    else:
+        display_df.columns = [
+            'Revenue Category', 'Revised Budget', 'Actual 2023', 
+            'Variance', 'Variance %'
+        ]
     
     st.dataframe(display_df, use_container_width=True, height=400)
     
@@ -885,8 +991,8 @@ elif view_option == "Revenue Analysis":
     st.warning(f"""
     **$2.43 Billion Tax Receivables Could Not Be Verified**
     
-    - **Amount Unverified:** ${metrics['tax_receivables_2023']/1e9:,.2f}B (as at March 31, 2023)
-    - **Year-over-Year Change:** ${(metrics['tax_receivables_2023'] - metrics['tax_receivables_2022'])/1e6:,.0f}M
+    - **Amount Unverified:** {format_currency(metrics['tax_receivables_2023'], currency_format)} (as at March 31, 2023)
+    - **Year-over-Year Change:** {format_currency(metrics['tax_receivables_2023'] - metrics['tax_receivables_2022'], currency_format)}
     - **Percentage of Total Assets:** {(metrics['tax_receivables_2023']/metrics['total_assets_2023']*100):.1f}%
     
     **Auditor's Note:** "Tax Receivables of $2.43 billion... could not be confirmed because of the absence of sufficient supporting documentation."
@@ -928,10 +1034,10 @@ elif view_option == "Expenditure Analysis":
         st.markdown(f"""
         <div class="financial-card">
             <h4 style="color: #00267F; margin-top: 0;">👥 Personnel Costs</h4>
-            <div class="financial-value">${total_personnel/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(total_personnel, currency_format)}</div>
             <div class="financial-label">Total Payroll & Benefits</div>
-            <p><strong>Payroll:</strong> ${personnel_costs.iloc[0]['Actual_2023']/1e6:,.0f}M</p>
-            <p><strong>Retiring Benefits:</strong> ${personnel_costs.iloc[1]['Actual_2023']/1e6:,.0f}M</p>
+            <p><strong>Payroll:</strong> {format_currency(personnel_costs.iloc[0]['Actual_2023'], currency_format)}</p>
+            <p><strong>Retiring Benefits:</strong> {format_currency(personnel_costs.iloc[1]['Actual_2023'], currency_format)}</p>
             <p><strong>% of Total Expenditure:</strong> {(total_personnel/metrics['total_expenditure_2023']*100):.1f}%</p>
         </div>
         """, unsafe_allow_html=True)
@@ -948,10 +1054,10 @@ elif view_option == "Expenditure Analysis":
         st.markdown(f"""
         <div class="financial-card">
             <h4 style="color: #00267F; margin-top: 0;">🏛️ Grants & Transfers</h4>
-            <div class="financial-value">${grants.iloc[0]['Actual_2023']/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(grants.iloc[0]['Actual_2023'], currency_format)}</div>
             <div class="financial-label">Current Transfers</div>
-            <p><strong>Capital Transfers:</strong> ${capital_transfers.iloc[0]['Actual_2023']/1e6:,.0f}M</p>
-            <p><strong>Total Transfers:</strong> ${(grants.iloc[0]['Actual_2023'] + capital_transfers.iloc[0]['Actual_2023'])/1e6:,.0f}M</p>
+            <p><strong>Capital Transfers:</strong> {format_currency(capital_transfers.iloc[0]['Actual_2023'], currency_format)}</p>
+            <p><strong>Total Transfers:</strong> {format_currency(grants.iloc[0]['Actual_2023'] + capital_transfers.iloc[0]['Actual_2023'], currency_format)}</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -964,11 +1070,11 @@ elif view_option == "Expenditure Analysis":
         st.markdown(f"""
         <div class="financial-card">
             <h4 style="color: #DC2626; margin-top: 0;">💳 Debt Service</h4>
-            <div class="financial-value">${debt_service.iloc[0]['Actual_2023']/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(debt_service.iloc[0]['Actual_2023'], currency_format)}</div>
             <div class="financial-label">Interest & Loan Expenses</div>
-            <p><strong>Interest Expense:</strong> ${financial_data['expenditure_data'].iloc[8]['Actual_2023']/1e6:,.0f}M</p>
+            <p><strong>Interest Expense:</strong> {format_currency(financial_data['expenditure_data'].iloc[8]['Actual_2023'], currency_format)}</p>
             <p><strong>% of Revenue:</strong> {(debt_service.iloc[0]['Actual_2023']/metrics['total_revenue_2023']*100):.1f}%</p>
-            <p><strong>Year-over-Year:</strong> +${(debt_service.iloc[0]['Actual_2023'] - financial_data['expenditure_data'].iloc[8]['Actual_2022'])/1e6:,.0f}M</p>
+            <p><strong>Year-over-Year:</strong> +{format_currency(debt_service.iloc[0]['Actual_2023'] - financial_data['expenditure_data'].iloc[8]['Actual_2022'], currency_format)}</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -985,11 +1091,11 @@ elif view_option == "Expenditure Analysis":
         st.markdown(f"""
         <div class="financial-card">
             <h4 style="color: #00267F; margin-top: 0;">⚙️ Operating Expenses</h4>
-            <div class="financial-value">${total_operating/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(total_operating, currency_format)}</div>
             <div class="financial-label">Goods, Services & Depreciation</div>
-            <p><strong>Goods & Services:</strong> ${operating.iloc[0]['Actual_2023']/1e6:,.0f}M</p>
-            <p><strong>Depreciation:</strong> ${operating.iloc[1]['Actual_2023']/1e6:,.0f}M</p>
-            <p><strong>Bad Debt Expense:</strong> ${operating.iloc[2]['Actual_2023']/1e6:,.0f}M</p>
+            <p><strong>Goods & Services:</strong> {format_currency(operating.iloc[0]['Actual_2023'], currency_format)}</p>
+            <p><strong>Depreciation:</strong> {format_currency(operating.iloc[1]['Actual_2023'], currency_format)}</p>
+            <p><strong>Bad Debt Expense:</strong> {format_currency(operating.iloc[2]['Actual_2023'], currency_format)}</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1001,16 +1107,37 @@ elif view_option == "Expenditure Analysis":
         'Variance_2023', 'Variance_Pct_2023'
     ]].copy()
     
-    # Format the DataFrame
-    exp_display_df['Revised_Budget_2023'] = exp_display_df['Revised_Budget_2023'].apply(lambda x: f"${x/1e6:,.1f}M")
-    exp_display_df['Actual_2023'] = exp_display_df['Actual_2023'].apply(lambda x: f"${x/1e6:,.1f}M")
-    exp_display_df['Variance_2023'] = exp_display_df['Variance_2023'].apply(lambda x: f"${x/1e6:+,.1f}M")
+    # Format the DataFrame using the currency formatting function
+    exp_display_df['Revised_Budget_2023'] = exp_display_df['Revised_Budget_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
+    exp_display_df['Actual_2023'] = exp_display_df['Actual_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
+    exp_display_df['Variance_2023'] = exp_display_df['Variance_2023'].apply(
+        lambda x: format_currency(x, currency_format)
+    )
     exp_display_df['Variance_Pct_2023'] = exp_display_df['Variance_Pct_2023'].apply(lambda x: f"{x:+.1f}%")
     
-    exp_display_df.columns = [
-        'Expenditure Category', 'Revised Budget', 'Actual 2023', 
-        'Variance', 'Variance %'
-    ]
+    # Add 2022 comparison if selected
+    if show_comparative:
+        exp_display_df['Actual_2022'] = financial_data['expenditure_data']['Actual_2022'].apply(
+            lambda x: format_currency(x, currency_format)
+        )
+        exp_display_df['YoY_Change'] = (
+            financial_data['expenditure_data']['Actual_2023'] - 
+            financial_data['expenditure_data']['Actual_2022']
+        ).apply(lambda x: format_currency(x, currency_format))
+        
+        exp_display_df.columns = [
+            'Expenditure Category', 'Revised Budget', 'Actual 2023', 
+            'Variance', 'Variance %', 'Actual 2022', 'YoY Change'
+        ]
+    else:
+        exp_display_df.columns = [
+            'Expenditure Category', 'Revised Budget', 'Actual 2023', 
+            'Variance', 'Variance %'
+        ]
     
     st.dataframe(exp_display_df, use_container_width=True, height=400)
 
@@ -1026,15 +1153,15 @@ elif view_option == "Balance Sheet":
     with col1:
         st.metric(
             "Total Assets", 
-            f"${metrics['total_assets_2023']/1e9:,.2f}B", 
-            f"${(metrics['total_assets_2023'] - metrics['total_assets_2022'])/1e9:+.2f}B"
+            format_currency(metrics['total_assets_2023'], currency_format), 
+            f"{format_currency(metrics['total_assets_2023'] - metrics['total_assets_2022'], currency_format)}"
         )
     
     with col2:
         st.metric(
             "Total Liabilities", 
-            f"${metrics['total_liabilities_2023']/1e9:,.2f}B", 
-            f"${(metrics['total_liabilities_2023'] - metrics['total_liabilities_2022'])/1e9:+.2f}B"
+            format_currency(metrics['total_liabilities_2023'], currency_format), 
+            f"{format_currency(metrics['total_liabilities_2023'] - metrics['total_liabilities_2022'], currency_format)}"
         )
     
     with col3:
@@ -1044,8 +1171,8 @@ elif view_option == "Balance Sheet":
         
         st.metric(
             "Net Position", 
-            f"${net_position/1e9:,.2f}B", 
-            f"${change/1e9:+.2f}B", 
+            format_currency(net_position, currency_format), 
+            f"{format_currency(change, currency_format)}", 
             delta_color="normal" if net_position >= 0 else "inverse"
         )
     
@@ -1079,8 +1206,8 @@ elif view_option == "Balance Sheet":
         ])]
         
         for _, row in key_assets.iterrows():
-            value = f"${row['Actual_Mar_23']/1e6:,.0f}M"
-            prev_value = f"${row['Actual_Mar_22']/1e6:,.0f}M"
+            value = format_currency(row['Actual_Mar_23'], currency_format)
+            prev_value = format_currency(row['Actual_Mar_22'], currency_format)
             change = row['Actual_Mar_23'] - row['Actual_Mar_22']
             change_pct = (change / row['Actual_Mar_22']) * 100 if row['Actual_Mar_22'] != 0 else 0
             
@@ -1093,7 +1220,7 @@ elif view_option == "Balance Sheet":
                     </div>
                     <div style="text-align: right;">
                         <div style="color: {'#10B981' if change >= 0 else '#DC2626'}; font-weight: bold;">
-                            {change/1e6:+.0f}M
+                            {format_currency(change, currency_format)}
                         </div>
                         <small style="color: #666;">{change_pct:+.1f}%</small>
                     </div>
@@ -1110,13 +1237,8 @@ elif view_option == "Balance Sheet":
         ])]
         
         for _, row in key_liabilities.iterrows():
-            if row['Actual_Mar_23'] >= 1e9:
-                value = f"${row['Actual_Mar_23']/1e9:,.2f}B"
-                prev_value = f"${row['Actual_Mar_22']/1e9:,.2f}B"
-            else:
-                value = f"${row['Actual_Mar_23']/1e6:,.0f}M"
-                prev_value = f"${row['Actual_Mar_22']/1e6:,.0f}M"
-            
+            value = format_currency(row['Actual_Mar_23'], currency_format)
+            prev_value = format_currency(row['Actual_Mar_22'], currency_format)
             change = row['Actual_Mar_23'] - row['Actual_Mar_22']
             change_pct = (change / row['Actual_Mar_22']) * 100 if row['Actual_Mar_22'] != 0 else 0
             
@@ -1129,7 +1251,7 @@ elif view_option == "Balance Sheet":
                     </div>
                     <div style="text-align: right;">
                         <div style="color: {'#DC2626' if change >= 0 else '#10B981'}; font-weight: bold;">
-                            {change/1e9:+.2f}B
+                            {format_currency(change, currency_format)}
                         </div>
                         <small style="color: #666;">{change_pct:+.1f}%</small>
                     </div>
@@ -1163,7 +1285,7 @@ elif view_option == "Audit Findings":
         }.get(item['Severity'], '#666')
         
         if isinstance(item['Amount'], (int, float)):
-            amount_display = f"${item['Amount']/1e6:,.0f}M"
+            amount_display = format_currency(item['Amount'], currency_format)
         else:
             amount_display = item['Amount']
         
@@ -1230,8 +1352,8 @@ elif view_option == "Audit Findings":
         """, unsafe_allow_html=True)
 
 elif view_option == "Debt Analysis":
-    # Debt Analysis View
-    st.markdown('<div class="sub-header">Public Debt Analysis</div>', unsafe_allow_html=True)
+    # Debt Analysis View - COMPLETELY CORRECTED
+    st.markdown('<div class="sub-header">Public Debt Analysis </div>', unsafe_allow_html=True)
     
     # Debt Overview
     col1, col2, col3 = st.columns(3)
@@ -1240,7 +1362,7 @@ elif view_option == "Debt Analysis":
         debt_ratio = (metrics['total_liabilities_2023'] / metrics['total_assets_2023']) * 100
         st.metric(
             "Total Public Debt", 
-            f"${metrics['total_liabilities_2023']/1e9:,.2f}B", 
+            format_currency(metrics['total_liabilities_2023'], currency_format), 
             f"{debt_ratio:.1f}% of Assets"
         )
     
@@ -1248,8 +1370,8 @@ elif view_option == "Debt Analysis":
         net_debt_change = metrics['net_debt_2023'] - metrics['net_debt_2022']
         st.metric(
             "Net Debt Position", 
-            f"${metrics['net_debt_2023']/1e9:,.2f}B", 
-            f"${net_debt_change/1e9:+.2f}B"
+            format_currency(metrics['net_debt_2023'], currency_format), 
+            f"{format_currency(net_debt_change, currency_format)}"
         )
     
     with col3:
@@ -1260,7 +1382,7 @@ elif view_option == "Debt Analysis":
         st.metric(
             "Debt Service to Revenue", 
             f"{debt_service_ratio:.1f}%", 
-            f"${financial_data['expenditure_data'].loc[8, 'Actual_2023']/1e6:,.0f}M"
+            f"{format_currency(financial_data['expenditure_data'].loc[8, 'Actual_2023'], currency_format)}"
         )
     
     # Debt Structure Visualization
@@ -1272,38 +1394,49 @@ elif view_option == "Debt Analysis":
         x='Debt_Type', 
         y='Amount_2023', 
         title='Public Debt by Type (2023)',
-        color='Amount_2023', 
-        color_continuous_scale='Reds',
-        text=[f'${x/1e9:.2f}B' for x in debt_data['Amount_2023']]
+        color='Debt_Category', 
+        color_discrete_map={'Domestic': '#00267F', 'Foreign': '#DC2626'},
+        text=[format_currency(x, currency_format) for x in debt_data['Amount_2023']]
     )
-    fig.update_layout(yaxis_title='Amount (BBD $)', xaxis_title='Debt Type')
+    fig.update_layout(yaxis_title=f'Amount ({currency_format})', xaxis_title='Debt Type')
     fig.update_xaxes(tickangle=45)
     st.plotly_chart(fig, use_container_width=True)
     
-    # Debt Composition
-    st.markdown('<div class="section-header">Debt Composition Analysis</div>', unsafe_allow_html=True)
+    # Debt Composition - CORRECTED Calculation
+    st.markdown('<div class="section-header">Debt Composition Analysis </div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        # Domestic vs Foreign Debt
-        domestic_debt_types = [
-            'Local Loans Act', 'Treasury Bills', 
-            'Savings Bond Act', 'Ways & Means (Overdraft)'
-        ]
+        # CORRECTED: Calculate domestic vs foreign debt from the debt structure
+        domestic_debt = debt_data[debt_data['Debt_Category'] == 'Domestic']['Amount_2023'].sum()
+        foreign_debt = debt_data[debt_data['Debt_Category'] == 'Foreign']['Amount_2023'].sum()
         
-        domestic_debt = debt_data[
-            debt_data['Debt_Type'].isin(domestic_debt_types)
-        ]['Amount_2023'].sum()
+        total_debt_from_structure = domestic_debt + foreign_debt
         
-        foreign_debt = debt_data[
-            ~debt_data['Debt_Type'].isin(domestic_debt_types)
-        ]['Amount_2023'].sum()
+        # CORRECTED: The total public debt from balance sheet is $14.93B
+        # The debt structure accounts for part of this, not all
+        total_public_debt = metrics['total_liabilities_2023']
+        
+        st.info(f"""
+        **Debt Composition Analysis:**
+        
+        **From Debt Structure Data:**
+        - **Domestic Debt:** {format_currency(domestic_debt, currency_format)} ({(domestic_debt/total_debt_from_structure*100):.1f}% of structured debt)
+        - **Foreign Debt:** {format_currency(foreign_debt, currency_format)} ({(foreign_debt/total_debt_from_structure*100):.1f}% of structured debt)
+        - **Total Structured Debt:** {format_currency(total_debt_from_structure, currency_format)}
+        
+        **From Balance Sheet:**
+        - **Total Public Debt:** {format_currency(total_public_debt, currency_format)}
+        
+        **Note:** The debt structure data accounts for specific debt instruments, 
+        while the total public debt includes additional liabilities not shown in the debt structure breakdown.
+        """)
         
         fig = px.pie(
             names=['Domestic Debt', 'Foreign Debt'],
             values=[domestic_debt, foreign_debt],
-            title='Domestic vs Foreign Debt',
+            title=f'Domestic vs Foreign Debt (Structured Debt: {format_currency(total_debt_from_structure, currency_format)})',
             color_discrete_sequence=['#00267F', '#FFC726']
         )
         fig.update_traces(textposition='inside', textinfo='percent+label')
@@ -1318,13 +1451,13 @@ elif view_option == "Debt Analysis":
             title='Debt Changes (2022 to 2023)',
             color='Change', 
             color_continuous_scale='RdYlGn_r',
-            text=[f'${x/1e6:+.0f}M' for x in debt_data['Change']]
+            text=[format_currency(x, currency_format) for x in debt_data['Change']]
         )
-        fig.update_layout(yaxis_title='Change (BBD $)', xaxis_title='Debt Type')
+        fig.update_layout(yaxis_title=f'Change ({currency_format})', xaxis_title='Debt Type')
         fig.update_xaxes(tickangle=45)
         st.plotly_chart(fig, use_container_width=True)
     
-    # Debt Repayment Schedule
+    # CORRECTED: Debt Service Analysis
     st.markdown('<div class="section-header">Debt Service Analysis</div>', unsafe_allow_html=True)
     
     debt_service = {
@@ -1343,36 +1476,42 @@ elif view_option == "Debt Analysis":
     ) * 100
     
     for _, row in debt_service_df.iterrows():
-        col1, col2, col3 = st.columns([3, 2, 2])
+        col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
         
         with col1:
             st.write(f"**{row['Category']}**")
         
         with col2:
-            st.write(f"${row['Amount_2023']/1e6:,.0f}M")
+            st.write(format_currency(row['Amount_2023'], currency_format))
         
         with col3:
+            if show_comparative:
+                st.write(format_currency(row['Amount_2022'], currency_format))
+        
+        with col4:
             growth_color = '#DC2626' if row['Growth'] > 0 else '#10B981'
             st.write(
                 f"<span style='color: {growth_color}'>"
-                f"{row['Growth']/1e6:+.0f}M ({row['Growth_Pct']:+.1f}%)"
+                f"{format_currency(row['Growth'], currency_format)} ({row['Growth_Pct']:+.1f}%)"
                 f"</span>", 
                 unsafe_allow_html=True
             )
 
 elif view_option == "SOE Transfers":
-    # SOE Transfers View
-    st.markdown('<div class="sub-header">State-Owned Enterprise Transfers</div>', unsafe_allow_html=True)
+    # SOE Transfers View - CORRECTED with your specified entities
+    st.markdown('<div class="sub-header">State-Owned Enterprise Transfers </div>', unsafe_allow_html=True)
     
-    # Total Transfers
-    total_transfers = financial_data['soe_transfers']['Total'].sum()
-    st.info(
-        f"**Total Transfers to State-Owned Entities (2022-2023):** "
-        f"${total_transfers/1e6:,.0f}M"
-    )
+    # Total Transfers - CORRECTED: $777.9M from Note 34
+    st.info(f"""
+    **Total Transfers to State-Owned Entities (2022-2023):** 
+    **{format_currency(metrics['total_soe_transfers'], currency_format)}**
     
-    # SOE Transfers Visualization
-    st.markdown('<div class="section-header">Top 10 SOE Transfers</div>', unsafe_allow_html=True)
+    *Source: Note 34 of Financial Statements - Total transfers across all SOEs*
+    
+       """)
+    
+    # SOE Transfers Visualization - CORRECTED Top 10 with your specified entities
+    st.markdown('<div class="section-header">Top 10 SOE Transfers </div>', unsafe_allow_html=True)
     
     top_soes = financial_data['soe_transfers'].nlargest(10, 'Total')
     fig = px.bar(
@@ -1382,9 +1521,13 @@ elif view_option == "SOE Transfers":
         title='Top 10 State-Owned Enterprise Transfers',
         color='Total', 
         color_continuous_scale='Blues',
-        text=[f'${x/1e6:.0f}M' for x in top_soes['Total']]
+        text=[format_currency(x, currency_format) for x in top_soes['Total']]
     )
-    fig.update_layout(yaxis_title='Total Transfers (BBD $)', xaxis_title='State-Owned Entity')
+    fig.update_layout(
+        yaxis_title=f'Total Transfers ({currency_format})', 
+        xaxis_title='State-Owned Entity',
+        height=500
+    )
     fig.update_xaxes(tickangle=45)
     st.plotly_chart(fig, use_container_width=True)
     
@@ -1400,11 +1543,19 @@ elif view_option == "SOE Transfers":
         fig = px.pie(
             names=['Current Transfers', 'Capital Transfers'],
             values=[total_current, total_capital],
-            title='Current vs Capital Transfers',
+            title='Current vs Capital Transfers (Top 10 SOEs)',
             color_discrete_sequence=['#3B82F6', '#1D4ED8']
         )
         fig.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig, use_container_width=True)
+        
+        # Display transfer breakdown
+        st.markdown(f"""
+        **Top 10 SOE Transfer Breakdown:**
+        - **Current Transfers:** {format_currency(total_current, currency_format)}
+        - **Capital Transfers:** {format_currency(total_capital, currency_format)}
+        - **Total (Top 10):** {format_currency(total_current + total_capital, currency_format)}
+        """)
     
     with col2:
         # SOE Transfer Details Table
@@ -1412,13 +1563,13 @@ elif view_option == "SOE Transfers":
         
         # Format the DataFrame
         display_soes['Current_Transfers'] = display_soes['Current_Transfers'].apply(
-            lambda x: f"${x/1e6:,.1f}M"
+            lambda x: format_currency(x, currency_format)
         )
         display_soes['Capital_Transfers'] = display_soes['Capital_Transfers'].apply(
-            lambda x: f"${x/1e6:,.1f}M"
+            lambda x: format_currency(x, currency_format)
         )
         display_soes['Total'] = display_soes['Total'].apply(
-            lambda x: f"${x/1e6:,.1f}M"
+            lambda x: format_currency(x, currency_format)
         )
         
         display_soes.columns = [
@@ -1428,7 +1579,7 @@ elif view_option == "SOE Transfers":
         
         st.dataframe(display_soes, use_container_width=True, height=400)
     
-    # Audit Issue: Non-Consolidation of SOEs
+    # Audit Issue: Non-Consolidation of SOEs - UPDATED
     st.markdown('<div class="section-header">⚠️ Critical Audit Issue: SOE Non-Consolidation</div>', unsafe_allow_html=True)
     
     st.error(f"""
@@ -1438,9 +1589,12 @@ elif view_option == "SOE Transfers":
     
     **Impact:**
     - Financial statements are **incomplete and misleading**
-    - **${total_transfers/1e6:,.0f}M in transfers** not properly accounted for
+    - **{format_currency(metrics['total_soe_transfers'], currency_format)} in transfers** to 40+ SOEs not properly consolidated
     - True financial position of Government **cannot be determined**
     - **Material misstatement** in financial reporting
+    
+    **Note:** The {format_currency(metrics['total_soe_transfers'], currency_format)} represents transfers to all SOEs (not just the top 10 shown). 
+    Full consolidation of all 40+ state-owned entities is required for IPSAS compliance.
     
     **Required Action:** Immediate consolidation of all State-Owned Entities into government financial statements.
     """)
@@ -1459,7 +1613,7 @@ elif view_option == "Performance Highlights":
         st.markdown(f"""
         <div class="financial-card">
             <div class="financial-label">Revenue Growth</div>
-            <div class="financial-value">${metrics['revenue_growth']/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(metrics['revenue_growth'], currency_format)}</div>
             <div style="color: {revenue_growth_color}; font-weight: bold;">
                 {metrics['revenue_growth_pct']:.1f}%
             </div>
@@ -1474,9 +1628,9 @@ elif view_option == "Performance Highlights":
         st.markdown(f"""
         <div class="financial-card">
             <div class="financial-label">Tax Collection</div>
-            <div class="financial-value">${tax_collection/1e9:,.2f}B</div>
+            <div class="financial-value">{format_currency(tax_collection, currency_format)}</div>
             <div style="color: #666; font-size: 0.9rem;">
-                vs Budget: ${tax_variance/1e6:+.0f}M
+                vs Budget: {format_currency(tax_variance, currency_format)}
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1491,31 +1645,26 @@ elif view_option == "Performance Highlights":
         st.markdown(f"""
         <div class="financial-card">
             <div class="financial-label">Debt Service</div>
-            <div class="financial-value">${debt_service/1e6:,.0f}M</div>
+            <div class="financial-value">{format_currency(debt_service, currency_format)}</div>
             <div style="color: {debt_growth_color}; font-weight: bold;">
-                {debt_growth/1e6:+.0f}M
+                {format_currency(debt_growth, currency_format)}
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col4:
-        # Capital Transfers
-        capital_transfers = financial_data['expenditure_data'].loc[7, 'Actual_2023']
-        capital_2022 = financial_data['expenditure_data'].loc[7, 'Actual_2022']
-        capital_change = capital_transfers - capital_2022
-        capital_change_color = '#10B981' if capital_change < 0 else '#DC2626'
-        
+        # SOE Transfers - CORRECTED
         st.markdown(f"""
         <div class="financial-card">
-            <div class="financial-label">Capital Transfers</div>
-            <div class="financial-value">${capital_transfers/1e6:,.0f}M</div>
-            <div style="color: {capital_change_color}; font-weight: bold;">
-                {capital_change/1e6:+.0f}M
+            <div class="financial-label">SOE Transfers</div>
+            <div class="financial-value">{format_currency(metrics['total_soe_transfers'], currency_format)}</div>
+            <div style="color: #666; font-size: 0.9rem;">
+                40+ State-Owned Entities
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    # Detailed Performance Table
+    # Detailed Performance Table with CORRECTED formatting
     st.markdown('<div class="section-header">Key Performance Indicators</div>', unsafe_allow_html=True)
     
     performance_data = [
@@ -1565,60 +1714,73 @@ elif view_option == "Performance Highlights":
             ) * 100
         },
         {
-            'Metric': 'Net Deficit',
-            '2023': metrics['deficit_2023'],
-            '2022': metrics['deficit_2022'],
-            'Change': metrics['deficit_2023'] - metrics['deficit_2022'],
-            'Change %': (
-                (metrics['deficit_2023'] - metrics['deficit_2022']) / 
-                abs(metrics['deficit_2022'])
-            ) * 100 if metrics['deficit_2022'] != 0 else 0
+            'Metric': 'SOE Transfers',
+            '2023': metrics['total_soe_transfers'],
+            '2022': None,  # Not provided in 2022 data
+            'Change': None,
+            'Change %': None
         }
     ]
     
     perf_df = pd.DataFrame(performance_data)
     
-    # Format the DataFrame for display
+    # Format the DataFrame for display with consistent formatting
     display_perf_df = perf_df.copy()
-    display_perf_df['2023'] = display_perf_df['2023'].apply(lambda x: f"${x/1e6:,.1f}M")
-    display_perf_df['2022'] = display_perf_df['2022'].apply(lambda x: f"${x/1e6:,.1f}M")
-    display_perf_df['Change'] = display_perf_df['Change'].apply(lambda x: f"${x/1e6:+,.1f}M")
-    display_perf_df['Change %'] = display_perf_df['Change %'].apply(lambda x: f"{x:+.1f}%")
+    
+    # Apply consistent currency formatting
+    for col in ['2023', '2022', 'Change']:
+        display_perf_df[col] = display_perf_df[col].apply(
+            lambda x: format_currency(x, currency_format) if pd.notnull(x) else 'N/A'
+        )
+    
+    display_perf_df['Change %'] = display_perf_df['Change %'].apply(
+        lambda x: f"{x:+.1f}%" if pd.notnull(x) else 'N/A'
+    )
+    
+    # Rename columns
+    display_perf_df.columns = [
+        'Performance Metric', '2023 Value', '2022 Value', 
+        'Change (Amount)', 'Change (%)'
+    ]
     
     st.dataframe(display_perf_df, use_container_width=True)
     
     # Performance Trends Visualization
     st.markdown('<div class="section-header">Performance Trends</div>', unsafe_allow_html=True)
     
-    fig = go.Figure()
+    # Filter out non-numeric 2022 values for the chart
+    chart_data = perf_df[perf_df['2022'].apply(lambda x: isinstance(x, (int, float)))].copy()
     
-    # Add bars for 2022 and 2023
-    fig.add_trace(go.Bar(
-        name='2022',
-        x=perf_df['Metric'],
-        y=perf_df['2022'],
-        marker_color='#3B82F6',
-        text=[f'${x/1e6:.0f}M' for x in perf_df['2022']],
-        textposition='auto'
-    ))
-    
-    fig.add_trace(go.Bar(
-        name='2023',
-        x=perf_df['Metric'],
-        y=perf_df['2023'],
-        marker_color='#00267F',
-        text=[f'${x/1e6:.0f}M' for x in perf_df['2023']],
-        textposition='auto'
-    ))
-    
-    fig.update_layout(
-        barmode='group',
-        title='Key Performance Indicators (2022 vs 2023)',
-        yaxis_title='Amount (BBD $)',
-        height=500
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
+    if not chart_data.empty:
+        fig = go.Figure()
+        
+        # Add bars for 2022 and 2023
+        fig.add_trace(go.Bar(
+            name='2022',
+            x=chart_data['Metric'],
+            y=chart_data['2022'],
+            marker_color='#3B82F6',
+            text=[format_currency(x, currency_format) for x in chart_data['2022']],
+            textposition='auto'
+        ))
+        
+        fig.add_trace(go.Bar(
+            name='2023',
+            x=chart_data['Metric'],
+            y=chart_data['2023'],
+            marker_color='#00267F',
+            text=[format_currency(x, currency_format) for x in chart_data['2023']],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            barmode='group',
+            title='Key Performance Indicators (2022 vs 2023)',
+            yaxis_title=f'Amount ({currency_format})',
+            height=500
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
 # FOOTER
@@ -1635,10 +1797,11 @@ with col2:
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Report on Financial Statements • 
-            Dashboard Version 2.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Dashboard Version 3.1 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
             ⚠️ This dashboard highlights material misstatements and adverse audit opinion
         </p>
+        
     </div>
     """, unsafe_allow_html=True)
