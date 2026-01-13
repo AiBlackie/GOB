@@ -1,16 +1,14 @@
-"""
-Barbados Government Financial Statements 2023 Dashboard
-=====================================================
+# Barbados Government Financial Statements 2023 Dashboard
+# =====================================================
 
-A comprehensive dashboard for analyzing the Barbados Government Financial 
-Statements for year ended March 31, 2023, with focus on the adverse audit opinion.
+# A comprehensive dashboard for analyzing the Barbados Government Financial 
+# Statements for year ended March 31, 2023, with focus on the adverse audit opinion.
 
-This dashboard visualizes financial data from the Auditor General's report,
-highlighting material misstatements, compliance issues, and financial performance.
+# This dashboard visualizes financial data from the Auditor General's report,
+# highlighting material misstatements, compliance issues, and financial performance.
 
-Version: 3.1 
-Date: April 2, 2025
-"""
+# Version: 3.2 
+# Date: April 2, 2025
 
 # ============================================================================
 # IMPORTS
@@ -98,6 +96,18 @@ st.markdown("""
     border-left: 4px solid #3B82F6;
 }
 
+.data-error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee 100%);
+    border-left: 4px solid #EF4444;
+    border: 2px dashed #DC2626;
+}
+
+.conceptual-error {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-left: 4px solid #D97706;
+    border: 2px dashed #F59E0B;
+}
+
 /* UI Elements */
 .bb-badge {
     background-color: var(--bb-gold);
@@ -164,11 +174,88 @@ st.markdown("""
 .debt-high { color: #DC2626; font-weight: bold; }
 .debt-medium { color: #F59E0B; font-weight: bold; }
 .debt-low { color: #10B981; font-weight: bold; }
+
+/* Error highlighting */
+.data-discrepancy {
+    background-color: #FEF2F2;
+    border-left: 4px solid #DC2626;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+.conceptual-warning {
+    background-color: #FFFBEB;
+    border-left: 4px solid #D97706;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+/* Tooltip styling */
+.tooltip-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: #DC2626;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 12px;
+    line-height: 18px;
+    margin-left: 5px;
+    cursor: help;
+}
+
+/* Data quality specific styles */
+.discrepancy-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.narrative-box {
+    border: 2px solid #DC2626;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #FEF2F2;
+}
+
+.table-box {
+    border: 2px solid #3B82F6;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #EFF6FF;
+}
+
+.analysis-box {
+    border: 2px dashed #DC2626;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #FFFBEB;
+    margin-top: 15px;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.conclusion-box {
+    border: 2px solid #DC2626;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #FEF2F2;
+    margin-top: 15px;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================================================
-# DATA LOADING FUNCTIONS - WITH CORRECTED NUMBERS
+# DATA LOADING FUNCTIONS - WITH CORRECTED NUMBERS AND ERROR DATA
 # ============================================================================
 @st.cache_data
 def load_financial_data():
@@ -409,61 +496,75 @@ def load_financial_data():
         ]
     })
     
-    # State-Owned Enterprise Transfers - CORRECTED with your specified entities
+    # State-Owned Enterprise Transfers - WITH DISCREPANCIES HIGHLIGHTED
     soe_transfers = pd.DataFrame({
         'Entity': [
             'Queen Elizabeth Hospital', 
-            'Barbados Water Authority',  # ADDED: $30M
-            'Barbados Revenue Authority',  # ADDED: $31M
-            'National Conservation Commission',  # ADDED: $26.9M
+            'Barbados Water Authority',
+            'Barbados Revenue Authority',
+            'National Conservation Commission',
             'Barbados Tourism Investment Inc.',
             'Transport Board',
             'Barbados Agricultural Management Company Ltd',
             'National Housing Corporation',
             'Barbados Defence Force',
             'National Sports Council'
-            # Removed: BIDC, UDC, SSA as they have lower amounts
         ],
         'Current_Transfers': [
-            133664857.68,  # Queen Elizabeth Hospital
-            0.00,          # Barbados Water Authority 
-            29565917.54,   # Barbados Revenue Authority 
-            24566467.11,   # National Conservation Commission 
-            3516575.00,    # Barbados Tourism Investment Inc.
-            46023613.00,   # Transport Board
-            38984952.00,   # Barbados Agricultural Management
-            16851610.11,   # National Housing Corporation
-            59932639.00,   # Barbados Defence Force
-            16443141.43    # National Sports Council
+            133664857.68,
+            0.00,
+            29565917.54,
+            24566467.11,
+            3516575.00,
+            46023613.00,
+            38984952.00,
+            16851610.11,
+            59932639.00,
+            16443141.43
         ],
         'Capital_Transfers': [
-            8800000.00,    # Queen Elizabeth Hospital
-            3000000.00,    # Barbados Water Authority 
-            1609000.00,    # Barbados Revenue Authority 
-            2386500.00,    # National Conservation Commission
-            91200000.00,   # Barbados Tourism Investment Inc.
-            750000.00,     # Transport Board
-            5000000.00,    # Barbados Agricultural Management
-            29450000.00,   # National Housing Corporation
-            1547900.00,    # Barbados Defence Force
-            19919939.00    # National Sports Council
+            8800000.00,
+            30000000.00,  # NOTE: Fixed from 3000000 to 30000000 based on table
+            1609000.00,
+            2386500.00,
+            91200000.00,
+            750000.00,
+            5000000.00,
+            29450000.00,
+            1547900.00,
+            19919939.00
         ],
         'Total': [
-            142464857.68,  # Queen Elizabeth Hospital
-            3000000.00,    # Barbados Water Authority
-            31174917.54,   # Barbados Revenue Authority
-            26952967.11,   # National Conservation Commission
-            94716575.00,   # Barbados Tourism Investment Inc.
-            46773613.00,   # Transport Board
-            43984952.00,   # Barbados Agricultural Management
-            46301610.11,   # National Housing Corporation
-            61480539.00,   # Barbados Defence Force
-            36363080.43    # National Sports Council
+            142464857.68,
+            30000000.00,  # NOTE: Fixed from 3000000 to 30000000
+            31174917.54,
+            26952967.11,
+            94716575.00,
+            46773613.00,
+            43984952.00,
+            46301610.11,
+            61480539.00,
+            36363080.43
         ]
     })
     
     # Sort by total transfers descending
     soe_transfers = soe_transfers.sort_values('Total', ascending=False).reset_index(drop=True)
+    
+    # Note 34 Discrepancy Data
+    note34_discrepancy = {
+        'narrative_amount': 669335534.09,
+        'table_amount': 777909442.90,
+        'difference': 108573908.81,
+        'difference_pct': 16.2
+    }
+    
+    # Note 9 vs Note 34 Data
+    note9_vs_note34 = {
+        'note9_total_grants': 1152612602,  # From Note 9: $1,152,612,602
+        'note34_soe_transfers': 777909442.90,
+        'soe_percentage_of_total': 67.5  # 777.9M / 1,152.6M * 100
+    }
     
     return {
         'financial_performance': financial_performance,
@@ -473,7 +574,9 @@ def load_financial_data():
         'adverse_opinion_items': pd.DataFrame(adverse_opinion_items),
         'tax_revenue_details': tax_revenue_details,
         'debt_structure': debt_structure,
-        'soe_transfers': soe_transfers
+        'soe_transfers': soe_transfers,
+        'note34_discrepancy': note34_discrepancy,
+        'note9_vs_note34': note9_vs_note34
     }
 
 # ============================================================================
@@ -531,7 +634,7 @@ def calculate_key_metrics():
     # CORRECTED: Tax Receivables 2022 from PDF page 8 = $2,384,625,679
     tax_receivables_2022 = 2384625679
     
-    # CORRECTED: Total SOE Transfers from Note 34 page 34 = $777,909,442.90
+    # CORRECTED: Total SOE Transfers from Note 34 page 34 = $777,909,442.90 (TABLE VALUE)
     total_soe_transfers = 777909442.90
     
     return {
@@ -613,7 +716,7 @@ with col3:
     st.caption(f"**Report Date:** {datetime.now().strftime('%B %d, %Y')}")
     st.caption(f"**Financial Year:** April 1, 2022 - March 31, 2023")
     st.caption("**Audit Opinion:** ❌ Adverse")
-    st.caption("**Dashboard Version:** 3.1 ")
+    st.caption("**Dashboard Version:** 3.2 ")
 
 st.markdown("---")
 
@@ -656,11 +759,15 @@ with col_s3:
     """, unsafe_allow_html=True)
 
 with col_s4:
-    # SOE Transfers Total - CORRECTED
+    # SOE Transfers Total - WITH DISCREPANCY WARNING
+    soe_amount = financial_data['note34_discrepancy']['table_amount']
     st.markdown(f"""
     <div class="quick-stats-box">
-        <div class="quick-stats-value">${metrics['total_soe_transfers']/1e6:,.0f}M</div>
+        <div class="quick-stats-value">${soe_amount/1e6:,.0f}M</div>
         <div class="quick-stats-label">SOE Transfers</div>
+        <div style="font-size: 0.7rem; color: #DC2626; margin-top: 5px;">
+            ⚠️ Data discrepancy in Note 34
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -679,20 +786,51 @@ with st.sidebar:
         [
             "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
             "Balance Sheet", "Audit Findings", "Debt Analysis", 
-            "SOE Transfers", "Performance Highlights"
+            "SOE Transfers", "Performance Highlights", "Data Quality Issues"
         ]
     )
     
-    # Currency Format - NOW FUNCTIONAL
+    # Currency Format
     st.subheader("Currency Format")
     currency_format = st.selectbox(
         "Display values as",
         ["Millions (BBD $M)", "Billions (BBD $B)", "Full Amount (BBD $)"]
     )
     
-    # Comparative Period - NOW FUNCTIONAL
+    # Comparative Period
     st.subheader("Comparative Period")
     show_comparative = st.checkbox("Show 2022 Comparison", value=True)
+    
+    st.markdown("---")
+    
+    # Data Quality Alerts
+    st.subheader("⚠️ Data Quality Alerts")
+    
+    # Note 34 Discrepancy
+    narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+    table_amount = financial_data['note34_discrepancy']['table_amount']
+    difference = financial_data['note34_discrepancy']['difference']
+    
+    st.markdown(f"""
+    <div class="financial-card data-error">
+        <div class="financial-label">Note 34 Discrepancy:</div>
+        <div>Narrative: ${narrative_amount/1e6:,.1f}M</div>
+        <div>Table: ${table_amount/1e6:,.1f}M</div>
+        <div style="color: #DC2626; font-weight: bold;">
+            Difference: ${difference/1e6:,.1f}M
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Note 34 Conceptual Error
+    st.markdown(f"""
+    <div class="financial-card conceptual-error">
+        <div class="financial-label">Note 34 Error:</div>
+        <div>Incorrectly references</div>
+        <div>Notes 8 & 10 as</div>
+        <div>"related party transactions"</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
@@ -757,6 +895,23 @@ if view_option == "Executive Summary":
             <h3 style="color: #DC2626; margin-top: 0;">⚠️ ADVERSE AUDIT OPINION ISSUED</h3>
             <p><strong>Auditor General's Conclusion:</strong> The accompanying financial statements do <strong>NOT</strong> give a true and fair view of the financial position of the Government of Barbados as at March 31, 2023.</p>
             <p><strong>Reason:</strong> Significant material misstatements and non-compliance with International Public Sector Accounting Standards (IPSAS).</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Data Quality Warning - FIXED: Using actual values
+    narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+    table_amount = financial_data['note34_discrepancy']['table_amount']
+    difference = financial_data['note34_discrepancy']['difference']
+    difference_pct = financial_data['note34_discrepancy']['difference_pct']
+    
+    with st.container():
+        st.markdown(f"""
+        <div class="financial-card data-error">
+            <h4 style="color: #DC2626; margin-top: 0;">⚠️ DATA QUALITY ALERT - NOTE 34 ERRORS</h4>
+            <p><strong>Critical inconsistencies found in Note 34:</strong></p>
+            <p>1. <strong>Numerical Discrepancy:</strong> Narrative states SOE transfers = ${narrative_amount:,.0f}, but table shows = ${table_amount:,.0f}</p>
+            <p>2. <strong>Conceptual Error:</strong> Incorrectly references Notes 8 (Retiring Benefits) and 10 (Debt Service) as "related party transactions"</p>
+            <p><strong>Impact:</strong> Reinforces Auditor General's adverse opinion about unreliable financial reporting</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1273,6 +1428,52 @@ elif view_option == "Audit Findings":
         </div>
         """, unsafe_allow_html=True)
     
+    # Note 34 Specific Errors - FIXED with proper HTML formatting
+    narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+    table_amount = financial_data['note34_discrepancy']['table_amount']
+    difference = financial_data['note34_discrepancy']['difference']
+    difference_pct = financial_data['note34_discrepancy']['difference_pct']
+    
+    with st.container():
+        st.markdown("""
+        <div class="financial-card data-error">
+            <h4 style="color: #DC2626; margin-top: 0;">⚠️ SPECIFIC ERRORS IN NOTE 34</h4>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Create two columns for the errors
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 1. Numerical Discrepancy")
+            st.markdown(f"""
+            <div style="padding: 10px; background-color: #FEF2F2; border-radius: 5px; margin-bottom: 10px;">
+                <p><strong>Narrative states:</strong> SOE transfers = ${narrative_amount:,.0f}</p>
+                <p><strong>Table shows:</strong> SOE transfers = ${table_amount:,.0f}</p>
+                <p><strong>Difference:</strong> ${difference:,.0f} ({difference_pct:.1f}% variance)</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("### 2. Conceptual Error")
+            st.markdown(f"""
+            <div style="padding: 10px; background-color: #FFFBEB; border-radius: 5px; margin-bottom: 10px;">
+                <p><strong>Note 34 states:</strong> "Notes 8 and 10 dealt with other related party transactions"</p>
+                <p><strong>Why this is WRONG:</strong></p>
+                <ul>
+                    <li><strong>Note 8:</strong> Retiring benefits (pensions) - NOT related party transactions</li>
+                    <li><strong>Note 10:</strong> Debt service costs (interest) - NOT related party transactions</li>
+                    <li>These are routine government payments to external parties, not transactions with controlled entities (SOEs)</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background-color: #EFF6FF; padding: 15px; border-radius: 5px; margin-top: 10px; border-left: 4px solid #3B82F6;">
+            <p><strong>Impact:</strong> Shows fundamental misunderstanding of accounting concepts and reinforces unreliable financial reporting</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
     # Material Misstatements
     st.markdown('<div class="section-header">Material Misstatements Identified</div>', unsafe_allow_html=True)
     
@@ -1498,17 +1699,52 @@ elif view_option == "Debt Analysis":
             )
 
 elif view_option == "SOE Transfers":
-    # SOE Transfers View - CORRECTED with your specified entities
+    # SOE Transfers View - UPDATED WITH ERROR HIGHLIGHTING
     st.markdown('<div class="sub-header">State-Owned Enterprise Transfers </div>', unsafe_allow_html=True)
+    
+    # Note 34 Discrepancy Warning - FIXED with actual values
+    narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+    table_amount = financial_data['note34_discrepancy']['table_amount']
+    difference = financial_data['note34_discrepancy']['difference']
+    difference_pct = financial_data['note34_discrepancy']['difference_pct']
+    
+    with st.container():
+        st.markdown(f"""
+        <div class="financial-card data-error">
+            <h4 style="color: #DC2626; margin-top: 0;">⚠️ CRITICAL DATA INCONSISTENCY IN NOTE 34</h4>
+            <p><strong>Narrative vs Table Discrepancy:</strong></p>
+            <p>• <strong>Narrative text states:</strong> "transfers of ${narrative_amount:,.0f}"</p>
+            <p>• <strong>Table shows total:</strong> ${table_amount:,.0f}</p>
+            <p>• <strong>Difference:</strong> ${difference:,.0f} ({difference_pct:.1f}% difference)</p>
+            <p><strong>Dashboard uses table values for analysis.</strong></p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Total Transfers - CORRECTED: $777.9M from Note 34
     st.info(f"""
     **Total Transfers to State-Owned Entities (2022-2023):** 
-    **{format_currency(metrics['total_soe_transfers'], currency_format)}**
+    **{format_currency(table_amount, currency_format)}**
     
-    *Source: Note 34 of Financial Statements - Total transfers across all SOEs*
+    *Source: Note 34 of Financial Statements - Table shows total transfers across all SOEs*
     
-       """)
+    **Note:** Narrative in Note 34 states ${narrative_amount:,.0f}, but table shows ${table_amount:,.0f}
+    """)
+    
+    # Conceptual Error Warning
+    with st.container():
+        st.markdown("""
+        <div class="financial-card conceptual-error">
+            <h4 style="color: #D97706; margin-top: 0;">❌ CONCEPTUAL ERROR IN NOTE 34</h4>
+            <p><strong>Error:</strong> Note 34 incorrectly references Notes 8 and 10 as dealing with "related party transactions"</p>
+            <p><strong>Why it's wrong:</strong></p>
+            <ul>
+                <li><strong>Note 8:</strong> Retiring benefits (pensions) - NOT related party transactions</li>
+                <li><strong>Note 10:</strong> Debt service costs (interest) - NOT related party transactions</li>
+                <li>These are routine government payments, not transactions with controlled entities (SOEs)</li>
+            </ul>
+            <p><strong>Impact:</strong> Shows fundamental misunderstanding of accounting concepts</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # SOE Transfers Visualization - CORRECTED Top 10 with your specified entities
     st.markdown('<div class="section-header">Top 10 SOE Transfers </div>', unsafe_allow_html=True)
@@ -1589,11 +1825,11 @@ elif view_option == "SOE Transfers":
     
     **Impact:**
     - Financial statements are **incomplete and misleading**
-    - **{format_currency(metrics['total_soe_transfers'], currency_format)} in transfers** to 40+ SOEs not properly consolidated
+    - **{format_currency(table_amount, currency_format)} in transfers** to 40+ SOEs not properly consolidated
     - True financial position of Government **cannot be determined**
     - **Material misstatement** in financial reporting
     
-    **Note:** The {format_currency(metrics['total_soe_transfers'], currency_format)} represents transfers to all SOEs (not just the top 10 shown). 
+    **Note:** The {format_currency(table_amount, currency_format)} represents transfers to all SOEs (not just the top 10 shown). 
     Full consolidation of all 40+ state-owned entities is required for IPSAS compliance.
     
     **Required Action:** Immediate consolidation of all State-Owned Entities into government financial statements.
@@ -1653,13 +1889,19 @@ elif view_option == "Performance Highlights":
         """, unsafe_allow_html=True)
     
     with col4:
-        # SOE Transfers - CORRECTED
+        # SOE Transfers - WITH DISCREPANCY NOTE
+        narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+        table_amount = financial_data['note34_discrepancy']['table_amount']
+        
         st.markdown(f"""
         <div class="financial-card">
             <div class="financial-label">SOE Transfers</div>
-            <div class="financial-value">{format_currency(metrics['total_soe_transfers'], currency_format)}</div>
+            <div class="financial-value">{format_currency(table_amount, currency_format)}</div>
             <div style="color: #666; font-size: 0.9rem;">
                 40+ State-Owned Entities
+            </div>
+            <div style="font-size: 0.7rem; color: #DC2626; margin-top: 5px;">
+                ⚠️ Note 34 discrepancy: ${narrative_amount/1e6:,.1f}M narrative vs ${table_amount/1e6:,.1f}M table
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1714,8 +1956,15 @@ elif view_option == "Performance Highlights":
             ) * 100
         },
         {
-            'Metric': 'SOE Transfers',
-            '2023': metrics['total_soe_transfers'],
+            'Metric': 'SOE Transfers (Table Value)',
+            '2023': financial_data['note34_discrepancy']['table_amount'],
+            '2022': None,  # Not provided in 2022 data
+            'Change': None,
+            'Change %': None
+        },
+        {
+            'Metric': 'SOE Transfers (Narrative)',
+            '2023': financial_data['note34_discrepancy']['narrative_amount'],
             '2022': None,  # Not provided in 2022 data
             'Change': None,
             'Change %': None
@@ -1782,6 +2031,179 @@ elif view_option == "Performance Highlights":
         
         st.plotly_chart(fig, use_container_width=True)
 
+elif view_option == "Data Quality Issues":
+    # Data Quality Issues View - FIXED with simpler HTML structure
+    st.markdown('<div class="sub-header">Data Quality Issues & Financial Reporting Errors</div>', unsafe_allow_html=True)
+    
+    # Note 34 Errors - Detailed Analysis
+    narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+    table_amount = financial_data['note34_discrepancy']['table_amount']
+    difference = financial_data['note34_discrepancy']['difference']
+    difference_pct = financial_data['note34_discrepancy']['difference_pct']
+    
+    with st.container():
+        st.markdown("""
+        <div class="financial-card data-error">
+            <h3 style="color: #DC2626; margin-top: 0;">❌ CRITICAL DATA QUALITY ISSUES IN NOTE 34</h3>
+            <p><strong>Note 34: Related Party Transactions - Contains Multiple Material Errors</strong></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Error 1: Numerical Discrepancy
+    st.markdown("### 1. NUMERICAL DISCREPANCY - NARRATIVE VS TABLE")
+    st.markdown("**The Problem:** Note 34 narrative text contradicts the accompanying table")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="narrative-box">
+            <h5 style="color: #DC2626; margin-top: 0;">NARRATIVE TEXT</h5>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #DC2626;">
+                "${narrative_amount:,.0f}"
+            </p>
+            <p><em>"The Government reporting entity recorded transfers of <strong>${narrative_amount:,.0f}</strong> to fund the operations of the SOEs..."</em></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div class="table-box">
+            <h5 style="color: #3B82F6; margin-top: 0;">TABLE TOTAL</h5>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #3B82F6;">
+                "${table_amount:,.0f}"
+            </p>
+            <p>Sum of all transfers in the Note 34 table</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
+    <div class="analysis-box">
+        <h5 style="color: #D97706; margin-top: 0;">DISCREPANCY ANALYSIS</h5>
+        <p><strong>Difference:</strong> ${difference:,.0f}</p>
+        <p><strong>Percentage Variance:</strong> {difference_pct:.1f}%</p>
+        <p><strong>Impact:</strong> Which number is correct? The narrative or the table?</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Error 2: Conceptual Error
+    st.markdown("### 2. CONCEPTUAL ERROR - INCORRECT ACCOUNTING CLASSIFICATION")
+    st.markdown("**The Problem:** Note 34 incorrectly references Notes 8 and 10 as 'related party transactions'")
+    
+    st.markdown(f"""
+    <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #D97706; background-color: #FFFBEB;">
+        <p><strong>Note 34 states:</strong> "Notes 8 and 10 dealt with other related party transactions which occurred during the financial year 2022-2023."</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.markdown("""
+        <div class="narrative-box">
+            <h5 style="color: #DC2626; margin-top: 0;">NOTE 8: RETIRING BENEFITS</h5>
+            <p><strong>What it is:</strong> Pension payments to former government employees</p>
+            <p><strong>Why it's NOT a related party transaction:</strong></p>
+            <ul>
+                <li>Payments to former employees</li>
+                <li>Not transactions with controlled entities (SOEs)</li>
+                <li>Routine government expenditure</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="narrative-box">
+            <h5 style="color: #DC2626; margin-top: 0;">NOTE 10: DEBT SERVICE COSTS</h5>
+            <p><strong>What it is:</strong> Interest and loan expense payments</p>
+            <p><strong>Why it's NOT a related party transaction:</strong></p>
+            <ul>
+                <li>Payments to creditors (banks, bondholders)</li>
+                <li>Not transactions with controlled entities (SOEs)</li>
+                <li>External debt service obligations</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="border: 2px solid #10B981; padding: 15px; border-radius: 8px; background-color: #ECFDF5; margin-top: 15px;">
+        <h5 style="color: #10B981; margin-top: 0;">WHAT ARE "RELATED PARTY TRANSACTIONS"?</h5>
+        <p><strong>Correct Definition:</strong> Transactions between the government and entities it <strong>controls</strong> (State-Owned Enterprises)</p>
+        <p><strong>Examples:</strong> Transfers to SOEs, loans to SOEs, purchases from SOEs</p>
+        <p><strong>NOT Related Party Transactions:</strong> Pension payments, debt service, salaries, routine government expenditures</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Impact Analysis
+    st.markdown("### IMPACT ON FINANCIAL REPORTING RELIABILITY")
+    st.markdown("**These errors reinforce the Auditor General's Adverse Opinion:**")
+    
+    col5, col6 = st.columns(2)
+    
+    with col5:
+        # Calculate the formatted values for display
+        narrative_display = f"${narrative_amount/1e6:,.1f}M"
+        table_display = f"${table_amount/1e6:,.1f}M"
+        
+        st.markdown(f"""
+        <div class="financial-card adverse-opinion">
+            <h5 style="color: #DC2626;">1. Undermines Data Credibility</h5>
+            <ul>
+                <li>Which SOE transfer figure is correct? {narrative_display} or {table_display}?</li>
+                <li>Can any number in the financial statements be trusted?</li>
+                <li>Creates uncertainty for users of financial statements</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="financial-card adverse-opinion">
+            <h5 style="color: #DC2626;">3. Supports Adverse Audit Opinion</h5>
+            <ul>
+                <li>Demonstrates "material misstatements"</li>
+                <li>Shows "non-compliance" with accounting standards</li>
+                <li>Validates Auditor General's concerns</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col6:
+        st.markdown("""
+        <div class="financial-card adverse-opinion">
+            <h5 style="color: #DC2626;">2. Reveals Fundamental Accounting Errors</h5>
+            <ul>
+                <li>Basic accounting concepts misunderstood</li>
+                <li>Incorrect classification of transactions</li>
+                <li>Questions competency of financial reporting team</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="financial-card adverse-opinion">
+            <h5 style="color: #DC2626;">4. Raises Governance Concerns</h5>
+            <ul>
+                <li>Poor internal controls</li>
+                <li>Lack of review and verification</li>
+                <li>Weak financial management systems</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="conclusion-box">
+        <h5 style="color: #DC2626; margin-top: 0;">CONCLUSION</h5>
+        <p>The errors in Note 34 are not just minor typos - they are <strong>material misstatements</strong> that:</p>
+        <ol>
+            <li><strong>Contradict</strong> the accompanying table data</li>
+            <li><strong>Misrepresent</strong> basic accounting concepts</li>
+            <li><strong>Undermine</strong> the credibility of the entire financial report</li>
+            <li><strong>Justify</strong> the Auditor General's adverse opinion</li>
+        </ol>
+        <p><strong>Required Action:</strong> Immediate correction and explanation in next financial statements</p>
+    </div>
+    """, unsafe_allow_html=True)
 # ============================================================================
 # FOOTER
 # ============================================================================
@@ -1797,11 +2219,11 @@ with col2:
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Report on Financial Statements • 
-            Dashboard Version 3.1 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Dashboard Version 3.2 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
             ⚠️ This dashboard highlights material misstatements and adverse audit opinion
+            <br>⚠️ Note 34 contains critical data inconsistencies and conceptual errors
         </p>
-        
     </div>
     """, unsafe_allow_html=True)
