@@ -1030,7 +1030,7 @@ if view_option == "Executive Summary":
             <p><strong>State-Owned Entities NOT consolidated</strong> (IPSAS violation)</p>
             <p><strong>Pension liabilities OMITTED</strong> from balance sheet</p>
             <p><strong>No consolidated financial statements</strong></p>
-            <p><strong>15+ year bank reconciliation backlog</strong></p>
+            <p><strong>15+ years of untimely bank reconciliations</strong> (Auditor General's Report, Note 2.17).</p>
         </div>
         """, unsafe_allow_html=True)
         
