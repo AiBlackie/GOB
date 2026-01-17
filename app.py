@@ -786,7 +786,7 @@ with st.sidebar:
         [
             "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
             "Balance Sheet", "Audit Findings", "Debt Analysis", 
-            "SOE Transfers", "Performance Highlights", "Data Quality Issues"
+            "SOE Transfers", "Performance Highlights", "Data Quality Issues", "Story View"
         ]
     )
     
@@ -2204,6 +2204,378 @@ elif view_option == "Data Quality Issues":
         <p><strong>Required Action:</strong> Immediate correction and explanation in next financial statements</p>
     </div>
     """, unsafe_allow_html=True)
+elif view_option == "Story View":
+    # Story View - Narrative Analysis
+    st.markdown('<div class="sub-header">The Story of Barbados\' Financial Statements: A Tale of Unreliable Numbers</div>', unsafe_allow_html=True)
+    
+    # Chapter 1
+    with st.expander("📖 **Chapter 1: The Surface Narrative - What the Government Wants You to See**", expanded=True):
+        st.markdown(f"""
+        **At first glance, Barbados appears to be making a remarkable recovery.** The government's financial statements tell a story of successful economic transformation:
+        
+        **"Look at our progress!" they say:**
+        - **Revenue is up 29%** - from ${metrics['total_revenue_2022']/1e9:.2f}B to ${metrics['total_revenue_2023']/1e9:.2f}B
+        - **The deficit has been slashed** - from a staggering ${abs(metrics['deficit_2022'])/1e6:.0f}M deficit to "only" ${abs(metrics['deficit_2023'])/1e6:.0f}M
+        - **Tax collection is booming** - VAT revenue alone jumped 32% to $1.16 billion
+        - **We're managing our spending** - certain expenditures came in under budget
+        
+        The Accountant General signed these statements on September 14, 2023, presenting what appears to be a government turning the corner after years of economic challenges. 
+        The Barbados Economic Recovery and Transformation (BERT) program seems to be working its magic.
+        """)
+    
+    # Chapter 2
+    with st.expander("⚠️ **Chapter 2: The Auditor General's Intervention - The Truth Behind the Curtain**"):
+        st.markdown(f"""
+        **But then enters the Auditor General on April 2, 2025, with a bombshell:** "These numbers cannot be trusted."
+        
+        **The audit report reads like a financial horror story:**
+        
+        **❌ "We cannot confirm $2.43 billion of your tax receivables."**
+        *Impact:* That's **{(metrics['tax_receivables_2023']/metrics['total_assets_2023']*100):.1f}% of total assets** - just gone into the "unverifiable" category
+        
+        **❌ "Your assets are overstated by nearly $1 billion."**
+        - **$719 million** discrepancy in "Other Capital Assets"
+        - **$115 million** in cash that doesn't exist
+        - **$147 million** in investments that are inflated
+        
+        **❌ "You've completely ignored major liabilities."**
+        - **Pension obligations?** Nowhere to be seen
+        - **State-owned enterprises?** Not consolidated (a direct IPSAS violation)
+        
+        **The Auditor General doesn't mince words:** **Adverse Opinion** - the financial equivalent of a failing grade.
+        """)
+    
+    # Chapter 3
+    with st.expander("🔍 **Chapter 3: The Hidden Story - What the Numbers Really Reveal**"):
+        narrative_amount = financial_data['note34_discrepancy']['narrative_amount']
+        table_amount = financial_data['note34_discrepancy']['table_amount']
+        
+        st.markdown("### The Revenue 'Miracle' Might Be Fiction")
+        st.markdown(f"""
+        The dashboard reveals a troubling pattern: the government claims **{metrics['revenue_growth_pct']:.1f}% revenue growth**, but:
+        
+        - **${metrics['tax_receivables_2023']/1e9:.2f}B of this "revenue"** (in receivables) can't be verified
+        - The bad debt policy changed dramatically (590% increase in provision) with no documentation
+        """)
+        
+        st.warning("**❓ Critical Question:** Is revenue really growing, or are they just getting better at claiming money they'll never collect?")
+        
+        st.markdown("### The State-Owned Enterprise Black Hole")
+        st.markdown("Here's where the story gets particularly dark:")
+        
+        # Create two columns for the comparison
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown(f"""
+            <div style="padding: 15px; background-color: white; border: 2px solid #DC2626; border-radius: 5px; margin-bottom: 10px;">
+                <h5 style="color: #DC2626; margin-top: 0;">Narrative States</h5>
+                <p style="font-size: 1.2rem; font-weight: bold; color: #DC2626;">${narrative_amount/1e6:.1f}M</p>
+                <p>Transfers to SOEs</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown(f"""
+            <div style="padding: 15px; background-color: white; border: 2px solid #3B82F6; border-radius: 5px; margin-bottom: 10px;">
+                <h5 style="color: #3B82F6; margin-top: 0;">Table Shows</h5>
+                <p style="font-size: 1.2rem; font-weight: bold; color: #3B82F6;">${table_amount/1e6:.1f}M</p>
+                <p>Transfers to SOEs</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.warning("**❓ Critical Question:** Which number is true? Neither can be trusted, because...")
+        
+        st.markdown("### The Conceptual Failure")
+        st.markdown("""
+        **Note 34 makes a shocking error:** It claims pension payments (Note 8) and debt service (Note 10) are "related party transactions."
+        
+        **This is Accounting 101 failure:**
+        - Pensions and interest **aren't** transactions with controlled entities
+        - These are routine government expenditures to external parties
+        
+        **What this reveals:** The people preparing these statements don't understand basic accounting concepts.
+        
+        **If they're this wrong on fundamentals, what else are they misunderstanding?**
+        """)
+    
+    # Chapter 4
+    with st.expander("🏛️ **Chapter 4: The Systemic Problems - A Pattern of Dysfunction**"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 1. The Asset Management Farce")
+            st.markdown("""
+            - **$719 million discrepancy** means either the financial statements OR the subsidiary records are wrong
+            - Fixed asset register hasn't been reconciled for years
+            - **The government doesn't know what it owns**
+            """)
+            
+            st.markdown("### 2. The Pension Time Bomb")
+            st.markdown("""
+            - Pension liabilities **completely omitted** from the balance sheet
+            - No actuarial valuation has been done
+            - **Future taxpayers are on the hook** for obligations we can't even quantify
+            """)
+        
+        with col2:
+            st.markdown("### 3. The SOE Shell Game")
+            st.markdown(f"""
+            - **40+ state-owned entities** operate in financial limbo
+            - They're **not consolidated**, so their debts and losses are hidden
+            - But taxpayers fund them to the tune of **${table_amount/1e6:.1f}M annually**
+            """)
+            
+            st.markdown("### 4. The Documentation Disaster")
+            st.markdown("""
+            - **$2.43B tax receivables** - no supporting documentation
+            - **$68.3M bad debt expense** - unverified calculation method
+            - **15+ years of unreconciled bank accounts**
+            """)
+    
+        # Chapter 5
+    with st.expander("📊 **Chapter 5: What the Dashboard Reveals - Connecting the Dots**"):
+        difference_amount = financial_data['note34_discrepancy']['difference'] / 1e6
+        
+        st.markdown("### The 'Unverifiable' Cascade Effect:")
+        
+        # Create a visual flow
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("""
+            <div style="text-align: center; padding: 15px; background-color: #DC2626; color: white; border-radius: 10px; margin: 10px 0;">
+                <strong>Start</strong><br>
+                $2.43B<br>
+                Unverified
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("""
+            <div style="text-align: center; padding: 15px; background-color: #F59E0B; color: white; border-radius: 10px; margin: 10px 0;">
+                <strong>Apply</strong><br>
+                $68.3M Bad Debt<br>
+                Unverified Method
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            st.markdown("""
+            <div style="text-align: center; padding: 15px; background-color: #DC2626; color: white; border-radius: 10px; margin: 10px 0;">
+                <strong>Result</strong><br>
+                Both Assets & Expenses<br>
+                Unreliable
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Add arrows between columns
+        st.markdown("<div style='text-align: center; font-size: 1.5rem; margin: -30px 0 -20px 0;'>→ →</div>", unsafe_allow_html=True)
+        
+        st.info("**Impact:** Everything downstream - from deficit calculations to debt ratios - is suspect")
+        
+        st.markdown("### The Data Quality Death Spiral:")
+        
+        # Create 2x2 grid for issues
+        issues_col1, issues_col2 = st.columns(2)
+        
+        with issues_col1:
+            st.markdown(f"""
+            **Numerical Discrepancies**
+            - ${difference_amount:.1f}M difference in Note 34
+            """)
+            
+            st.markdown("""
+            **Conceptual Errors**
+            - Misunderstanding related party transactions
+            """)
+        
+        with issues_col2:
+            st.markdown("""
+            **Documentation Gaps**
+            - No support for key assumptions
+            """)
+            
+            st.markdown("""
+            **Complete Loss of Credibility**
+            - Financial statements cannot be trusted
+            """)
+    
+# Chapter 6
+    with st.expander("💰 **Chapter 6: The Real Financial Position - What We Actually Know**"):
+        st.markdown("### ✅ The Certainties")
+        
+        cert_col1, cert_col2 = st.columns(2)
+        
+        with cert_col1:
+            st.markdown(f"""
+            **We have massive debt:**
+            ${metrics['total_liabilities_2023']/1e9:.2f}B
+            *(though this is likely understated)*
+            
+            **We're running a deficit:**
+            ${abs(metrics['deficit_2023'])/1e6:.0f}M
+            *(probably more)*
+            """)
+        
+        with cert_col2:
+            st.markdown(f"""
+            **We're spending heavily on SOEs:**
+            ${financial_data['note34_discrepancy']['table_amount']/1e6:.1f}M
+            
+            **We can't verify our largest asset:**
+            ${metrics['tax_receivables_2023']/1e9:.2f}B
+            *(might not exist)*
+            """)
+        
+        st.markdown("### ❓ The Unknowns (The Scary Part)")
+        
+        unk_col1, unk_col2 = st.columns(2)
+        
+        with unk_col1:
+            st.markdown("""
+            **How much are pensions really costing us?**
+            *Status:* Unquantified liability
+            
+            **What's the true financial position of SOEs?**
+            *Status:* Hidden in non-consolidation
+            """)
+        
+        with unk_col2:
+            st.markdown("""
+            **How much of the "revenue growth" is real?**
+            *Status:* Unverifiable receivables
+            
+            **What other liabilities are missing?**
+            *Status:* The audit suggests there are more
+            """)
+    
+    # Chapter 7
+    with st.expander("🏛️ **Chapter 7: The Underlying Story - What This Really Means for Barbados**"):
+        st.error("**⚠️ This Isn't Just About Accounting Errors**")
+        st.markdown("**This is a story about governance failure:**")
+        
+        # Governance issues in columns
+        gov_col1, gov_col2 = st.columns(2)
+        
+        with gov_col1:
+            st.markdown("""
+            **Lack of Internal Controls**
+            How does a $719 million discrepancy happen?
+            
+            **Poor Financial Management**
+            15+ years of unreconciled bank accounts
+            """)
+        
+        with gov_col2:
+            st.markdown("""
+            **Weak Oversight**
+            How did these statements get prepared without anyone catching basic errors?
+            
+            **Transparency Deficit**
+            The public cannot make informed decisions based on these numbers
+            """)
+        
+        st.markdown("### The Economic Recovery Paradox")
+        st.markdown("""
+        The government claims successful economic recovery while:
+        
+        - **Not being able to verify** its largest asset
+        - **Omitting** major liabilities
+        - **Making fundamental accounting errors**
+        - **Violating international standards**
+        """)
+        
+        st.warning("**❓ The uncomfortable question:** Is the economic recovery as real as the financial statements claim it to be?")
+    
+    # Chapter 8
+    with st.expander("👥 **Chapter 8: The Citizen's Perspective - What This Means for Ordinary Barbadians**"):
+        st.markdown("### 💸 Your Tax Dollars Are Being Managed Unreliably")
+        
+        cit_col1, cit_col2 = st.columns(2)
+        
+        with cit_col1:
+            st.markdown("""
+            **Pensions**
+            Your future retirement benefits? **The liability isn't even on the books**
+            
+            **Services**
+            Money going to SOEs that **aren't properly accounted for**
+            """)
+        
+        with cit_col2:
+            st.markdown(f"""
+            **Debt**
+            **${metrics['total_liabilities_2023']/1e9:.2f}B in liabilities** that future generations will pay
+            
+            **Transparency**
+            You **can't trust** the government's own numbers about its finances
+            """)
+        
+        st.markdown("### 📉 The Credibility Crisis")
+        st.markdown("When a government cannot produce reliable financial statements:")
+        
+        cred_col1, cred_col2 = st.columns(2)
+        
+        with cred_col1:
+            st.markdown("""
+            **International lenders become wary**
+            *Impact:* Higher borrowing costs
+            
+            **Investors lose confidence**
+            *Impact:* Less foreign investment
+            """)
+        
+        with cred_col2:
+            st.markdown("""
+            **Citizens lose trust**
+            *Impact:* Weakening social contract
+            
+            **Policy decisions are based on faulty data**
+            *Impact:* Poor outcomes
+            """)
+    
+    # Conclusion
+    with st.expander("🔚 **Conclusion: The Unfinished Story**"):
+        # Two columns for comparison
+        con_col1, con_col2 = st.columns(2)
+        
+        with con_col1:
+            st.markdown("""
+            ### The Official Story
+            *"We're recovering, revenues are up, deficits are down, trust us."*
+            """)
+        
+        with con_col2:
+            st.markdown("""
+            ### The Real Story
+            *"We don't know what we own, we don't know what we owe, we can't verify our numbers, and we make fundamental accounting errors."*
+            """)
+        
+        st.error("**The Dashboard's Ultimate Revelation**")
+        st.markdown("""
+        This **isn't about finding a few errors** - it's about **systemic financial management failure**. 
+        The adverse opinion **isn't a technicality**; it's a warning that Barbados' financial reporting 
+        **cannot be trusted** for any serious decision-making.
+        """)
+        
+        st.warning("**The Most Damning Part of the Story**")
+        st.markdown("""
+        **These aren't new problems.** The Auditor General has been reporting similar issues for years. 
+        The dashboard doesn't just show what's wrong now - it shows a **pattern of persistent failure** 
+        that continues despite repeated warnings.
+        """)
+        
+        st.markdown("### The Final Verdict")
+        st.markdown("""
+        The story these financial statements tell is ultimately one of a government that has:
+        
+        1. **Lost control** of its financial reporting
+        2. **Cannot produce** reliable numbers
+        3. **Doesn't seem to understand** how serious these failures are
+        
+        **For:** National credibility and economic stability
+        """)
 # ============================================================================
 # FOOTER
 # ============================================================================
