@@ -2214,15 +2214,45 @@ elif view_option == "Story View":
         **At first glance, Barbados appears to be making a remarkable recovery.** The government's financial statements tell a story of successful economic transformation:
         
         **"Look at our progress!" they say:**
-        - **Revenue is up 29%** - from ${metrics['total_revenue_2022']/1e9:.2f}B to ${metrics['total_revenue_2023']/1e9:.2f}B
-        - **The deficit has been slashed** - from a staggering ${abs(metrics['deficit_2022'])/1e6:.0f}M deficit to "only" ${abs(metrics['deficit_2023'])/1e6:.0f}M
-        - **Tax collection is booming** - VAT revenue alone jumped 32% to $1.16 billion
-        - **We're managing our spending** - certain expenditures came in under budget
-        
-        The Accountant General signed these statements on September 14, 2023, presenting what appears to be a government turning the corner after years of economic challenges. 
-        The Barbados Economic Recovery and Transformation (BERT) program seems to be working its magic.
         """)
-    
+        
+        # Use columns for better control of the layout
+        col_a, col_b = st.columns(2)
+        
+        with col_a:
+            st.markdown(f"""
+            <div style="background-color: #f0f7ff; padding: 15px; border-radius: 10px; border-left: 4px solid #00267F; margin-bottom: 15px;">
+                <p style="margin: 0; font-size: 0.9rem; color: #666; margin-bottom: 5px;">Revenue is up 29%</p>
+                <p style="margin: 0; font-size: 1.2rem; font-weight: bold; color: #00267F;">
+                    from ${metrics['total_revenue_2022']/1e9:.2f}B to ${metrics['total_revenue_2023']/1e9:.2f}B
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_b:
+            st.markdown(f"""
+            <div style="background-color: #fff0f0; padding: 15px; border-radius: 10px; border-left: 4px solid #DC2626; margin-bottom: 15px;">
+                <p style="margin: 0; font-size: 0.9rem; color: #666; margin-bottom: 5px;">The deficit has been slashed</p>
+                <p style="margin: 0; font-size: 1.2rem; font-weight: bold; color: #DC2626;">
+                    from a staggering ${abs(metrics['deficit_2022'])/1e6:.0f}M deficit to "only" ${abs(metrics['deficit_2023'])/1e6:.0f}M
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Additional points in consistent format
+        st.markdown(f"""
+        <div style="margin-top: 10px; margin-bottom: 10px;">
+            <p><span style="font-weight: bold;">Tax collection is booming</span> - VAT revenue alone jumped 32% to $1.16 billion</p>
+            <p><span style="font-weight: bold;">We're managing our spending</span> - certain expenditures came in under budget</p>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #e0e0e0;">
+            <p style="margin: 0; font-size: 0.95rem;">
+                The Accountant General signed these statements on September 14, 2023, presenting what appears to be a government turning the corner after years of economic challenges. 
+                The Barbados Economic Recovery and Transformation (BERT) program seems to be working its magic.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)    
     # Chapter 2
     with st.expander("⚠️ **Chapter 2: The Auditor General's Intervention - The Truth Behind the Curtain**"):
         st.markdown(f"""
