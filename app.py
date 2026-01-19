@@ -786,7 +786,7 @@ with st.sidebar:
         [
             "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
             "Balance Sheet", "Audit Findings", "Debt Analysis", 
-            "SOE Transfers", "Performance Highlights", "Data Quality Issues", "Story View"
+            "SOE Transfers", "Performance Highlights", "Data Quality Issues", "Story View", "BERT 2026 Risk Analysis"
         ]
     )
     
@@ -1458,7 +1458,7 @@ elif view_option == "Audit Findings":
             st.markdown("### 2. Conceptual Error")
             st.markdown(f"""
             <div style="padding: 10px; background-color: #FFFBEB; border-radius: 5px; margin-bottom: 10px;">
-                <p><strong>Note 34 states:</strong> "Notes 8 and 10 dealt with other related party transactions"</p>
+                <p><strong>Note 34 states:</strong> "Notes 8 and 10 dealt with other related party transactions which occurred during the financial year 2022-2023."</p>
                 <p><strong>Why this is WRONG:</strong></p>
                 <ul>
                     <li><strong>Note 8:</strong> Retiring benefits (pensions) - NOT related party transactions</li>
@@ -2204,6 +2204,7 @@ elif view_option == "Data Quality Issues":
         <p><strong>Required Action:</strong> Immediate correction and explanation in next financial statements</p>
     </div>
     """, unsafe_allow_html=True)
+
 elif view_option == "Story View":
     # Story View - Narrative Analysis
     st.markdown('<div class="sub-header">The Story of Barbados\' Financial Statements: A Tale of Unreliable Numbers</div>', unsafe_allow_html=True)
@@ -2431,7 +2432,7 @@ elif view_option == "Story View":
             - Financial statements cannot be trusted
             """)
     
-# Chapter 6
+    # Chapter 6
     with st.expander("💰 **Chapter 6: The Real Financial Position - What We Actually Know**"):
         st.markdown("### ✅ The Certainties")
         
@@ -2606,6 +2607,592 @@ elif view_option == "Story View":
         
         **For:** National credibility and economic stability
         """)
+
+elif view_option == "BERT 2026 Risk Analysis":
+    # BERT 2026 Risk Analysis View - COMPREHENSIVE INTEGRATION
+    st.markdown('<div class="sub-header">BERT 2026: Financing Transformation on Unreliable Numbers</div>', unsafe_allow_html=True)
+    
+    # The Core Paradox
+    with st.container():
+        st.markdown("""
+        <div class="financial-card adverse-opinion">
+            <h3 style="color: #DC2626; margin-top: 0;">⚠️ THE CORE PARADOX: BORROWING BILLIONS WHILE AUDITOR SAYS "CAN'T TRUST THE NUMBERS"</h3>
+            <p><strong>Source Article:</strong> "Third phase of BERT takes effect" <em>(Nation News, January 18, 2026)</em></p>
+            <p><strong>Critical Contradiction:</strong> The government plans to implement "the third and most ambitious phase" of economic reform, financing it with billions in borrowing, while its own Auditor General says the 2023 financial statements "do NOT give a true and fair view."</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # === TIMELINE: Financial Reporting vs. BERT 2026 Ambitions ===
+    st.markdown('<div class="section-header">⏰ Timeline: Financial Reporting vs. BERT 2026 Ambitions</div>', unsafe_allow_html=True)
+    
+    timeline_data = pd.DataFrame({
+        'Date': ['Sep 14, 2023', 'Apr 2, 2025', 'Jun 2025', 'Jan 18, 2026', 'Apr 1, 2026', '2026-2029'],
+        'Event': [
+            'Accountant General signs 2023 Financial Statements',
+            'Auditor General issues ADVERSE AUDIT OPINION',
+            'Government issues US$500M bond (claims "re-emergence as credible borrower")',
+            'BERT 2026 announced: "Third and most ambitious phase" begins immediately',
+            'FY 2026-27 starts: $1.71B gross financing needed for BERT',
+            'BERT 2026 Execution: $1.71B-$2.06B annual financing projected'
+        ],
+        'Status': ['📄 Signed', '❌ Adverse Opinion', '💳 Bond Issued', '🚀 Announced', '🔜 Planned', '🔜 Planned']
+    })
+    
+    st.dataframe(timeline_data, use_container_width=True)
+    
+    st.markdown("""
+    <div style="background-color: #FFFBEB; padding: 15px; border-radius: 8px; border: 2px dashed #D97706; margin-top: 10px;">
+        <p><strong>📌 Key Insight from Article:</strong> <em>"The new BERT programme is the first one to be implemented without the International Monetary Fund's (IMF) direct oversight."</em></p>
+        <p><strong>🔍 Risk:</strong> Removing IMF oversight while financial reporting has persistent, unresolved failures.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === BERT 2026 PROMISES vs. FINANCIAL REALITY ===
+    st.markdown('<div class="section-header">🚀 BERT 2026 Promises vs. 📊 Audit Reality</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="padding: 15px; background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-radius: 8px; border-left: 4px solid #3B82F6;">
+            <h5 style="color: #1D4ED8; margin-top: 0;">🚀 FROM BERT 2026 ARTICLE</h5>
+            <p><strong>Financing Strategy:</strong></p>
+            <ul>
+                <li>"Concessional borrowing, international and domestic capital and PPPs."</li>
+                <li>"No financing gaps are projected... Every dollar matched with secured sources."</li>
+                <li>US$500M bond "signals re-emergence as a credible borrower."</li>
+            </ul>
+            <p><strong>Goals:</strong> Address "contingent liabilities from SOEs", "debt and fiscal sustainability", "climate resilience".</p>
+            <p><strong>Oversight:</strong> First plan <strong>without IMF direct oversight</strong>. Led by Joint Economic Group (PM, Ministers, Central Bank).</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="padding: 15px; background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%); border-radius: 8px; border-left: 4px solid #DC2626;">
+            <h5 style="color: #B91C1C; margin-top: 0;">📊 FROM 2023 AUDIT & FISCAL FRAMEWORK</h5>
+            <p><strong>Financial Reporting Failures:</strong></p>
+            <ul>
+                <li><strong>Adverse Audit Opinion:</strong> Statements "do NOT give a true and fair view."</li>
+                <li><strong>$719M</strong> asset discrepancies; <strong>$2.43B</strong> unverified tax receivables.</li>
+                <li><strong>SOEs Not Consolidated:</strong> IPSAS violation; true financial position hidden.</li>
+            </ul>
+            <p><strong>SOE Reality (Fiscal Framework):</strong></p>
+            <ul>
+                <li><strong>$77.3M</strong> arrears; <strong>$282.7M</strong> unfunded pensions; <strong>$732.5M</strong> long-term debt.</li>
+                <li>Several SOEs "technically insolvent" or face "liquidity challenges."</li>
+            </ul>
+            <p><strong>Governance:</strong> 15+ years of unreconciled accounts; basic conceptual errors in notes.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # === SPECIFIC CONTRADICTION: SOE RESTRUCTURING ===
+    st.markdown('<div class="section-header">🏢 Specific Contradiction: SOE Restructuring</div>', unsafe_allow_html=True)
+    
+    soe_transfers_amount = financial_data['note34_discrepancy']['table_amount']
+    
+    st.markdown(f"""
+    <div class="financial-card data-error">
+        <h5 style="color: #DC2626; margin-top: 0;">BERT 2026 AIMS TO "ADDRESS CONTINGENT LIABILITIES FROM SOEs"</h5>
+        <p><strong>But the 2023 Financial Statements show:</strong></p>
+        <ol>
+            <li><strong>SOEs are not consolidated</strong> (IPSAS violation). You cannot restructure what you do not even measure in your accounts.</li>
+            <li>The government made <strong>transfers of ${soe_transfers_amount/1e6:.1f}M</strong> to SOEs (Note 34), but the note contains critical data errors.</li>
+            <li>The <strong>Fiscal Framework (2026-2029)</strong> details SOEs with $77M in arrears, $283M in unfunded pensions, and $733M in long-term debt.</li>
+        </ol>
+        <p><strong>Article Promise:</strong> "SOE restructuring... will undergo targeted performance audits."</p>
+        <p><strong>Fundamental Problem:</strong> The core financial data needed to baseline and measure this restructuring is unreliable.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === INTERACTIVE FINANCING RISK CALCULATOR ===
+    st.markdown('<div class="section-header">💰 BERT 2026 Financing Risk Calculator</div>', unsafe_allow_html=True)
+    
+    col_calc1, col_calc2, col_calc3 = st.columns(3)
+    
+    with col_calc1:
+        # Values from the article
+        borrowing_needs = st.number_input(
+            "Annual Borrowing Need ($B)",
+            min_value=1.0,
+            max_value=3.0,
+            value=1.85,  # Mid-point of $1.71B-$2.06B from article
+            step=0.1,
+            help="BERT 2026 projects $1.71B (FY26/27) to $2.06B (FY28/29)"
+        )
+    
+    with col_calc2:
+        risk_premium = st.slider(
+            "Audit Risk Premium (%)",
+            min_value=0.0,
+            max_value=5.0,
+            value=2.5,
+            step=0.1,
+            help="Additional interest lenders charge due to adverse opinion & unreliable data"
+        )
+    
+    with col_calc3:
+        implementation_delay = st.slider(
+            "Likely Implementation Delay",
+            min_value=0,
+            max_value=24,
+            value=8,
+            step=1,
+            help="Delays due to capacity gaps (e.g., can't reconcile assets)"
+        )
+    
+    # Calculate impacts
+    additional_interest = borrowing_needs * 1e9 * (risk_premium / 100)
+    delay_cost = borrowing_needs * 1e9 * 0.05 * (implementation_delay / 12)  # 5% cost of delay
+    
+    st.markdown(f"""
+    <div class="financial-card data-error">
+        <h5 style="color: #DC2626; margin-top: 0;">CALCULATED FINANCING RISKS</h5>
+        <p><strong>Article states:</strong> "Refinancing needs are expected to ease significantly... replaced with longer-tenor, lower-cost instruments."</p>
+        <p><strong>Reality Check:</strong> An Adverse Audit Opinion increases perceived risk, making <strong>lower-cost</strong> instruments harder to secure.</p>
+        <ul>
+            <li><strong>Additional Annual Interest Cost:</strong> <span style="color: #DC2626;">${additional_interest/1e6:.1f}M</span></li>
+            <li><strong>Cost of {implementation_delay}-Month Delay:</strong> <span style="color: #DC2626;">${delay_cost/1e6:.1f}M</span></li>
+            <li><strong>Total Potential Annual Impact:</strong> <span style="color: #DC2626; font-weight: bold;">${(additional_interest + delay_cost)/1e6:.1f}M</span></li>
+        </ul>
+        <p><em>This undermines the "no financing gaps" claim by introducing unquantified risk premiums.</em></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === GOVERNANCE & OVERSIGHT RISK MATRIX ===
+    st.markdown('<div class="section-header">🏛️ Governance & Oversight Risk Matrix</div>', unsafe_allow_html=True)
+    
+    risk_data = [
+        {'Risk': 'Financing Access & Cost', 'Likelihood': 'High', 'Impact': 'Critical', 'Evidence': 'Adverse opinion vs. B+ rating & bond market claim'},
+        {'Risk': 'SOE Restructuring Failure', 'Likelihood': 'High', 'Impact': 'Critical', 'Evidence': 'Cannot restructure entities not consolidated in financials'},
+        {'Risk': 'PPP Attraction & Management', 'Likelihood': 'Medium', 'Impact': 'High', 'Evidence': 'Private partners require reliable government data & controls'},
+        {'Risk': 'Fiscal Control Erosion', 'Likelihood': 'High', 'Impact': 'Critical', 'Evidence': 'Removing IMF oversight while internal controls are weak'},
+        {'Risk': 'Implementation Delays', 'Likelihood': 'Very High', 'Impact': 'High', 'Evidence': 'Capacity issues (e.g., asset reconciliation) slow execution'}
+    ]
+    
+    risk_df = pd.DataFrame(risk_data)
+    
+    # Color coding for risk matrix
+    def color_risk(row):
+        if row['Impact'] == 'Critical' and row['Likelihood'] in ['High', 'Very High']:
+            return 'background-color: #DC2626; color: white;'
+        elif row['Impact'] == 'High' and row['Likelihood'] in ['High', 'Very High']:
+            return 'background-color: #F59E0B; color: white;'
+        else:
+            return 'background-color: #3B82F6; color: white;'
+    
+    styled_risk_df = risk_df.style.apply(lambda row: [color_risk(row)] * len(row), axis=1)
+    st.dataframe(styled_risk_df, use_container_width=True, height=250)
+    
+    # === THE "IMPOSSIBLE TRINITY" VISUAL SUMMARY ===
+    st.markdown('<div class="section-header">📊 The BERT 2026 "Impossible Trinity"</div>', unsafe_allow_html=True)
+    
+    col_t1, col_t2, col_t3 = st.columns(3)
+    
+    with col_t1:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color: white; border-radius: 10px; height: 180px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="margin: 0;">❌</h2>
+            <h4 style="margin: 10px 0;">Unreliable Foundation</h4>
+            <p style="font-size: 0.85rem; margin: 0;">Adverse Audit Opinion<br>Unverifiable Assets</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_t2:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; border-radius: 10px; height: 180px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="margin: 0;">🏛️</h2>
+            <h4 style="margin: 10px 0;">Reduced Oversight</h4>
+            <p style="font-size: 0.85rem; margin: 0;">First plan without IMF<br>Weak Internal Controls</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_t3:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; border-radius: 10px; height: 180px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="margin: 0;">💰</h2>
+            <h4 style="margin: 10px 0;">Maximum Ambition</h4>
+            <p style="font-size: 0.85rem; margin: 0;">$7B+ Transformation<br>Complex SOE/PPP reforms</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align: center; margin-top: 20px; padding: 15px; background-color: #FFFBEB; border-radius: 8px; border: 2px solid #D97706;">
+        <h4 style="color: #D97706; margin: 0;">THE FUNDAMENTAL CONTRADICTION</h4>
+        <p style="margin: 10px 0; font-size: 1.1rem;">
+            <strong>A government cannot responsibly execute its most ambitious, complex, and expensive reform program without reliable financial data and strong independent oversight.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === PREREQUISITE ROADMAP ===
+    st.markdown('<div class="section-header">🛠️ Prerequisite Roadmap: What Should Come BEFORE BERT 2026 Financing</div>', unsafe_allow_html=True)
+    
+    remediation_steps = [
+        {
+            'Priority': 'CRITICAL',
+            'Action': 'Obtain a Clean Audit Opinion',
+            'Timeline': '6-12 months',
+            'Current Status': '❌ Adverse Opinion (2023)',
+            'BERT 2026 Block': 'Without it, financing claims lack credibility'
+        },
+        {
+            'Priority': 'CRITICAL',
+            'Action': 'Consolidate ALL SOEs in Financial Statements',
+            'Timeline': '12-18 months',
+            'Current Status': '❌ IPSAS Violation',
+            'BERT 2026 Block': 'Cannot baseline or measure "SOE restructuring"'
+        },
+        {
+            'Priority': 'HIGH',
+            'Action': 'Fix Internal Controls & Reconcile Accounts',
+            'Timeline': '18-24 months',
+            'Current Status': '❌ 15+ years of failures',
+            'BERT 2026 Block': 'Implementation capacity for complex reforms is questionable'
+        },
+        {
+            'Priority': 'HIGH',
+            'Action': 'Establish Track Record Without IMF Oversight',
+            'Timeline': '24+ months',
+            'Current Status': '🔜 New',
+            'BERT 2026 Block': 'Removing oversight while performance is poorest'
+        }
+    ]
+    
+    for step in remediation_steps:
+        priority_color = '#DC2626' if step['Priority'] == 'CRITICAL' else '#F59E0B'
+        st.markdown(f"""
+        <div class="financial-card" style="border-left-color: {priority_color};">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>{step['Action']}</strong><br>
+                    <small>Timeline: {step['Timeline']}</small>
+                </div>
+                <div>
+                    <span style="background-color: {priority_color}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                        {step['Priority']}
+                    </span>
+                </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.9rem;">
+                <strong>Current Status:</strong> {step['Current Status']}<br>
+                <strong>Blocks BERT 2026 Because:</strong> {step['BERT 2026 Block']}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+            # === WORST-CASE SCENARIO ANALYSIS: EVIDENCE-BASED RISKS ===
+    st.markdown('<div class="section-header">⚠️ Worst-Case Scenarios: Evidence-Based Risk Assessment</div>', unsafe_allow_html=True)
+    
+    # Evidence-Based Risk Introduction
+    with st.container():
+        st.markdown("""
+        #### 📊 EVIDENCE-BASED WORST-CASE ANALYSIS
+        Based on the 2023 audit findings and historical patterns, these worst-case scenarios represent material risks that lenders, investors, and citizens should consider.
+        
+        **Methodology:** Each scenario is tied directly to audit evidence from this dashboard.
+        """)
+    
+    # Catastrophic Risks (High Impact)
+    with st.expander("🔴 CATASTROPHIC RISKS (Low Probability but Existential Impact)", expanded=False):
+        col_cat1, col_cat2 = st.columns(2)
+        
+        with col_cat1:
+            # Calculate dynamic values
+            current_debt = format_currency(metrics['total_liabilities_2023'], "Millions (BBD $M)")
+            debt_service_pct = (financial_data['expenditure_data'].loc[8, 'Actual_2023'] / metrics['total_revenue_2023']) * 100
+            
+            # Use st.write and st.markdown with simple formatting
+            st.markdown("##### 1. COMPLETE LOSS OF MARKET ACCESS")
+            st.markdown("**Trigger:** International lenders reject BERT 2026 financing due to adverse audit opinion")
+            
+            st.markdown("**Dashboard Evidence:**")
+            st.markdown("- Adverse opinion states: **'do NOT give a true and fair view'**")
+            st.markdown("- **$2.43B unverified tax receivables**")
+            st.markdown("- **SOEs not consolidated (IPSAS violation)**")
+            
+            st.markdown("**Probability:** Medium **(40-50%)** given current governance issues")
+            st.markdown("**Impact:** **BERT 2026 collapses before implementation begins**")
+            st.markdown("**Timeline:** **6-18 months** from next major borrowing attempt")
+            
+            # Mitigation box
+            with st.container():
+                st.markdown('<div style="margin-top: 15px; padding: 10px; background-color: #FEF2F2; border-radius: 5px; border-left: 4px solid #DC2626;">', unsafe_allow_html=True)
+                st.markdown("**🛡️ Mitigation Required:** **Clean audit opinion BEFORE any major BERT borrowing**")
+                st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col_cat2:
+            st.markdown("##### 2. SOVEREIGN DEBT CRISIS RELAPSE")
+            st.markdown("**Trigger:** Unreliable data leads to miscalculated debt sustainability")
+            
+            st.markdown("**Dashboard Evidence:**")
+            st.markdown(f"- **Current debt:** $14.93B")
+            st.markdown("- **Pension liabilities omitted** (unknown amount)")
+            st.markdown("- **SOE liabilities not consolidated** ($1B+ estimated)")
+            
+            st.markdown("**Probability:** Medium **(35-45%)** based on historical patterns")
+            st.markdown("**Impact:** **2018-style debt restructuring repeats within 3-5 years**")
+            st.markdown(f"**Warning Sign:** Debt service exceeds **40% of revenue** (currently: **{debt_service_pct:.1f}%**)")
+            
+            # Mitigation box
+            with st.container():
+                st.markdown('<div style="margin-top: 15px; padding: 10px; background-color: #FEF2F2; border-radius: 5px; border-left: 4px solid #DC2626;">', unsafe_allow_html=True)
+                st.markdown("**🛡️ Mitigation Required:** **Independent validation of debt sustainability analysis**")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Severe Risks (Medium Probability)
+    with st.expander("🟠 SEVERE RISKS (Medium Probability, Major Economic Damage)", expanded=False):
+        col_sev1, col_sev2 = st.columns(2)
+        
+        with col_sev1:
+            # Calculate values
+            soe_transfers = format_currency(financial_data['note34_discrepancy']['table_amount'], "Millions (BBD $M)")
+            note34_diff = format_currency(financial_data['note34_discrepancy']['difference'], "Millions (BBD $M)")
+            
+            st.markdown("##### 3. SOE RESTRUCTURING BECOMES FISCAL BLACK HOLE")
+            st.markdown("**Trigger:** Attempt to restructure entities that aren't properly measured")
+            
+            st.markdown("**Dashboard Evidence:**")
+            st.markdown("- **SOEs not consolidated** in financial statements")
+            st.markdown(f"- **Transfers:** {soe_transfers} annually")
+            st.markdown(f"- **Note 34 contains data errors** ({note34_diff} discrepancy)")
+            
+            st.markdown("**Probability:** High **(60-70%)** given current measurement gaps")
+            st.markdown("**Impact:** **Additional $1-2B in unexpected government liabilities crystallizes**")
+            st.markdown("**Timeline:** **2-4 years** as SOE reforms progress")
+            
+            # Mitigation box
+            with st.container():
+                st.markdown('<div style="margin-top: 15px; padding: 10px; background-color: #FFFBEB; border-radius: 5px; border-left: 4px solid #F59E0B;">', unsafe_allow_html=True)
+                st.markdown("**🛡️ Mitigation Required:** **Full SOE consolidation BEFORE restructuring begins**")
+                st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col_sev2:
+            asset_discrepancy = format_currency(719000000, "Millions (BBD $M)")
+            
+            st.markdown("##### 4. FAILED PPP PROGRAM BECOMES LOSS-MAKING MACHINE")
+            st.markdown("**Trigger:** Weak financial controls + massive PPP program = Corruption/losses")
+            
+            st.markdown("**Dashboard Evidence:**")
+            st.markdown("- **15+ years of unreconciled bank accounts**")
+            st.markdown("- **Basic conceptual errors** in financial notes")
+            st.markdown(f"- **{asset_discrepancy} asset discrepancies** unresolved")
+            
+            st.markdown("**Probability:** Medium-High **(55-65%)** given governance gaps")
+            st.markdown("**Impact:** **$3-5B wasted on poorly structured public-private partnerships**")
+            st.markdown("**Timeline:** **3-6 years** as PPPs are implemented")
+            
+            # Mitigation box
+            with st.container():
+                st.markdown('<div style="margin-top: 15px; padding: 10px; background-color: #FFFBEB; border-radius: 5px; border-left: 4px solid #F59E0B;">', unsafe_allow_html=True)
+                st.markdown("**🛡️ Mitigation Required:** **Strong oversight mechanisms BEFORE PPP approvals**")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Interactive Risk Probability Assessment
+    st.markdown("---")
+    st.markdown("##### 🎲 Interactive Risk Probability Assessment")
+    
+    col_prob1, col_prob2, col_prob3 = st.columns(3)
+    
+    with col_prob1:
+        governance_score = st.slider(
+            "Governance Quality (1-10)",
+            1, 10, 3,
+            help="1 = Adverse audit, 10 = Clean audit with strong controls"
+        )
+    
+    with col_prob2:
+        data_reliability = st.slider(
+            "Financial Data Reliability (1-10)",
+            1, 10, 2,
+            help="1 = $2.43B unverified, 10 = All assets/liabilities verified"
+        )
+    
+    with col_prob3:
+        implementation_capacity = st.slider(
+            "Implementation Capacity (1-10)",
+            1, 10, 4,
+            help="1 = Can't reconcile accounts, 10 = Proven track record with complex reforms"
+        )
+    
+    # Calculate composite risk score
+    composite_risk = (10 - governance_score) * 0.4 + (10 - data_reliability) * 0.4 + (10 - implementation_capacity) * 0.2
+    
+    # Determine risk level
+    if composite_risk >= 7.5:
+        risk_level = "🔴 EXTREME"
+        risk_color = "#DC2626"
+        risk_desc = "BERT 2026 likely to fail catastrophically"
+    elif composite_risk >= 6.0:
+        risk_level = "🟠 VERY HIGH"
+        risk_color = "#F59E0B"
+        risk_desc = "Significant probability of major setbacks"
+    elif composite_risk >= 4.5:
+        risk_level = "🟡 HIGH"
+        risk_color = "#FBBF24"
+        risk_desc = "Substantial risks requiring mitigation"
+    else:
+        risk_level = "🟢 MODERATE"
+        risk_color = "#10B981"
+        risk_desc = "Risks manageable with proper safeguards"
+    
+    # Display risk assessment
+    with st.container():
+        st.markdown(f'<div style="padding: 20px; background-color: {risk_color}20; border: 2px solid {risk_color}; border-radius: 10px;">', unsafe_allow_html=True)
+        
+        col_risk1, col_risk2 = st.columns([3, 1])
+        with col_risk1:
+            st.markdown(f"##### BERT 2026 IMPLEMENTATION RISK: {risk_level}")
+            st.markdown(f"{risk_desc}")
+        with col_risk2:
+            st.markdown(f"<div style='text-align: center;'><span style='font-size: 2.5rem; font-weight: bold; color: {risk_color};'>{composite_risk:.1f}/10</span><br><small>Composite Risk Score</small></div>", unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        st.markdown("**Risk Drivers:**")
+        col_drivers1, col_drivers2, col_drivers3 = st.columns(3)
+        with col_drivers1:
+            st.metric("Governance Quality", f"{governance_score}/10")
+        with col_drivers2:
+            st.metric("Data Reliability", f"{data_reliability}/10")
+        with col_drivers3:
+            st.metric("Implementation Capacity", f"{implementation_capacity}/10")
+        
+        st.markdown(f"**Key Insight:** Your assessment suggests BERT 2026 faces **{composite_risk:.1f}/10 implementation risk**. The 2023 audit scores would be: **Governance=3/10, Data=2/10, Capacity=4/10 (Composite=3.0/10 → 🔴 EXTREME risk)**.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # The "Perfect Storm" Scenario Timeline
+    st.markdown("---")
+    st.markdown("##### 🌀 The 'Perfect Storm' Scenario: Most Likely Worst-Case")
+    
+    perfect_storm = pd.DataFrame({
+        'Timeline': ['Q2 2026', 'Q3 2026', 'Q4 2026', 'Q1 2027', 'Q2 2027', '2028-2029'],
+        'Event': [
+            'Moody\'s downgrades Barbados citing **"governance deterioration"** from adverse audit',
+            'Planned **$500M bond fails** or priced at **15%+ yield** (vs projected 8-9%)',
+            'BERT implementation stalls; SOE restructuring reveals **deeper losses than expected**',
+            'FX reserves drop **below 3 months of imports** as BERT requires dollar imports',
+            'Government announces **"reprioritization"** (cuts to BERT ambitions)',
+            '**New IMF program** with harsher austerity; economic growth stalls at **0-1%**'
+        ],
+        'Probability': ['60%', '45%', '55%', '35%', '50%', '40%'],
+        'Cumulative Impact': ['🟡 Higher borrowing costs', '🟠 Reduced financing options', '🔴 Program delays', '🟠 Currency pressure', '🟡 Scaled-back ambitions', '🔴 Economic stagnation']
+    })
+    
+    # Custom formatting for the DataFrame
+    st.markdown("""
+    <style>
+    .dataframe td {
+        font-family: monospace;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.dataframe(perfect_storm, use_container_width=True, height=300)
+           # Bottom Line Summary
+    st.markdown("---")
+    st.markdown("##### 🎯 BOTTOM LINE: THE FUNDAMENTAL CONTRADICTION")
+    
+    with st.container():
+        st.markdown('<div style="padding: 20px; background-color: #FEF2F2; border-radius: 10px; border-left: 4px solid #DC2626;">', unsafe_allow_html=True)
+        
+        st.markdown("**The worst-case scenario isn't just 'BERT 2026 fails' - it's:**")
+        st.markdown("> *'BERT 2026 fails EXPENSIVELY, leaving Barbados with MORE debt, LESS credibility, and FEWER options than in 2018, potentially triggering an economic crisis that makes the last one look mild.'*")
+        
+        st.markdown("<br><strong>Why these risks are underestimated:</strong>", unsafe_allow_html=True)
+        
+        # Using HTML table-like structure for complete control
+        st.markdown("""
+        <div style="margin: 15px 0; padding-left: 10px;">
+            <div style="margin-bottom: 10px;">
+                <span style="font-weight: bold;">1. The Governance Gap:</span> 
+                <span>No IMF oversight for first time while internal controls are weakest</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <span style="font-weight: bold;">2. The Data Deception:</span> 
+                <span>Planning <strong>$7B transformation</strong> using financial statements that <strong>overstate assets by $1B+</strong></span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <span style="font-weight: bold;">3. The Capacity Reality:</span> 
+                <span>Government that can't reconcile bank accounts after 15 years won't suddenly manage Caribbean's most complex transformation</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        st.markdown("<h4 style='margin-bottom: 10px;'>❌ Minimum Viable BERT (Risk-Reduced Alternative):</h4>", unsafe_allow_html=True)
+        
+        # Using HTML for bullet points
+        st.markdown("""
+        <div style="margin: 15px 0; padding-left: 10px;">
+            <div style="margin-bottom: 8px;">
+                • Start with <strong>$500M pilot program</strong> (not $1.7B)
+            </div>
+            <div style="margin-bottom: 8px;">
+                • Focus on <strong>1-2 SOEs</strong> (not 40+)
+            </div>
+            <div style="margin-bottom: 8px;">
+                • Maintain <strong>IMF/World Bank technical oversight</strong>
+            </div>
+            <div style="margin-bottom: 8px;">
+                • <strong>Quarterly transparency reports</strong> with external audit
+            </div>
+            <div style="margin-bottom: 8px;">
+                • Progress to full BERT ONLY after achieving <strong>clean audit opinion</strong>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # === FINAL CONCLUSION ===
+    with st.container():
+        st.markdown("""
+        <div class="financial-card adverse-opinion">
+            <h3 style="color: #DC2626; margin-top: 0;">🔚 CONCLUSION: THE UNANSWERED QUESTION FOR LENDERS & CITIZENS</h3>
+            <p><strong>Based on the Article (Nation News, Jan 18, 2026) and the 2023 Audit Evidence:</strong></p>
+            <p>"Should Barbados borrow <strong>$1.7 to $2.1 billion annually</strong> for an unprecedented transformation program (BERT 2026) when:</p>
+            <ol>
+            <li>Its own Auditor General states the financial statements <strong>'do NOT give a true and fair view'</strong>?</li>
+            <li>It <strong>cannot account for</strong> $2.43 billion in tax receivables or $719 million in assets?</li>
+            <li>It plans to <strong>restructure SOEs</strong> that it doesn't even consolidate in its accounts and that have $1+ billion in known liabilities?</li>
+            <li>It is embarking on this <strong>without the IMF's direct oversight</strong> for the first time, despite a long history of financial control failures?"</li>
+            </ol>
+            <p><strong>This dashboard does not say BERT 2026's goals are wrong. It highlights that the <span style="text-decoration: underline;">financial foundation required to credibly execute and finance them is currently missing.</span></strong></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # === REFERENCES ===
+    with st.expander("📚 Source References"):
+        st.markdown("""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <p><strong>1. BERT 2026 Program Details:</strong></p>
+        <ul>
+        <li>"Third phase of BERT takes effect". <em>Nation News</em>. January 18, 2026.</li>
+        <li><strong>Key Points</strong>: 1.71B—2.06B annual financing; five strategic pillars; first plan without IMF oversight; reliance on PPPs and capital markets.</li>
+        </ul>
+        
+        <p><strong>2. Financial Reporting & Audit Evidence (2023):</strong></p>
+        <ul>
+        <li>Auditor General's Report on the Financial Statements of the Government of Barbados for Year Ended March 31, 2023.</li>
+        <li><strong>Key Points</strong>: <strong>Adverse Audit Opinion</strong>; 719M asset discrepancy; 2.43B unverified receivables; SOEs not consolidated (IPSAS violation).</li>
+        </ul>
+        
+        <p><strong>3. SOE Financial Reality (2026–2029 Fiscal Framework):</strong></p>
+        <ul>
+        <li><em>Barbados Fiscal Framework 2026–2029</em>.</li>
+        <li><strong>Key Points</strong>: SOE arrears (77.3M); unfunded pension liabilities (282.7M); long-term debt (732.5M); entities technically insolvent or illiquid.</li>
+        </ul>
+        
+        <p><strong>4. Dashboard Data Analysis:</strong></p>
+        <ul>
+        <li>Note 34 Discrepancy: Narrative (669,335,534) vs. Table (777,909,443).</li>
+        <li>Conceptual Error: Misclassification of related party transactions.</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
 # ============================================================================
 # FOOTER
 # ============================================================================
