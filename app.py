@@ -7,7 +7,7 @@
 # This dashboard visualizes financial data from the Auditor General's report,
 # highlighting material misstatements, compliance issues, and financial performance.
 
-# Version: 3.2 
+# Version: 3.3 
 # Date: April 2, 2025
 
 # ============================================================================
@@ -716,7 +716,7 @@ with col3:
     st.caption(f"**Report Date:** {datetime.now().strftime('%B %d, %Y')}")
     st.caption(f"**Financial Year:** April 1, 2022 - March 31, 2023")
     st.caption("**Audit Opinion:** ❌ Adverse")
-    st.caption("**Dashboard Version:** 3.2 ")
+    st.caption("**Dashboard Version:** 3.3 ")
 
 st.markdown("---")
 
@@ -2987,7 +2987,7 @@ elif view_option == "BERT 2026 Risk Analysis":
                 st.markdown("**🛡️ Mitigation Required:** **Strong oversight mechanisms BEFORE PPP approvals**")
                 st.markdown('</div>', unsafe_allow_html=True)
     
-    # Interactive Risk Probability Assessment
+       # Interactive Risk Probability Assessment
     st.markdown("---")
     st.markdown("##### 🎲 Interactive Risk Probability Assessment")
     
@@ -3014,26 +3014,34 @@ elif view_option == "BERT 2026 Risk Analysis":
             help="1 = Can't reconcile accounts, 10 = Proven track record with complex reforms"
         )
     
-    # Calculate composite risk score
-    composite_risk = (10 - governance_score) * 0.4 + (10 - data_reliability) * 0.4 + (10 - implementation_capacity) * 0.2
+    # Calculate composite risk score - CORRECTED LOGIC
+    # Higher scores should mean HIGHER risk when governance/data/capacity are poor
+    # Since these are quality scores (1=bad, 10=good), we need to invert them for risk
+    composite_risk = ((10 - governance_score) * 0.4 + 
+                     (10 - data_reliability) * 0.4 + 
+                     (10 - implementation_capacity) * 0.2)
     
-    # Determine risk level
+    # Determine risk level - CORRECTED: Higher risk score = worse scenario
     if composite_risk >= 7.5:
         risk_level = "🔴 EXTREME"
         risk_color = "#DC2626"
-        risk_desc = "BERT 2026 likely to fail catastrophically"
+        risk_desc = "BERT 2026 likely to fail catastrophically. Immediate remediation required before any borrowing."
     elif composite_risk >= 6.0:
         risk_level = "🟠 VERY HIGH"
         risk_color = "#F59E0B"
-        risk_desc = "Significant probability of major setbacks"
+        risk_desc = "High probability of major setbacks. Significant reforms needed before proceeding."
     elif composite_risk >= 4.5:
         risk_level = "🟡 HIGH"
         risk_color = "#FBBF24"
-        risk_desc = "Substantial risks requiring mitigation"
-    else:
+        risk_desc = "Substantial risks requiring mitigation. Proceed with extreme caution and oversight."
+    elif composite_risk >= 3.0:
         risk_level = "🟢 MODERATE"
         risk_color = "#10B981"
-        risk_desc = "Risks manageable with proper safeguards"
+        risk_desc = "Risks manageable with proper safeguards. Monitor closely during implementation."
+    else:
+        risk_level = "🔵 LOW"
+        risk_color = "#3B82F6"
+        risk_desc = "Risks are minimal. BERT 2026 can proceed with standard oversight."
     
     # Display risk assessment
     with st.container():
@@ -3044,20 +3052,65 @@ elif view_option == "BERT 2026 Risk Analysis":
             st.markdown(f"##### BERT 2026 IMPLEMENTATION RISK: {risk_level}")
             st.markdown(f"{risk_desc}")
         with col_risk2:
-            st.markdown(f"<div style='text-align: center;'><span style='font-size: 2.5rem; font-weight: bold; color: {risk_color};'>{composite_risk:.1f}/10</span><br><small>Composite Risk Score</small></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center;'><span style='font-size: 2.5rem; font-weight: bold; color: {risk_color};'>{composite_risk:.1f}/10</span><br><small>Risk Score</small></div>", unsafe_allow_html=True)
         
         st.markdown("---")
         
-        st.markdown("**Risk Drivers:**")
+        st.markdown("**Risk Drivers (Lower = Higher Risk):**")
         col_drivers1, col_drivers2, col_drivers3 = st.columns(3)
         with col_drivers1:
-            st.metric("Governance Quality", f"{governance_score}/10")
+            # Display with color coding - low score = bad
+            gov_color = "#DC2626" if governance_score <= 3 else "#F59E0B" if governance_score <= 5 else "#10B981"
+            st.markdown(f'<div style="text-align: center;"><span style="color: {gov_color}; font-size: 1.5rem; font-weight: bold;">{governance_score}/10</span><br><small>Governance</small></div>', unsafe_allow_html=True)
         with col_drivers2:
-            st.metric("Data Reliability", f"{data_reliability}/10")
+            data_color = "#DC2626" if data_reliability <= 2 else "#F59E0B" if data_reliability <= 4 else "#10B981"
+            st.markdown(f'<div style="text-align: center;"><span style="color: {data_color}; font-size: 1.5rem; font-weight: bold;">{data_reliability}/10</span><br><small>Data Reliability</small></div>', unsafe_allow_html=True)
         with col_drivers3:
-            st.metric("Implementation Capacity", f"{implementation_capacity}/10")
+            capacity_color = "#DC2626" if implementation_capacity <= 3 else "#F59E0B" if implementation_capacity <= 5 else "#10B981"
+            st.markdown(f'<div style="text-align: center;"><span style="color: {capacity_color}; font-size: 1.5rem; font-weight: bold;">{implementation_capacity}/10</span><br><small>Implementation</small></div>', unsafe_allow_html=True)
         
-        st.markdown(f"**Key Insight:** Your assessment suggests BERT 2026 faces **{composite_risk:.1f}/10 implementation risk**. The 2023 audit scores would be: **Governance=3/10, Data=2/10, Capacity=4/10 (Composite=3.0/10 → 🔴 EXTREME risk)**.")
+        # FIXED: Add clear explanation of 2023 audit findings
+        st.markdown("---")
+        st.markdown("**📊 2023 Audit Findings as Risk Baseline:**")
+        
+        # Create a mini table showing actual audit scores
+        audit_scores = pd.DataFrame({
+            'Risk Factor': ['Governance Quality', 'Data Reliability', 'Implementation Capacity'],
+            '2023 Audit Score': ['3/10', '2/10', '4/10'],
+            'Evidence': [
+                'Adverse audit opinion, SOEs not consolidated',
+                '$2.43B unverified, $719M asset discrepancy',
+                '15+ years unreconciled accounts, conceptual errors'
+            ]
+        })
+        
+        st.dataframe(audit_scores, use_container_width=True, hide_index=True)
+        
+        # Calculate the 2023 baseline risk score
+        audit_risk_score = ((10 - 3) * 0.4 + (10 - 2) * 0.4 + (10 - 4) * 0.2)
+        
+        # Determine the 2023 risk level
+        if audit_risk_score >= 7.5:
+            audit_risk_level = "🔴 EXTREME"
+            audit_risk_color = "#DC2626"
+        elif audit_risk_score >= 6.0:
+            audit_risk_level = "🟠 VERY HIGH"
+            audit_risk_color = "#F59E0B"
+        elif audit_risk_score >= 4.5:
+            audit_risk_level = "🟡 HIGH"
+            audit_risk_color = "#FBBF24"
+        else:
+            audit_risk_level = "🟢 MODERATE"
+            audit_risk_color = "#10B981"
+        
+        st.markdown(f"""
+        <div style="margin-top: 15px; padding: 15px; background-color: #FFFBEB; border-radius: 8px; border-left: 4px solid {audit_risk_color};">
+            <p><strong>Based on 2023 Audit Findings:</strong></p>
+            <p>Using the actual 2023 audit evidence (Governance=3, Data=2, Capacity=4), 
+            BERT 2026 faces a baseline risk score of <strong>{audit_risk_score:.1f}/10 → {audit_risk_level} RISK</strong>.</p>
+            <p><strong>Interpretation:</strong> {risk_desc}</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
     
@@ -3208,7 +3261,7 @@ with col2:
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Report on Financial Statements • 
-            Dashboard Version 3.2 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Dashboard Version 3.3 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
             ⚠️ This dashboard highlights material misstatements and adverse audit opinion
