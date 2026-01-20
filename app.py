@@ -7,7 +7,7 @@
 # This dashboard visualizes financial data from the Auditor General's report,
 # highlighting material misstatements, compliance issues, and financial performance.
 
-# Version: 3.3 
+# Version: 3.4 
 # Date: April 2, 2025
 
 # ============================================================================
@@ -716,7 +716,7 @@ with col3:
     st.caption(f"**Report Date:** {datetime.now().strftime('%B %d, %Y')}")
     st.caption(f"**Financial Year:** April 1, 2022 - March 31, 2023")
     st.caption("**Audit Opinion:** ❌ Adverse")
-    st.caption("**Dashboard Version:** 3.3 ")
+    st.caption("**Dashboard Version:** 3.4 ")
 
 st.markdown("---")
 
@@ -1720,15 +1720,25 @@ elif view_option == "SOE Transfers":
         </div>
         """, unsafe_allow_html=True)
     
-    # Total Transfers - CORRECTED: $777.9M from Note 34
-    st.info(f"""
-    **Total Transfers to State-Owned Entities (2022-2023):** 
-    **{format_currency(table_amount, currency_format)}**
-    
-    *Source: Note 34 of Financial Statements - Table shows total transfers across all SOEs*
-    
-    **Note:** Narrative in Note 34 states ${narrative_amount:,.0f}, but table shows ${table_amount:,.0f}
-    """)
+            # Total Transfers - CORRECTED: $777.9M from Note 34
+    st.markdown(f"""
+<div style="padding: 15px; background-color: #EFF6FF; border-radius: 8px; border-left: 4px solid #3B82F6; margin: 20px 0;">
+<p><strong>Total Transfers to State-Owned Entities (2022-2023):</strong><br>
+<span style="font-size: 1.5rem; font-weight: bold; color: #00267F;">{format_currency(table_amount, currency_format)}</span></p>
+
+<p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+<em>Source: Note 34 of Financial Statements - Table shows total transfers across all SOEs</em></p>
+
+<div style="margin-top: 15px; padding: 10px; background-color: #FEF2F2; border-radius: 5px; border-left: 3px solid #DC2626;">
+<p style="margin: 0; font-size: 0.95rem; color: #DC2626;">
+<strong>⚠️ Data Discrepancy:</strong> Narrative in Note 34 states 
+<span style="font-size: 1.1rem; font-weight: bold;">${narrative_amount:,.0f}</span>, 
+but table shows 
+<span style="font-size: 1.1rem; font-weight: bold;">${table_amount:,.0f}</span>
+</p>
+</div>
+</div>
+""", unsafe_allow_html=True)
     
     # Conceptual Error Warning
     with st.container():
@@ -2713,7 +2723,7 @@ elif view_option == "BERT 2026 Risk Analysis":
     with col_calc1:
         # Values from the article
         borrowing_needs = st.number_input(
-            "Annual Borrowing Need ($B)",
+            "**Annual Borrowing Need ($B)**",
             min_value=1.0,
             max_value=3.0,
             value=1.85,  # Mid-point of $1.71B-$2.06B from article
@@ -2723,7 +2733,7 @@ elif view_option == "BERT 2026 Risk Analysis":
     
     with col_calc2:
         risk_premium = st.slider(
-            "Audit Risk Premium (%)",
+            "**Audit Risk Premium (%)**",
             min_value=0.0,
             max_value=5.0,
             value=2.5,
@@ -2733,7 +2743,7 @@ elif view_option == "BERT 2026 Risk Analysis":
     
     with col_calc3:
         implementation_delay = st.slider(
-            "Likely Implementation Delay",
+            "**Likely Implementation Delay**",
             min_value=0,
             max_value=24,
             value=8,
@@ -3261,7 +3271,7 @@ with col2:
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Report on Financial Statements • 
-            Dashboard Version 3.3 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Dashboard Version 3.4 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
             ⚠️ This dashboard highlights material misstatements and adverse audit opinion
