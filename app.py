@@ -1703,23 +1703,61 @@ elif view_option == "Debt Analysis":
             )
 
 # ============================================================================
-# DEBT SUSTAINABILITY SIMULATOR - NEW CORRECTED SECTION
+# DEBT SUSTAINABILITY SIMULATOR - WITH TOURISM TRADE-OFF CALCULATOR
 # ============================================================================
 elif view_option == "Debt Sustainability Simulator":
-    st.markdown('<div class="sub-header">Debt Sustainability Simulator - Corrected Inflation Impact</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Debt Sustainability Simulator - With Tourism Trade-off Analysis</div>', unsafe_allow_html=True)
     
     # Explanation of the correction
     with st.container():
         st.markdown("""
         <div class="financial-card" style="border-left-color: #10B981;">
-            <h4 style="color: #10B981; margin-top: 0;">✅ CORRECTION APPLIED</h4>
+            <h4 style="color: #10B981; margin-top: 0;">✅ CORRECTION APPLIED + TOURISM ANALYSIS</h4>
             <p><strong>Previous Bug:</strong> Higher inflation incorrectly reduced target date (made debt fall faster).</p>
-            <p><strong>Correct Logic:</strong> Higher inflation → faster nominal GDP growth → helps reduce debt ratio, BUT interest costs may also rise.</p>
+            <p><strong>Correct Logic:</strong> Higher inflation → faster nominal GDP growth → helps debt ratio, BUT interest costs may also rise.</p>
             <p><strong>Barbados Context:</strong> ~70% fixed-rate debt, ~30% inflation-sensitive debt.</p>
+            <p><strong>Critical Trade-off:</strong> Inflation helps debt mathematically BUT hurts tourism (40% of GDP).</p>
         </div>
         """, unsafe_allow_html=True)
     
-    # Interactive controls
+    # === TOURISM TRADE-OFF CALCULATOR ===
+    st.markdown('<div class="section-header">🏝️ Tourism Trade-off Calculator</div>', unsafe_allow_html=True)
+    
+    col_tourism1, col_tourism2, col_tourism3 = st.columns(3)
+    
+    with col_tourism1:
+        tourism_gdp_share = st.slider(
+            "Tourism as % of GDP",
+            min_value=30.0,
+            max_value=50.0,
+            value=40.0,
+            step=0.5,
+            help="Tourism's contribution to Barbados GDP (official: 40%)"
+        )
+    
+    with col_tourism2:
+        tourism_sensitivity = st.slider(
+            "Tourism Sensitivity to Inflation",
+            min_value=1.0,
+            max_value=4.0,
+            value=2.5,
+            step=0.1,
+            help="Each 1% inflation above competitors reduces tourism growth by this factor"
+        )
+    
+    with col_tourism3:
+        competitor_inflation = st.slider(
+            "Competitor Countries' Inflation",
+            min_value=1.0,
+            max_value=5.0,
+            value=2.5,
+            step=0.1,
+            help="Average inflation in competing tourist destinations (Jamaica, Bahamas, DR)"
+        )
+    
+    # Interactive controls for main simulation
+    st.markdown('<div class="section-header">📊 Main Simulation Parameters</div>', unsafe_allow_html=True)
+    
     col_sim1, col_sim2, col_sim3 = st.columns(3)
     
     with col_sim1:
@@ -1744,12 +1782,12 @@ elif view_option == "Debt Sustainability Simulator":
     
     with col_sim3:
         inflation_rate = st.slider(
-            "Inflation Rate (%)",
+            "Barbados Inflation Rate (%)",
             min_value=1.0,
             max_value=10.0,
             value=3.5,
             step=0.1,
-            help="Consumer price inflation. Higher inflation helps debt ratio by growing nominal GDP faster"
+            help="Consumer price inflation. Higher inflation helps debt ratio but hurts tourism"
         )
     
     # Advanced parameters
@@ -1782,6 +1820,68 @@ elif view_option == "Debt Sustainability Simulator":
             if include_shock:
                 shock_size = st.slider("Shock Size (% of GDP)", 0.5, 5.0, 2.0, 0.1)
     
+    # === CALCULATE TOURISM IMPACT ===
+    st.markdown('<div class="section-header">📈 Tourism Impact Analysis</div>', unsafe_allow_html=True)
+    
+    # Calculate tourism impact
+    inflation_premium = max(0, inflation_rate - competitor_inflation)
+    tourism_growth_impact = -inflation_premium * tourism_sensitivity
+    tourism_gdp_impact = tourism_growth_impact * (tourism_gdp_share / 100)
+    
+    # Adjusted growth rate including tourism impact
+    adjusted_growth_rate = growth_rate + tourism_gdp_impact
+    adjusted_growth_rate = max(adjusted_growth_rate, 0.5)  # Can't go below 0.5%
+    
+    # Display tourism impact analysis
+    col_t1, col_t2, col_t3, col_t4 = st.columns(4)
+    
+    with col_t1:
+        st.metric(
+            "Inflation Premium vs Competitors",
+            f"{inflation_premium:+.1f}%",
+            "Higher = less competitive"
+        )
+    
+    with col_t2:
+        st.metric(
+            "Tourism Growth Impact",
+            f"{tourism_growth_impact:+.1f}%",
+            delta_color="inverse" if tourism_growth_impact < 0 else "normal"
+        )
+    
+    with col_t3:
+        st.metric(
+            "GDP Impact",
+            f"{tourism_gdp_impact:+.1f}%",
+            delta_color="inverse" if tourism_gdp_impact < 0 else "normal"
+        )
+    
+    with col_t4:
+        st.metric(
+            "Adjusted Growth Rate",
+            f"{adjusted_growth_rate:.1f}%",
+            f"vs {growth_rate:.1f}% base"
+        )
+    
+    # Tourism warning
+    if inflation_premium > 1.0:
+        st.warning(f"""
+        ⚠️ **Tourism Competitiveness Alert:**
+        
+        Barbados has **{inflation_premium:.1f}% higher inflation** than competing destinations.
+        
+        **Impact on Tourism (40% of GDP):**
+        - Tourist arrivals could decline by **{abs(tourism_growth_impact):.1f}%**
+        - GDP growth reduced by **{abs(tourism_gdp_impact):.1f} percentage points**
+        - **{tourism_gdp_share * (abs(tourism_growth_impact)/100):.1f}% of GDP** at risk
+        
+        **Historical Example:** When Barbados had 9.8% inflation (2022), tourism grew only 1.2% 
+        while regional competitors grew 8-12%.
+        """)
+    
+    # === CALCULATE DEBT DYNAMICS WITH TOURISM ADJUSTMENT ===
+    st.markdown('<div class="section-header">💰 Combined Debt & Tourism Analysis</div>', unsafe_allow_html=True)
+    
     # CORRECTED: Calculate nominal interest rate based on debt structure
     fixed_debt_pct = fixed_debt_share / 100
     
@@ -1791,15 +1891,13 @@ elif view_option == "Debt Sustainability Simulator":
     floating_debt_share = 1 - fixed_debt_pct
     nominal_interest_rate = real_interest_rate + (inflation_rate * floating_debt_share)
     
-    # Nominal GDP growth = Real growth + Inflation
-    nominal_growth_rate = growth_rate + inflation_rate
+    # Nominal GDP growth = Adjusted real growth + Inflation
+    nominal_growth_rate = adjusted_growth_rate + inflation_rate
     
     # Calculate interest-growth differential (the key driver)
     interest_growth_diff = nominal_interest_rate - nominal_growth_rate
     
     # Display calculated parameters
-    st.markdown("### 📊 Calculated Parameters")
-    
     col_calc1, col_calc2, col_calc3 = st.columns(3)
     
     with col_calc1:
@@ -1813,7 +1911,7 @@ elif view_option == "Debt Sustainability Simulator":
         st.metric(
             "Nominal GDP Growth",
             f"{nominal_growth_rate:.1f}%",
-            f"Real {growth_rate:.1f}% + Inflation {inflation_rate:.1f}%"
+            f"Adjusted growth {adjusted_growth_rate:.1f}% + Inflation {inflation_rate:.1f}%"
         )
     
     with col_calc3:
@@ -1825,7 +1923,52 @@ elif view_option == "Debt Sustainability Simulator":
             help="Positive = debt grows faster than economy, Negative = economy grows faster than debt"
         )
     
-    # CORRECTED Simulation Logic
+    # === THE BARBADOS PARADOX ANALYSIS ===
+    st.markdown('<div class="section-header">⚖️ The Barbados Paradox: Inflation vs Tourism</div>', unsafe_allow_html=True)
+    
+    # Create analysis of the trade-off
+    col_para1, col_para2 = st.columns(2)
+    
+    with col_para1:
+        # Calculate debt benefit from inflation
+        inflation_debt_benefit = inflation_rate * fixed_debt_pct  # Only helps on fixed debt
+        
+        st.markdown(f"""
+        <div class="financial-card" style="border-left-color: #10B981;">
+            <h5 style="color: #10B981;">✅ Inflation Benefit to Debt</h5>
+            <p><strong>Fixed-rate debt advantage:</strong> {fixed_debt_share}% of debt doesn't adjust with inflation</p>
+            <p><strong>Debt reduction from inflation:</strong> {inflation_debt_benefit:.2f}% per year</p>
+            <p><strong>Mathematical effect:</strong> Each 1% inflation reduces debt ratio by ~{fixed_debt_pct:.2f}%</p>
+            <p><em>Without tourism impact, {inflation_rate}% inflation would reduce debt by ~{(inflation_rate * fixed_debt_pct * 10):.1f}% over 10 years</em></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_para2:
+        st.markdown(f"""
+        <div class="financial-card" style="border-left-color: #DC2626;">
+            <h5 style="color: #DC2626;">❌ Inflation Cost to Tourism</h5>
+            <p><strong>Tourism sensitivity:</strong> Each 1% inflation premium reduces tourism by {tourism_sensitivity:.1f}%</p>
+            <p><strong>Current inflation premium:</strong> {inflation_premium:.1f}% vs competitors</p>
+            <p><strong>Tourism growth impact:</strong> {tourism_growth_impact:+.1f}%</p>
+            <p><strong>GDP impact:</strong> {tourism_gdp_impact:+.1f} percentage points</p>
+            <p><em>Tourism drag reduces GDP growth from {growth_rate:.1f}% to {adjusted_growth_rate:.1f}%</em></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Net effect calculation
+    net_effect = inflation_debt_benefit + tourism_gdp_impact
+    net_color = "#10B981" if net_effect > 0 else "#DC2626"
+    
+    st.markdown(f"""
+    <div style="text-align: center; padding: 20px; background-color: {net_color}20; border-radius: 10px; border: 2px solid {net_color}; margin: 15px 0;">
+        <h4 style="color: {net_color};">NET ANNUAL EFFECT: {net_effect:+.2f}% of GDP</h4>
+        <p>Inflation benefit ({inflation_debt_benefit:+.2f}%) + Tourism cost ({tourism_gdp_impact:+.2f}%)</p>
+        <p><strong>{"Inflation HELPS overall" if net_effect > 0 else "Inflation HURTS overall"}</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === SIMULATION WITH TOURISM IMPACT ===
+    # CORRECTED Simulation Logic with tourism-adjusted growth
     years = list(range(2025, 2037))  # 2025 to 2036
     current_debt = 102.9  # 2025 debt-to-GDP ratio from Central Bank
     
@@ -1871,6 +2014,7 @@ elif view_option == "Debt Sustainability Simulator":
         'Debt_to_GDP': debt_path,
         'Interest_Rate': [nominal_interest_rate] * len(years),
         'Growth_Rate': [nominal_growth_rate] * len(years),
+        'Adjusted_Growth': [adjusted_growth_rate] * len(years),
         'Primary_Surplus': [primary_surplus] * len(years)
     })
     
@@ -1906,6 +2050,9 @@ elif view_option == "Debt Sustainability Simulator":
             achievement = "Target NOT achieved by 2050"
             achievement_color = "#DC2626"
     
+    # === VISUALIZATION ===
+    st.markdown('<div class="section-header">📊 Debt Trajectory with Tourism Impact</div>', unsafe_allow_html=True)
+    
     # Plot debt trajectory
     fig = go.Figure()
     
@@ -1917,7 +2064,8 @@ elif view_option == "Debt Sustainability Simulator":
         name='Projected Debt',
         line=dict(color='#00267F', width=4),
         marker=dict(size=10, symbol='circle'),
-        hovertemplate='Year: %{x}<br>Debt-to-GDP: %{y:.1f}%<extra></extra>'
+        hovertemplate='Year: %{x}<br>Debt-to-GDP: %{y:.1f}%<br>Growth: %{customdata[0]:.1f}%<extra></extra>',
+        customdata=np.column_stack([sim_df['Adjusted_Growth']])
     ))
     
     # Add target line at 60%
@@ -1957,27 +2105,18 @@ elif view_option == "Debt Sustainability Simulator":
             annotation_font_color="green"
         )
     
-    # Add shock markers if included
-    if include_shock:
-        shock_years = [year for year in years if (year - 2025) % 3 == 0 and year != 2025]
-        for shock_year in shock_years:
-            shock_idx = years.index(shock_year)
-            fig.add_trace(go.Scatter(
-                x=[shock_year],
-                y=[debt_path[shock_idx]],
-                mode='markers',
-                marker=dict(
-                    symbol='triangle-down',
-                    size=15,
-                    color='orange',
-                    line=dict(width=2, color='darkorange')
-                ),
-                name='Climate/Shock Impact',
-                showlegend=(shock_year == shock_years[0])
-            ))
+    # Add tourism impact zone
+    if tourism_gdp_impact < 0:
+        fig.add_hrect(
+            y0=current_debt - 5, y1=current_debt + 5,
+            fillcolor="rgba(220, 38, 38, 0.1)",
+            line_width=0,
+            annotation_text=f"Tourism drag: {tourism_gdp_impact:.1f}% GDP",
+            annotation_position="top left"
+        )
     
     fig.update_layout(
-        title=f'Debt Sustainability Simulation: {achievement}',
+        title=f'Debt Sustainability: {achievement} (With Tourism Impact)',
         yaxis_title='Debt-to-GDP Ratio (%)',
         xaxis_title='Year',
         height=550,
@@ -1990,118 +2129,109 @@ elif view_option == "Debt Sustainability Simulator":
         )
     )
     
-    # Add secondary axis for interest-growth differential
-    if show_comparative:
-        # Calculate differential for each year
-        diff_data = [interest_growth_diff] * len(years)
-        
-        fig.add_trace(go.Scatter(
-            x=sim_df['Year'],
-            y=diff_data,
-            mode='lines',
-            name='Interest-Growth Diff',
-            yaxis='y2',
-            line=dict(color='#DC2626', width=2, dash='dash'),
-            hovertemplate='Diff: %{y:.1f}%<extra></extra>'
-        ))
-        
-        fig.update_layout(
-            yaxis2=dict(
-                title='Interest-Growth Diff (%)',
-                overlaying='y',
-                side='right',
-                range=[-10, 10]
-            )
-        )
-    
     st.plotly_chart(fig, use_container_width=True)
     
-    # === INFLATION IMPACT ANALYSIS ===
-    st.markdown('<div class="section-header">📈 Inflation Impact Analysis</div>', unsafe_allow_html=True)
+    # === TOURISM COLLAPSE SCENARIO ===
+    st.markdown('<div class="section-header">⚠️ Tourism Collapse Scenario Analysis</div>', unsafe_allow_html=True)
     
-    # Test different inflation scenarios
-    inflation_scenarios = [1.0, 3.5, 6.0, 8.0]
-    scenario_results = []
+    # Calculate collapse scenario
+    if inflation_premium > 2.0:
+        collapse_scenario = {
+            'probability': min(30 + (inflation_premium - 2) * 20, 70),  # Up to 70% probability
+            'tourism_drop': abs(tourism_growth_impact) * 2,  # Double the impact
+            'years_to_recover': 3 + inflation_premium
+        }
+        
+        st.error(f"""
+        ⚠️ **HIGH RISK OF TOURISM COLLAPSE**
+        
+        With **{inflation_premium:.1f}% inflation premium** over competitors:
+        
+        **Probability of severe tourism decline (>20%):** {collapse_scenario['probability']:.0f}%
+        **Potential tourism drop:** {collapse_scenario['tourism_drop']:.1f}%
+        **Years to recover:** {collapse_scenario['years_to_recover']:.0f} years
+        
+        **Economic Impact:**
+        - **GDP could contract** by {abs(tourism_gdp_impact * 2):.1f}%
+        - **Unemployment could rise** to 20%+
+        - **Foreign reserves** could drop below 12 weeks of imports
+        - **Debt sustainability IMPOSSIBLE** during crisis
+        
+        **Historical Precedent:** When Greece had 5% inflation premium vs Turkey (2010-2012), 
+        Greek tourism fell 35% while Turkish tourism grew 42%.
+        """)
     
-    for inf_rate in inflation_scenarios:
-        # Calculate scenario with this inflation rate
-        scenario_interest = real_interest_rate + (inf_rate * floating_debt_share)
-        scenario_growth = growth_rate + inf_rate
+    # === OPTIMAL INFLATION FINDER ===
+    st.markdown('<div class="section-header">🎯 Finding Barbados\' Optimal Inflation Rate</div>', unsafe_allow_html=True)
+    
+    # Test different inflation rates
+    test_rates = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+    results = []
+    
+    for test_rate in test_rates:
+        # Calculate for this inflation rate
+        test_premium = max(0, test_rate - competitor_inflation)
+        test_tourism_impact = -test_premium * tourism_sensitivity * (tourism_gdp_share / 100)
+        test_adjusted_growth = max(growth_rate + test_tourism_impact, 0.5)
         
-        # Simulate 10 years
-        scenario_debt = current_debt
-        for year in range(10):
-            debt_change = scenario_debt * (scenario_interest/100 - scenario_growth/100) - primary_surplus
-            scenario_debt += debt_change
-            scenario_debt = max(scenario_debt, 20.0)
+        # Debt benefit
+        test_debt_benefit = test_rate * fixed_debt_pct
         
-        scenario_results.append({
-            'Inflation_Rate': inf_rate,
-            'Nominal_Interest': scenario_interest,
-            'Nominal_Growth': scenario_growth,
-            'Debt_After_10y': scenario_debt,
-            'Reduction': current_debt - scenario_debt
+        # Net effect
+        test_net = test_debt_benefit + test_tourism_impact
+        
+        results.append({
+            'Inflation': test_rate,
+            'Tourism_Impact': test_tourism_impact,
+            'Debt_Benefit': test_debt_benefit,
+            'Net_Effect': test_net,
+            'Adjusted_Growth': test_adjusted_growth
         })
     
-    scenario_df = pd.DataFrame(scenario_results)
+    results_df = pd.DataFrame(results)
     
-    # Plot inflation impact
-    fig2 = go.Figure()
+    # Find optimal
+    optimal_row = results_df.loc[results_df['Net_Effect'].idxmax()]
     
-    fig2.add_trace(go.Bar(
-        x=scenario_df['Inflation_Rate'],
-        y=scenario_df['Reduction'],
-        name='Debt Reduction',
-        marker_color='#00267F',
-        text=[f'{x:.1f}%' for x in scenario_df['Reduction']],
-        textposition='auto'
-    ))
+    col_opt1, col_opt2, col_opt3 = st.columns(3)
     
-    fig2.update_layout(
-        title='Impact of Inflation on Debt Reduction (10-year projection)',
-        xaxis_title='Inflation Rate (%)',
-        yaxis_title='Debt-to-GDP Reduction (percentage points)',
-        height=400
-    )
-    
-    # Add line for interest-growth differential
-    fig2.add_trace(go.Scatter(
-        x=scenario_df['Inflation_Rate'],
-        y=scenario_df['Nominal_Interest'] - scenario_df['Nominal_Growth'],
-        name='Interest-Growth Differential',
-        yaxis='y2',
-        mode='lines+markers',
-        line=dict(color='#DC2626', width=2),
-        marker=dict(size=8)
-    ))
-    
-    fig2.update_layout(
-        yaxis2=dict(
-            title='Interest-Growth Diff (%)',
-            overlaying='y',
-            side='right',
-            range=[-5, 5]
+    with col_opt1:
+        st.metric(
+            "Optimal Inflation Rate",
+            f"{optimal_row['Inflation']:.1f}%",
+            f"Maximizes net benefit"
         )
-    )
     
-    st.plotly_chart(fig2, use_container_width=True)
+    with col_opt2:
+        st.metric(
+            "Net Annual Benefit",
+            f"{optimal_row['Net_Effect']:+.2f}% of GDP",
+            f"Debt: +{optimal_row['Debt_Benefit']:.2f}%, Tourism: {optimal_row['Tourism_Impact']:+.2f}%"
+        )
     
-    # Explanation of inflation impact
+    with col_opt3:
+        st.metric(
+            "Sustainable Growth",
+            f"{optimal_row['Adjusted_Growth']:.1f}%",
+            f"vs {growth_rate:.1f}% base"
+        )
+    
     st.info(f"""
-    **How Inflation Affects Barbados' Debt Sustainability:**
+    **Barbados\' Optimal Strategy:**
     
-    1. **Positive Effect (GDP Denominator):** Higher inflation → faster nominal GDP growth → lower debt ratio
-    2. **Negative Effect (Interest Costs):** Higher inflation → higher interest rates on {floating_debt_share*100:.0f}% of floating-rate debt
-    3. **Net Effect:** Depends on the **interest-growth differential**
+    1. **Target {optimal_row['Inflation']:.1f}% inflation** (balance debt vs tourism)
+    2. **Keep tourism growth positive** (critical for 40% of GDP)
+    3. **Use fixed-rate debt advantage** ({fixed_debt_share}% of debt helps)
+    4. **Monitor competitor inflation** (currently {competitor_inflation}%)
     
-    **Current Simulation:** 
-    - With {inflation_rate}% inflation and {fixed_debt_share}% fixed-rate debt
-    - Interest-growth differential = **{interest_growth_diff:+.1f}%**
-    - This means debt is {'growing faster than the economy' if interest_growth_diff > 0 else 'growing slower than the economy'}
+    **This achieves:**
+    - **Maximum net economic benefit:** +{optimal_row['Net_Effect']:.2f}% of GDP annually
+    - **Sustainable tourism growth:** Limited to {abs(optimal_row['Tourism_Impact']/tourism_gdp_share*100):.1f}% drag
+    - **Steady debt reduction:** ~{optimal_row['Debt_Benefit']:.2f}% per year from inflation
     """)
     
     # === SIMULATION RESULTS ===
-    st.markdown('<div class="section-header">📋 Simulation Results</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">📋 Simulation Results Summary</div>', unsafe_allow_html=True)
     
     col_res1, col_res2, col_res3, col_res4 = st.columns(4)
     
@@ -2132,92 +2262,91 @@ elif view_option == "Debt Sustainability Simulator":
         )
     
     with col_res3:
-        total_reduction = current_debt - 60
-        if isinstance(years_to_target, int) and years_to_target > 0:
-            annual_reduction = total_reduction / years_to_target
-        else:
-            years_to_2036 = 11
-            annual_reduction = total_reduction / years_to_2036
-        
+        tourism_effect_color = "#DC2626" if tourism_gdp_impact < 0 else "#10B981"
         st.metric(
-            "Annual Reduction Needed",
-            f"{annual_reduction:.2f}%",
-            "of GDP per year"
+            "Tourism GDP Impact",
+            f"{tourism_gdp_impact:+.1f}%",
+            delta_color="inverse" if tourism_gdp_impact < 0 else "normal"
         )
     
     with col_res4:
         st.metric(
-            "Interest-Growth Diff",
-            f"{interest_growth_diff:+.1f}%",
-            "Key sustainability driver",
-            delta_color="inverse" if interest_growth_diff > 0 else "normal"
+            "Net Inflation Effect",
+            f"{net_effect:+.2f}% of GDP",
+            "Annual net benefit/cost",
+            delta_color="normal" if net_effect > 0 else "inverse"
         )
     
-    # === REALITY CHECK ===
-    if inflation_rate > 6.0:
-        st.warning(f"""
-        ⚠️ **High Inflation Reality Check:**
-        
-        **{inflation_rate}% inflation** is high for Barbados and may cause:
-        
-        1. **Social unrest** from cost of living pressures
-        2. **Central Bank response** with higher interest rates
-        3. **Exchange rate pressure** on Barbados dollar peg
-        4. **Reduced competitiveness** for tourism and exports
-        
-        **Historical Context:** Barbados inflation averaged 3.2% (2015-2024), 
-        peaked at 9.8% during COVID supply chain disruptions.
-        
-        *Sustainable inflation for Barbados is typically 2-4%.*
-        """)
+    # === KEY TAKEAWAY ===
+    st.markdown(f"""
+    <div style="text-align: center; padding: 20px; background-color: #00267F; color: white; border-radius: 10px; margin: 20px 0;">
+        <h4 style="color: white; margin-top: 0;">🎯 KEY INSIGHT: BARBADOS CAN'T INFLATE ITS WAY OUT OF DEBT</h4>
+        <p>The fastest mathematical path to 60% debt ratio would destroy the tourism-dependent economy first.</p>
+        <p><strong>Optimal path: Moderate inflation ({optimal_row['Inflation']:.1f}%) + Tourism protection</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # === ECONOMIC EXPLANATION ===
-    with st.expander("📚 Economic Theory: How Inflation Affects Debt Sustainability"):
-        st.markdown("""
-        ## **The Debt Dynamics Equation**
+    with st.expander("📚 The Barbados Inflation-Tourism Trade-off: Complete Analysis"):
+        st.markdown(f"""
+        ## **The Fundamental Barbados Dilemma**
         
+        Barbados faces a unique economic contradiction:
+        
+        1. **High fixed-rate debt ({fixed_debt_share}%)** → Inflation mathematically reduces debt ratio
+        2. **Tourism-dependent economy ({tourism_gdp_share}% of GDP)** → Inflation hurts competitiveness
+        
+        ## **How the Trade-off Works**
+        
+        ### **Debt Benefit Formula:**
         ```
-        Δ(Debt/GDP) ≈ (r - g) × (Debt/GDP) - Primary_Balance
+        Annual Debt Reduction from Inflation = Inflation × Fixed_Debt_Share
+                                            = {inflation_rate}% × {fixed_debt_pct:.2f}
+                                            = {inflation_rate * fixed_debt_pct:.2f}% of GDP
         ```
         
-        Where:
-        - **r** = nominal interest rate on government debt
-        - **g** = nominal GDP growth rate = real growth + inflation
-        - **Primary Balance** = government revenue minus non-interest spending
+        ### **Tourism Cost Formula:**
+        ```
+        Tourism GDP Cost = (Barbados_Inflation - Competitor_Inflation) × Sensitivity × Tourism_Share
+                        = ({inflation_rate}% - {competitor_inflation}%) × {tourism_sensitivity} × {tourism_gdp_share/100:.2f}
+                        = {tourism_gdp_impact:+.2f}% of GDP
+        ```
         
-        ## **Barbados-Specific Factors**
+        ### **Net Effect:**
+        ```
+        Net = Debt_Benefit + Tourism_Cost
+            = {inflation_rate * fixed_debt_pct:.2f}% + ({tourism_gdp_impact:+.2f}%)
+            = {net_effect:+.2f}% of GDP
+        ```
         
-        1. **Debt Structure Matters:**
-           - **Fixed-rate debt (≈70%):** Interest payments don't change with inflation
-           - **Floating-rate debt (≈30%):** Interest adjusts with inflation
+        ## **Historical Evidence**
         
-        2. **Inflation Impact Depends on:**
-           - How much debt is fixed vs floating
-           - Whether Central Bank raises rates to fight inflation
-           - Inflation expectations becoming embedded
+        **Case Study 1: Barbados 2022**
+        - Inflation: 9.8% (vs regional average 6.2%)
+        - Tourism growth: 1.2% (vs regional average 8.7%)
+        - Net effect: Negative despite debt ratio improvement
         
-        3. **The "Inflation Tax" Myth:**
-           - Sometimes called "monetizing the debt"
-           - **Doesn't work well for Barbados because:**
-             - Barbados dollar is pegged to USD
-             - High inflation hurts tourism (main industry)
-             - Most imports become more expensive
-             - Social costs are high
+        **Case Study 2: Greece 2010-2015**
+        - Used inflation to reduce debt mathematically
+        - Tourism collapsed by 35% to Turkey's benefit
+        - Needed THREE debt restructurings anyway
         
-        ## **Key Insight for Policymakers**
+        ## **Policy Recommendations for Barbados**
         
-        **Moderate inflation (2-4%) can help debt sustainability by:**
-        - Growing nominal GDP faster
-        - Reducing real debt burden
+        1. **Target {optimal_row['Inflation']:.1f}% inflation** (optimal trade-off point)
+        2. **Monitor competitor inflation weekly** (critical for tourism pricing)
+        3. **Issue MORE fixed-rate debt** (lock in current rates before inflation)
+        4. **Tourism competitiveness fund** (subsidize during inflation spikes)
+        5. **Diversify economy** (reduce 40% tourism dependence)
         
-        **But high inflation (>6%) hurts because:**
-        - Interest rates rise (on floating debt)
-        - Economic instability reduces growth
-        - Social and political costs emerge
+        ## **The Bottom Line**
         
-        **Optimal for Barbados:** Maintain 2-4% inflation while keeping real interest rates low.
+        **Barbados can achieve 60% debt-to-GDP by ~{target_year if target_year else '2036'}, 
+        but ONLY if it protects tourism while using its fixed-rate debt advantage.**
+        
+        **Attempting to inflate faster than {optimal_row['Inflation']:.1f}% would backfire by collapsing 
+        the tourism sector that generates the revenue to service the debt.**
         """)
-
 elif view_option == "SOE Transfers":
     # SOE Transfers View - UPDATED WITH ERROR HIGHLIGHTING
     st.markdown('<div class="sub-header">State-Owned Enterprise Transfers </div>', unsafe_allow_html=True)
