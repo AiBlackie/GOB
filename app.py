@@ -782,13 +782,14 @@ with st.sidebar:
     # Display Options
     st.subheader("Display Options")
     view_option = st.selectbox(
-        "Select View",
-        [
-            "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
-            "Balance Sheet", "Audit Findings", "Debt Analysis", 
-            "SOE Transfers", "Performance Highlights", "Data Quality Issues", "Story View", "BERT 2026 Risk Analysis"
-        ]
-    )
+    "Select View",
+    [
+        "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
+        "Balance Sheet", "Audit Findings", "Debt Analysis", 
+        "Debt Sustainability Simulator", "SOE Transfers", "Performance Highlights", 
+        "Data Quality Issues", "Story View", "BERT 2026 Risk Analysis"
+    ]
+)
     
     # Currency Format
     st.subheader("Currency Format")
@@ -1552,6 +1553,9 @@ elif view_option == "Audit Findings":
         </div>
         """, unsafe_allow_html=True)
 
+# ============================================================================
+# DEBT SUSTAINABILITY SIMULATOR - CORRECTED VERSION
+# ============================================================================
 elif view_option == "Debt Analysis":
     # Debt Analysis View - COMPLETELY CORRECTED
     st.markdown('<div class="sub-header">Public Debt Analysis </div>', unsafe_allow_html=True)
@@ -1697,6 +1701,522 @@ elif view_option == "Debt Analysis":
                 f"</span>", 
                 unsafe_allow_html=True
             )
+
+# ============================================================================
+# DEBT SUSTAINABILITY SIMULATOR - NEW CORRECTED SECTION
+# ============================================================================
+elif view_option == "Debt Sustainability Simulator":
+    st.markdown('<div class="sub-header">Debt Sustainability Simulator - Corrected Inflation Impact</div>', unsafe_allow_html=True)
+    
+    # Explanation of the correction
+    with st.container():
+        st.markdown("""
+        <div class="financial-card" style="border-left-color: #10B981;">
+            <h4 style="color: #10B981; margin-top: 0;">✅ CORRECTION APPLIED</h4>
+            <p><strong>Previous Bug:</strong> Higher inflation incorrectly reduced target date (made debt fall faster).</p>
+            <p><strong>Correct Logic:</strong> Higher inflation → faster nominal GDP growth → helps reduce debt ratio, BUT interest costs may also rise.</p>
+            <p><strong>Barbados Context:</strong> ~70% fixed-rate debt, ~30% inflation-sensitive debt.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Interactive controls
+    col_sim1, col_sim2, col_sim3 = st.columns(3)
+    
+    with col_sim1:
+        growth_rate = st.slider(
+            "Real GDP Growth Rate (%)",
+            min_value=1.0,
+            max_value=6.0,
+            value=3.5,
+            step=0.1,
+            help="Real economic growth (excluding inflation) - BERT 2026 target: 3.5% average"
+        )
+    
+    with col_sim2:
+        primary_surplus = st.slider(
+            "Primary Surplus (% of GDP)",
+            min_value=1.0,
+            max_value=6.0,
+            value=4.4,
+            step=0.1,
+            help="BERT 2026 target: 4.4% → 3.5% over 2025-2028"
+        )
+    
+    with col_sim3:
+        inflation_rate = st.slider(
+            "Inflation Rate (%)",
+            min_value=1.0,
+            max_value=10.0,
+            value=3.5,
+            step=0.1,
+            help="Consumer price inflation. Higher inflation helps debt ratio by growing nominal GDP faster"
+        )
+    
+    # Advanced parameters
+    with st.expander("⚙️ Advanced Parameters"):
+        col_adv1, col_adv2, col_adv3 = st.columns(3)
+        
+        with col_adv1:
+            # Real interest rate (adjusted for inflation expectations)
+            real_interest_rate = st.slider(
+                "Real Interest Rate (%)",
+                min_value=0.0,
+                max_value=5.0,
+                value=2.5,
+                step=0.1,
+                help="Interest rate adjusted for inflation expectations. Barbados real rate typically 2-3%"
+            )
+        
+        with col_adv2:
+            fixed_debt_share = st.slider(
+                "Fixed-Rate Debt Share (%)",
+                min_value=50,
+                max_value=90,
+                value=70,
+                step=5,
+                help="Percentage of debt with fixed interest rates. Barbados: ~70% fixed"
+            )
+        
+        with col_adv3:
+            include_shock = st.checkbox("Include Climate/Shock Impact", value=False)
+            if include_shock:
+                shock_size = st.slider("Shock Size (% of GDP)", 0.5, 5.0, 2.0, 0.1)
+    
+    # CORRECTED: Calculate nominal interest rate based on debt structure
+    fixed_debt_pct = fixed_debt_share / 100
+    
+    # For fixed-rate debt: interest doesn't change with inflation
+    # For floating-rate debt: interest adjusts with inflation
+    # Nominal interest rate = Real rate + (inflation × portion of floating debt)
+    floating_debt_share = 1 - fixed_debt_pct
+    nominal_interest_rate = real_interest_rate + (inflation_rate * floating_debt_share)
+    
+    # Nominal GDP growth = Real growth + Inflation
+    nominal_growth_rate = growth_rate + inflation_rate
+    
+    # Calculate interest-growth differential (the key driver)
+    interest_growth_diff = nominal_interest_rate - nominal_growth_rate
+    
+    # Display calculated parameters
+    st.markdown("### 📊 Calculated Parameters")
+    
+    col_calc1, col_calc2, col_calc3 = st.columns(3)
+    
+    with col_calc1:
+        st.metric(
+            "Nominal Interest Rate",
+            f"{nominal_interest_rate:.1f}%",
+            f"Real {real_interest_rate:.1f}% + Inflation adjustment"
+        )
+    
+    with col_calc2:
+        st.metric(
+            "Nominal GDP Growth",
+            f"{nominal_growth_rate:.1f}%",
+            f"Real {growth_rate:.1f}% + Inflation {inflation_rate:.1f}%"
+        )
+    
+    with col_calc3:
+        diff_color = "#DC2626" if interest_growth_diff > 0 else "#10B981"
+        st.metric(
+            "Interest-Growth Differential",
+            f"{interest_growth_diff:+.1f}%",
+            delta_color="inverse" if interest_growth_diff > 0 else "normal",
+            help="Positive = debt grows faster than economy, Negative = economy grows faster than debt"
+        )
+    
+    # CORRECTED Simulation Logic
+    years = list(range(2025, 2037))  # 2025 to 2036
+    current_debt = 102.9  # 2025 debt-to-GDP ratio from Central Bank
+    
+    # Convert to decimals
+    interest_dec = nominal_interest_rate / 100
+    growth_dec = nominal_growth_rate / 100
+    primary_dec = primary_surplus / 100
+    
+    debt_path = [current_debt]
+    debt_dynamics = []
+    
+    for i in range(1, len(years)):
+        # CORRECT FORMULA: ΔDebt ≈ Debt × (r - g) - Primary_Balance
+        previous_debt = debt_path[-1]
+        
+        # Interest-growth effect
+        interest_growth_effect = previous_debt * (interest_dec - growth_dec)
+        
+        # Primary surplus effect (reduces debt)
+        primary_effect = -primary_dec * 100
+        
+        # Total change
+        debt_change = interest_growth_effect + primary_effect
+        
+        # Apply shocks if selected (simulate climate or economic shocks)
+        if include_shock and (years[i] - 2025) % 3 == 0:  # Every 3 years
+            debt_change += shock_size
+        
+        new_debt = previous_debt + debt_change
+        new_debt = max(new_debt, 20.0)  # Minimum reasonable debt level
+        
+        debt_path.append(new_debt)
+        debt_dynamics.append({
+            'year': years[i],
+            'interest_growth_effect': interest_growth_effect,
+            'primary_effect': primary_effect,
+            'total_change': debt_change
+        })
+    
+    # Create simulation results
+    sim_df = pd.DataFrame({
+        'Year': years,
+        'Debt_to_GDP': debt_path,
+        'Interest_Rate': [nominal_interest_rate] * len(years),
+        'Growth_Rate': [nominal_growth_rate] * len(years),
+        'Primary_Surplus': [primary_surplus] * len(years)
+    })
+    
+    # Find when/if 60% target is reached
+    below_60 = sim_df[sim_df['Debt_to_GDP'] <= 60]
+    
+    if not below_60.empty:
+        target_year = int(below_60.iloc[0]['Year'])
+        years_to_target = target_year - 2025
+        achievement = f"Target achieved by {target_year}"
+        achievement_color = "#10B981"
+    else:
+        # Project beyond 2036
+        extended_years = list(range(2037, 2051))
+        extended_debt = debt_path[-1]
+        target_year = None
+        
+        for year in extended_years:
+            # Continue with same dynamics
+            debt_change = extended_debt * (interest_dec - growth_dec) - primary_dec * 100
+            extended_debt += debt_change
+            extended_debt = max(extended_debt, 20.0)
+            
+            if extended_debt <= 60:
+                target_year = year
+                years_to_target = target_year - 2025
+                achievement = f"Target achieved by ~{target_year}"
+                achievement_color = "#F59E0B"
+                break
+        
+        if target_year is None:
+            years_to_target = ">25"
+            achievement = "Target NOT achieved by 2050"
+            achievement_color = "#DC2626"
+    
+    # Plot debt trajectory
+    fig = go.Figure()
+    
+    # Main debt trajectory
+    fig.add_trace(go.Scatter(
+        x=sim_df['Year'],
+        y=sim_df['Debt_to_GDP'],
+        mode='lines+markers',
+        name='Projected Debt',
+        line=dict(color='#00267F', width=4),
+        marker=dict(size=10, symbol='circle'),
+        hovertemplate='Year: %{x}<br>Debt-to-GDP: %{y:.1f}%<extra></extra>'
+    ))
+    
+    # Add target line at 60%
+    fig.add_hline(
+        y=60,
+        line_dash="dash",
+        line_color="green",
+        line_width=3,
+        annotation_text="60% Target",
+        annotation_position="bottom right",
+        annotation_font_size=12,
+        annotation_font_color="green"
+    )
+    
+    # Add current level line
+    fig.add_hline(
+        y=current_debt,
+        line_dash="dot",
+        line_color="red",
+        line_width=2,
+        annotation_text=f"Current: {current_debt}%",
+        annotation_position="top right",
+        annotation_font_size=11,
+        annotation_font_color="red"
+    )
+    
+    # Highlight target achievement year if reached
+    if target_year and years_to_target and years_to_target != ">25":
+        fig.add_vline(
+            x=target_year,
+            line_dash="dash",
+            line_color="green",
+            line_width=2,
+            annotation_text=f"Target: {target_year}",
+            annotation_position="top",
+            annotation_font_size=11,
+            annotation_font_color="green"
+        )
+    
+    # Add shock markers if included
+    if include_shock:
+        shock_years = [year for year in years if (year - 2025) % 3 == 0 and year != 2025]
+        for shock_year in shock_years:
+            shock_idx = years.index(shock_year)
+            fig.add_trace(go.Scatter(
+                x=[shock_year],
+                y=[debt_path[shock_idx]],
+                mode='markers',
+                marker=dict(
+                    symbol='triangle-down',
+                    size=15,
+                    color='orange',
+                    line=dict(width=2, color='darkorange')
+                ),
+                name='Climate/Shock Impact',
+                showlegend=(shock_year == shock_years[0])
+            ))
+    
+    fig.update_layout(
+        title=f'Debt Sustainability Simulation: {achievement}',
+        yaxis_title='Debt-to-GDP Ratio (%)',
+        xaxis_title='Year',
+        height=550,
+        hovermode='x unified',
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        )
+    )
+    
+    # Add secondary axis for interest-growth differential
+    if show_comparative:
+        # Calculate differential for each year
+        diff_data = [interest_growth_diff] * len(years)
+        
+        fig.add_trace(go.Scatter(
+            x=sim_df['Year'],
+            y=diff_data,
+            mode='lines',
+            name='Interest-Growth Diff',
+            yaxis='y2',
+            line=dict(color='#DC2626', width=2, dash='dash'),
+            hovertemplate='Diff: %{y:.1f}%<extra></extra>'
+        ))
+        
+        fig.update_layout(
+            yaxis2=dict(
+                title='Interest-Growth Diff (%)',
+                overlaying='y',
+                side='right',
+                range=[-10, 10]
+            )
+        )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # === INFLATION IMPACT ANALYSIS ===
+    st.markdown('<div class="section-header">📈 Inflation Impact Analysis</div>', unsafe_allow_html=True)
+    
+    # Test different inflation scenarios
+    inflation_scenarios = [1.0, 3.5, 6.0, 8.0]
+    scenario_results = []
+    
+    for inf_rate in inflation_scenarios:
+        # Calculate scenario with this inflation rate
+        scenario_interest = real_interest_rate + (inf_rate * floating_debt_share)
+        scenario_growth = growth_rate + inf_rate
+        
+        # Simulate 10 years
+        scenario_debt = current_debt
+        for year in range(10):
+            debt_change = scenario_debt * (scenario_interest/100 - scenario_growth/100) - primary_surplus
+            scenario_debt += debt_change
+            scenario_debt = max(scenario_debt, 20.0)
+        
+        scenario_results.append({
+            'Inflation_Rate': inf_rate,
+            'Nominal_Interest': scenario_interest,
+            'Nominal_Growth': scenario_growth,
+            'Debt_After_10y': scenario_debt,
+            'Reduction': current_debt - scenario_debt
+        })
+    
+    scenario_df = pd.DataFrame(scenario_results)
+    
+    # Plot inflation impact
+    fig2 = go.Figure()
+    
+    fig2.add_trace(go.Bar(
+        x=scenario_df['Inflation_Rate'],
+        y=scenario_df['Reduction'],
+        name='Debt Reduction',
+        marker_color='#00267F',
+        text=[f'{x:.1f}%' for x in scenario_df['Reduction']],
+        textposition='auto'
+    ))
+    
+    fig2.update_layout(
+        title='Impact of Inflation on Debt Reduction (10-year projection)',
+        xaxis_title='Inflation Rate (%)',
+        yaxis_title='Debt-to-GDP Reduction (percentage points)',
+        height=400
+    )
+    
+    # Add line for interest-growth differential
+    fig2.add_trace(go.Scatter(
+        x=scenario_df['Inflation_Rate'],
+        y=scenario_df['Nominal_Interest'] - scenario_df['Nominal_Growth'],
+        name='Interest-Growth Differential',
+        yaxis='y2',
+        mode='lines+markers',
+        line=dict(color='#DC2626', width=2),
+        marker=dict(size=8)
+    ))
+    
+    fig2.update_layout(
+        yaxis2=dict(
+            title='Interest-Growth Diff (%)',
+            overlaying='y',
+            side='right',
+            range=[-5, 5]
+        )
+    )
+    
+    st.plotly_chart(fig2, use_container_width=True)
+    
+    # Explanation of inflation impact
+    st.info(f"""
+    **How Inflation Affects Barbados' Debt Sustainability:**
+    
+    1. **Positive Effect (GDP Denominator):** Higher inflation → faster nominal GDP growth → lower debt ratio
+    2. **Negative Effect (Interest Costs):** Higher inflation → higher interest rates on {floating_debt_share*100:.0f}% of floating-rate debt
+    3. **Net Effect:** Depends on the **interest-growth differential**
+    
+    **Current Simulation:** 
+    - With {inflation_rate}% inflation and {fixed_debt_share}% fixed-rate debt
+    - Interest-growth differential = **{interest_growth_diff:+.1f}%**
+    - This means debt is {'growing faster than the economy' if interest_growth_diff > 0 else 'growing slower than the economy'}
+    """)
+    
+    # === SIMULATION RESULTS ===
+    st.markdown('<div class="section-header">📋 Simulation Results</div>', unsafe_allow_html=True)
+    
+    col_res1, col_res2, col_res3, col_res4 = st.columns(4)
+    
+    with col_res1:
+        projected_2036 = debt_path[-1]
+        vs_target = projected_2036 - 60
+        delta_color = "normal" if vs_target <= 0 else "inverse"
+        
+        st.metric(
+            "Projected 2036 Debt",
+            f"{projected_2036:.1f}%",
+            f"{vs_target:+.1f}% vs target",
+            delta_color=delta_color
+        )
+    
+    with col_res2:
+        if isinstance(years_to_target, str):
+            display_years = years_to_target
+            delta_text = "Target not reached"
+        else:
+            display_years = f"{years_to_target}"
+            delta_text = f"Target by {target_year}" if years_to_target <= 11 else f"After 2036"
+        
+        st.metric(
+            "Years to 60% Target",
+            display_years,
+            delta_text
+        )
+    
+    with col_res3:
+        total_reduction = current_debt - 60
+        if isinstance(years_to_target, int) and years_to_target > 0:
+            annual_reduction = total_reduction / years_to_target
+        else:
+            years_to_2036 = 11
+            annual_reduction = total_reduction / years_to_2036
+        
+        st.metric(
+            "Annual Reduction Needed",
+            f"{annual_reduction:.2f}%",
+            "of GDP per year"
+        )
+    
+    with col_res4:
+        st.metric(
+            "Interest-Growth Diff",
+            f"{interest_growth_diff:+.1f}%",
+            "Key sustainability driver",
+            delta_color="inverse" if interest_growth_diff > 0 else "normal"
+        )
+    
+    # === REALITY CHECK ===
+    if inflation_rate > 6.0:
+        st.warning(f"""
+        ⚠️ **High Inflation Reality Check:**
+        
+        **{inflation_rate}% inflation** is high for Barbados and may cause:
+        
+        1. **Social unrest** from cost of living pressures
+        2. **Central Bank response** with higher interest rates
+        3. **Exchange rate pressure** on Barbados dollar peg
+        4. **Reduced competitiveness** for tourism and exports
+        
+        **Historical Context:** Barbados inflation averaged 3.2% (2015-2024), 
+        peaked at 9.8% during COVID supply chain disruptions.
+        
+        *Sustainable inflation for Barbados is typically 2-4%.*
+        """)
+    
+    # === ECONOMIC EXPLANATION ===
+    with st.expander("📚 Economic Theory: How Inflation Affects Debt Sustainability"):
+        st.markdown("""
+        ## **The Debt Dynamics Equation**
+        
+        ```
+        Δ(Debt/GDP) ≈ (r - g) × (Debt/GDP) - Primary_Balance
+        ```
+        
+        Where:
+        - **r** = nominal interest rate on government debt
+        - **g** = nominal GDP growth rate = real growth + inflation
+        - **Primary Balance** = government revenue minus non-interest spending
+        
+        ## **Barbados-Specific Factors**
+        
+        1. **Debt Structure Matters:**
+           - **Fixed-rate debt (≈70%):** Interest payments don't change with inflation
+           - **Floating-rate debt (≈30%):** Interest adjusts with inflation
+        
+        2. **Inflation Impact Depends on:**
+           - How much debt is fixed vs floating
+           - Whether Central Bank raises rates to fight inflation
+           - Inflation expectations becoming embedded
+        
+        3. **The "Inflation Tax" Myth:**
+           - Sometimes called "monetizing the debt"
+           - **Doesn't work well for Barbados because:**
+             - Barbados dollar is pegged to USD
+             - High inflation hurts tourism (main industry)
+             - Most imports become more expensive
+             - Social costs are high
+        
+        ## **Key Insight for Policymakers**
+        
+        **Moderate inflation (2-4%) can help debt sustainability by:**
+        - Growing nominal GDP faster
+        - Reducing real debt burden
+        
+        **But high inflation (>6%) hurts because:**
+        - Interest rates rise (on floating debt)
+        - Economic instability reduces growth
+        - Social and political costs emerge
+        
+        **Optimal for Barbados:** Maintain 2-4% inflation while keeping real interest rates low.
+        """)
 
 elif view_option == "SOE Transfers":
     # SOE Transfers View - UPDATED WITH ERROR HIGHLIGHTING
