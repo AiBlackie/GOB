@@ -787,7 +787,7 @@ with st.sidebar:
         "Executive Summary", "Revenue Analysis", "Expenditure Analysis",
         "Balance Sheet", "Audit Findings", "Debt Analysis", 
         "Debt Sustainability Simulator", "SOE Transfers", "Performance Highlights", 
-        "Data Quality Issues", "Story View", "BERT 2026 Risk Analysis"
+        "Data Quality Issues", "Story View", "BERT 2026 Risk Analysis","2026 Reality Check"
     ]
 )
     
@@ -4824,6 +4824,467 @@ elif view_option == "BERT 2026 Risk Analysis":
         - **Ministry of Finance and Economic Affairs:** mof@barbados.gov.bb
         - **IMF Barbados Desk:** IMF-Barbados@imf.org | IMF Western Hemisphere Department
         """)
+# ============================================================================
+# 2026 REALITY CHECK VIEW - REVISED WITH DOCUMENT REFERENCES
+# ============================================================================
+elif view_option == "2026 Reality Check":
+    
+    st.markdown('<div class="sub-header">📊 2026 Reality Check: Official Optimism vs. 2023 Audit Reality</div>', unsafe_allow_html=True)
+    
+    # === DOCUMENT REFERENCE BANNER ===
+    st.markdown('''
+    <div style="text-align: center; padding: 15px; background-color: #1E40AF; color: white; border-radius: 8px; margin-bottom: 20px;">
+        <h5 style="color: white; margin-top: 0;">📄 Document Reference: Pre-Election Economic & Fiscal Update (Jan 27, 2026)</h5>
+        <p style="margin: 0; font-size: 0.85rem;">Pages 16-19: Debt Service | Page 7: Economic Performance | Page 14-15: Fiscal Balance</p>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    # === CRITICAL METRICS SIDE-BY-SIDE ===
+    st.markdown('<div class="section-header">📈 Key Metrics: 2023 Audit vs. 2026 Update</div>', unsafe_allow_html=True)
+    
+    # Create comparison table
+    comparison_data = {
+        'Metric': [
+            'Debt-to-GDP Ratio',
+            'Annual Debt Service Cost',
+            'Interest Rate on New Bonds',
+            'Tax Receivables (Unverified)',
+            'SOE Consolidation Status',
+            'Primary Surplus (Target vs Actual)',
+            'Tourism % of GDP',
+            'Critical Audit Issues'
+        ],
+        '2023 Reality': [
+            '102.9% (Central Bank 2025)',
+            '$568M (Page 7, 2023 FS)',
+            '6.5% (2029 bonds)',
+            '$2.43B UNVERIFIED (AG Report)',
+            '❌ NOT CONSOLIDATED (IPSAS violation)',
+            '4.3% (achieved 2023)',
+            '~40% (estimated)',
+            '❌ ADVERSE OPINION (AG Report)'
+        ],
+        '2026 Update': [
+            '93.7% (Nov 2025, Page 16)',
+            '$2.5B (2025/26 projected, Page 18)',
+            '8.0% (2035 bonds, Page 16)',
+            'No mention in 2026 report',
+            'SOEs: $77M arrears (Page 19)',
+            'Target: 4.1% | Actual: 3.7% (Page 15)',
+            '>40% (increasing, Page 7)',
+            'No mention of audit issues'
+        ],
+        'Document Page': [
+            'Page 16, Table & Text',
+            'Page 18, "Debt Service"',
+            'Page 16, "8% Eurobond"',
+            'Not mentioned',
+            'Page 19, "SOE Arrears"',
+            'Page 15, Figure 5',
+            'Page 7, Paragraph 1',
+            'Not addressed'
+        ]
+    }
+    
+    df_comparison = pd.DataFrame(comparison_data)
+    
+    # Color code the changes
+    def color_change(val):
+        if '▲' in str(val):
+            return 'background-color: #FEF2F2; color: #DC2626; font-weight: bold;'
+        elif '▼' in str(val):
+            return 'background-color: #ECFDF5; color: #10B981; font-weight: bold;'
+        elif '❌' in str(val) or '🚨' in str(val):
+            return 'background-color: #FEF2F2; color: #DC2626; font-weight: bold;'
+        elif '⚠️' in str(val) or '❓' in str(val):
+            return 'background-color: #FFFBEB; color: #D97706; font-weight: bold;'
+        else:
+            return ''
+    
+    styled_df = df_comparison.style.applymap(color_change, subset=['2026 Update'])
+    
+    # Display the comparison
+    st.dataframe(
+        styled_df,
+        use_container_width=True,
+        height=350,
+        column_config={
+            "Metric": st.column_config.TextColumn("Key Financial Metric", width="large"),
+            "2023 Reality": "2023 Audit Findings",
+            "2026 Update": "2026 Pre-Election Update",
+            "Document Page": "Source in 2026 PDF"
+        }
+    )
+    
+    # === THE DEBT SERVICE REALITY: WHO GETS PAID? ===
+    st.markdown('<div class="section-header">💸 The Harsh Reality: $2.5 Billion Annual Debt Service - Who Gets Paid?</div>', unsafe_allow_html=True)
+    
+    # DEBT SERVICE BREAKDOWN FROM DOCUMENT (Pages 16-19) - FIXED WITH MARKDOWN
+    st.markdown("""
+    <div class="financial-card adverse-opinion">
+        <h5 style="color: #DC2626; margin-top: 0;">💰 $2.5 BILLION DEBT SERVICE BREAKDOWN (2025/26 Projected)</h5>
+        <p><strong>Source: Page 18, "Debt Service - FY 2025/26"</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Use columns instead of grid for better compatibility
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="padding: 15px; background: #FEF2F2; border-radius: 5px; border-left: 4px solid #DC2626; margin-bottom: 15px;">
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">INTEREST PAYMENTS</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$588M</div>
+            <div style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                • Bondholders (8% Eurobond): $40M/year<br>
+                • Previous bondholders: $22M/year<br>
+                • Other creditors: $526M/year
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="padding: 15px; background: #FEF2F2; border-radius: 5px; border-left: 4px solid #991B1B; margin-bottom: 15px;">
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">PRINCIPAL REPAYMENTS</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #991B1B;">$1.9B</div>
+            <div style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                • Eurobond maturities<br>
+                • IMF repayments<br>
+                • Multilateral loans
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="margin-top: 15px; padding: 15px; background: #FEE2E2; border-radius: 5px;">
+        <p style="margin: 0; font-size: 0.95rem;">
+        <strong>🔥 THE HARSH REALITY:</strong> This $2.5B is <strong>40% of total government revenue</strong> ($6.2B projected 2025/26). 
+        For every $1 Barbados earns, <strong>$0.40 goes to debt payments</strong> before funding hospitals, schools, or roads.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === WHO SPECIFICALLY GETS PAID? ===
+    st.markdown('<div class="section-header">🏦 The Creditors: Who Barbados Owes Money To</div>', unsafe_allow_html=True)
+    
+    # Creditor breakdown from document (Page 16)
+    creditors = pd.DataFrame({
+        'Creditor': [
+            'International Bondholders (8% 2035 Eurobond)',
+            'Caribbean Development Bank (CDB)',
+            'Inter-American Development Bank (IADB)',
+            'International Monetary Fund (IMF)',
+            'Latin American Development Bank (CAF)',
+            'Export-Import Bank of China',
+            'Domestic Banks & Pension Funds',
+            'Other Multilateral Agencies'
+        ],
+        'Amount Owed (USD)': [
+            '$500M',
+            '$484M',
+            '$1.81B',
+            '$548M',
+            '$357M',
+            'Not specified',
+            '$8.99B (domestic debt)',
+            'Various'
+        ],
+        'Interest Rate': [
+            '8.0% (highest)',
+            '3-5% (concessional)',
+            '3-6% (concessional)',
+            '2-4% (concessional)',
+            '4-6%',
+            'Not specified',
+            '4-7%',
+            '3-6%'
+        ],
+        'Priority': [
+            'HIGHEST (market access depends on this)',
+            'Medium (multilateral)',
+            'Medium (multilateral)',
+            'HIGH (IMF program critical)',
+            'Medium',
+            'Medium',
+            'HIGH (domestic stability)',
+            'Low-Medium'
+        ]
+    })
+    
+    # Display creditor table
+    st.dataframe(
+        creditors,
+        use_container_width=True,
+        height=300,
+        column_config={
+            "Creditor": "Who Barbados Owes",
+            "Amount Owed (USD)": "Amount",
+            "Interest Rate": "Cost",
+            "Priority": "Payment Priority"
+        }
+    )
+    
+    # === THE DEBT TRAP VISUALIZATION ===
+    st.markdown('<div class="section-header">📊 The Expensive Refinancing: Locked into High Rates for 10 Years</div>', unsafe_allow_html=True)
+    
+    # Create debt comparison visualization
+    debt_comparison = pd.DataFrame({
+        'Bond': ['Old Bond (2029)', 'New Bond (2035)'],
+        'Amount': [340, 500],
+        'Interest Rate': [6.5, 8.0],
+        'Annual Interest': [22.1, 40.0],
+        'Maturity': [2029, 2035],
+        'Total Interest Cost': [147.7, 400.0],  # Over remaining life
+        'Document Reference': ['Page 16: "partial repurchase"', 'Page 16: "8% Eurobond was issued"']
+    })
+    
+    fig = go.Figure()
+    
+    # Add bars for total interest cost
+    fig.add_trace(go.Bar(
+        x=debt_comparison['Bond'],
+        y=debt_comparison['Total Interest Cost'],
+        name='Total Interest Cost (USD $M)',
+        marker_color=['#DC2626', '#991B1B'],
+        text=[f'${x}M total' for x in debt_comparison['Total Interest Cost']],
+        textposition='auto'
+    ))
+    
+    fig.update_layout(
+        title='The True Cost: 8% Bond = $400M Interest Over 10 Years vs $148M for 6.5% Bond',
+        yaxis=dict(title='Total Interest Cost (USD $M)'),
+        height=400,
+        annotations=[
+            dict(
+                x=0,
+                y=250,
+                xref="paper",
+                yref="y",
+                text="↑ $252M MORE in interest",
+                showarrow=True,
+                arrowhead=2,
+                ax=0,
+                ay=-40,
+                font=dict(size=12, color="#DC2626")
+            )
+        ]
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Interest cost calculation - FIXED
+    st.markdown("""
+    <div class="financial-card adverse-opinion">
+        <h5 style="color: #DC2626; margin-top: 0;">📄 DOCUMENT EVIDENCE: Pages 16-18</h5>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Use columns for bond comparison
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.markdown("""
+        <div style="padding: 15px; background: #FEF2F2; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">OLD 2029 BOND (Page 16)</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$22.1M/year</div>
+            <div style="font-size: 0.85rem; color: #666;">$340M × 6.5% = $22.1M/year</div>
+            <div style="font-size: 0.75rem; color: #DC2626; margin-top: 5px;">Would have matured 2029</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div style="padding: 15px; background: #FEF2F2; border-radius: 5px; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">NEW 2035 BOND (Page 16)</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #991B1B;">$40M/year</div>
+            <div style="font-size: 0.85rem; color: #666;">$500M × 8% = $40M/year</div>
+            <div style="font-size: 0.75rem; color: #991B1B; margin-top: 5px;">LOCKED IN until 2035</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Document finding section
+    st.markdown("""
+    <div style="border-top: 2px dashed #DC2626; margin: 15px 0; padding-top: 15px; padding: 15px; background: #FEF2F2; border-radius: 5px;">
+        <p><strong>📄 DOCUMENT FINDING (Page 17):</strong> "The interest on the new USD 500.0 million 8% Note... will be somewhat mitigated by the reduced payment on the GOB's 2029 6.5% Note"</p>
+        <p><strong>🔍 REALITY CHECK:</strong> This is <span style="color: #DC2626; font-weight: bold;">financial engineering, not savings</span>. Barbados now owes:</p>
+        <ul>
+            <li><strong>+$500M more principal</strong> (340M → 500M)</li>
+            <li><strong>+1.5% higher interest rate</strong> (6.5% → 8.0%)</li>
+            <li><strong>+6 years longer maturity</strong> (2029 → 2035)</li>
+        </ul>
+        <p style="margin-top: 15px;"><strong>📊 NET INCREASE:</strong> <span style="color: #DC2626; font-weight: bold;">+$18M per year</span> for the same government</p>
+        <p><strong>💸 TOTAL COST OVER 10 YEARS:</strong> <span style="color: #DC2626; font-weight: bold;">+$180M extra</span> just in interest (Page 18: "Total revised debt expenditure... $682.9 million more than approved")</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # === WHAT THIS MEANS FOR BARBADIANS ===
+    st.markdown('<div class="section-header">👥 What $2.5B Debt Service Means for Ordinary Barbadians</div>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown('''
+        <div class="financial-card" style="border-left-color: #DC2626; min-height: 220px;">
+            <h6 style="color: #DC2626;">💰 PER CAPITA BURDEN</h6>
+            <p><strong>Population:</strong> 287,000</p>
+            <p><strong>Debt service per person:</strong></p>
+            <div style="text-align: center; margin: 10px 0;">
+                <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">$8,710</div>
+                <div style="font-size: 0.8rem; color: #666;">per Barbadian per year</div>
+            </div>
+            <p><em>For a family of 4: $34,840/year in debt payments</em></p>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown('''
+        <div class="financial-card" style="border-left-color: #DC2626; min-height: 220px;">
+            <h6 style="color: #DC2626;">🏥 OPPORTUNITY COST</h6>
+            <p><strong>What $2.5B could fund instead:</strong></p>
+            <p>• <strong>Queen Elizabeth Hospital</strong> budget: $133M/year</p>
+            <p>→ Could fund QEH for <strong>19 years</strong></p>
+            <p>• <strong>University of West Indies</strong> subsidy: $50M/year</p>
+            <p>→ Could fund UWI for <strong>50 years</strong></p>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown('''
+        <div class="financial-card" style="border-left-color: #DC2626; min-height: 220px;">
+            <h6 style="color: #DC2626;">📅 DAILY COST</h6>
+            <p><strong>Debt service runs 24/7:</strong></p>
+            <div style="text-align: center; margin: 10px 0;">
+                <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">$6.85M</div>
+                <div style="font-size: 0.8rem; color: #666;">per day</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$285,000</div>
+                <div style="font-size: 0.8rem; color: #666;">per hour</div>
+            </div>
+            <p><em>Every hour, Barbados pays a doctor's annual salary in interest</em></p>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    # === WHAT'S NOT IN THE 2026 REPORT ===
+    st.markdown('<div class="section-header">❌ What the 2026 Report Doesn\'t Tell You (But Should)</div>', unsafe_allow_html=True)
+    
+    missing_items = [
+        {
+            'Issue': '2023 Audit Problems',
+            '2023 Status': 'Adverse opinion, $2.43B unverified assets',
+            '2026 Mention': 'NOT MENTIONED',
+            'Document Page': 'Not in report',
+            'Risk': 'Financial statements still unreliable for $7.4B BERT financing'
+        },
+        {
+            'Issue': 'SOE Consolidation',
+            '2023 Status': 'Not done (IPSAS violation)',
+            '2026 Mention': 'Only mentions $77M arrears (Page 19)',
+            'Document Page': 'Page 19, last paragraph',
+            'Risk': 'Still violating IPSAS, true SOE debt hidden'
+        },
+        {
+            'Issue': '8% Bond vs Alternative Options',
+            '2023 Status': 'Could have negotiated better terms',
+            '2026 Mention': 'Presented as "liability management" success',
+            'Document Page': 'Page 16-17',
+            'Risk': 'Locked into high rates for 10 years unnecessarily'
+        },
+        {
+            'Issue': 'Tourism Dependency Risk',
+            '2023 Status': '40% of GDP = high vulnerability',
+            '2026 Mention': 'Celebrated as growth driver',
+            'Document Page': 'Page 7',
+            'Risk': 'Economic collapse if tourism slows (single point of failure)'
+        }
+    ]
+    
+    for item in missing_items:
+        page_num = item['Document Page'].split(' ')[1] if 'Page' in item['Document Page'] else 'N/A'
+        st.markdown(f'''
+        <div class="financial-card data-error" style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <h6 style="margin-top: 0; color: #DC2626;">{item['Issue']}</h6>
+                    <p><strong>2023 Audit Finding:</strong> {item['2023 Status']}</p>
+                    <p><strong>2026 Report (Page {page_num}):</strong> <span style="color: #DC2626;">{item['2026 Mention']}</span></p>
+                    <p><strong>Risk to BERT 2026:</strong> {item['Risk']}</p>
+                </div>
+                <div style="background-color: #DC2626; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; white-space: nowrap;">
+                    🚨 MISSING CONTEXT
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    # === THE BOTTOM LINE ===
+    st.markdown('<div class="section-header">🎯 The Bottom Line: Fragile Recovery on Cracked Foundation</div>', unsafe_allow_html=True)
+    
+    col_b1, col_b2 = st.columns(2)
+    
+    with col_b1:
+        st.markdown('''
+        <div class="financial-card" style="border-left-color: #10B981; min-height: 280px;">
+            <h5 style="color: #10B981; margin-top: 0;">✅ WHAT THE 2026 REPORT SHOWS (Pages 7-15)</h5>
+            <p><strong>Short-term improvements:</strong></p>
+            <ul>
+            <li>Fiscal discipline (primary surplus 3.7%)</li>
+            <li>Growth recovery (2.7%, Page 7)</li>
+            <li>Lower inflation (0.5%, Page 7)</li>
+            <li>Debt ratio down to 93.7% (Page 16)</li>
+            <li>Reserves at $3.3B (Page 7)</li>
+            </ul>
+            <p><em>They're managing the SYMPTOMS better (temporary fix)</em></p>
+            <div style="margin-top: 10px; padding: 8px; background: #D1FAE5; border-radius: 5px;">
+                <p style="margin: 0; font-size: 0.85rem;"><strong>Document Evidence:</strong> Pages 7, 15, 16 show numerical improvements</p>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    with col_b2:
+        st.markdown('''
+        <div class="financial-card adverse-opinion" style="min-height: 280px;">
+            <h5 style="color: #DC2626; margin-top: 0;">🚨 WHAT THE 2023 AUDIT STILL SHOWS (Unaddressed)</h5>
+            <p><strong>Structural problems remain:</strong></p>
+            <ul>
+            <li>Paying MORE interest (8% bonds, Page 16)</li>
+            <li>Tourism dependency INCREASING (Page 7)</li>
+            <li>2023 audit issues NOT FIXED (not mentioned)</li>
+            <li>SOEs still unconsolidated (IPSAS violation)</li>
+            <li>Data quality problems persist (Note 34 errors)</li>
+            </ul>
+            <p><em>The FOUNDATION is still cracked (permanent risk)</em></p>
+            <div style="margin-top: 10px; padding: 8px; background: #FEE2E2; border-radius: 5px;">
+                <p style="margin: 0; font-size: 0.85rem;"><strong>Critical Gap:</strong> 2026 report doesn't address 2023 audit findings</p>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    # === FINAL WARNING WITH DOCUMENT EVIDENCE ===
+    st.markdown('''
+    <div style="text-align: center; padding: 20px; background-color: #DC2626; color: white; border-radius: 10px; margin: 20px 0;">
+        <h4 style="color: white; margin-top: 0;">⚠️ THE HARSH REALITY ⚠️</h4>
+        <p style="margin: 0; font-size: 1.1rem;"><strong>Document Evidence (Page 18):</strong> "Total revised debt expenditure for 2025-2026 is estimated at $2,507.0 million, approximately $682.9 million more than the amount approved."</p>
+        <p style="margin: 10px 0 0 0; font-size: 0.9rem;"><strong>The math doesn't lie:</strong> Barbados is paying 40% of revenue to creditors while asking for $7.4B more for BERT 2026 with unreliably audited financials</p>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    # === RESPONSIBLE RECOMMENDATION ===
+    st.markdown('''
+    <div style="padding: 15px; background-color: #00267F; color: white; border-radius: 8px; margin-top: 20px;">
+        <h5 style="color: white; margin-top: 0;">🎯 RESPONSIBLE PATH FORWARD: Fix Foundation Before More Borrowing</h5>
+        <p><strong>Based on 2023 audit + 2026 document evidence, Barbados should:</strong></p>
+        <ol style="color: white;">
+        <li><strong>Fix 2023 audit issues FIRST</strong> (clean 2024 audit) before $7.4B BERT borrowing</li>
+        <li><strong>Transparent cost-benefit</strong> of 8% bonds vs. alternatives (was this the best deal?)</li>
+        <li><strong>Diversify economy</strong> beyond 40% tourism dependency (BERT 2026 promise)</li>
+        <li><strong>Honest reporting</strong> on SOE consolidation progress (IPSAS compliance)</li>
+        </ol>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #BFDBFE;"><em>The 2026 document shows temporary fiscal improvement, but the 2023 audit shows the financial foundation remains unreliable for major new borrowing.</em></p>
+    </div>
+    ''', unsafe_allow_html=True)
+
 
 # ============================================================================
 # FOOTER
