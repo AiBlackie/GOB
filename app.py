@@ -5614,7 +5614,7 @@ st.markdown("""
     <h4 style="color: white; margin-top: 0;">🎯 THE BOTTOM-LINE REALITY CHECK</h4>
     <p style="margin: 10px 0; font-size: 1.1rem;">
     Barbados cannot achieve <strong>sustainable</strong> 60% debt-to-GDP<br>
-    while ignoring <strong>37% higher true debt</strong> and <strong>quadrupled debt service</strong>
+    while ignoring <strong>34% higher true debt</strong> and <strong>quadrupled debt service</strong>
     </p>
     <div style="display: inline-flex; gap: 30px; margin-top: 15px;">
         <div>
