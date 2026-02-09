@@ -5444,7 +5444,7 @@ elif view_option == "2026 Reality Check":
         "2023": ["$14.93B", "~$5.5B", "102.9% (reported)", "$568M"],
         "2026 (Nov)": ["$15.03B", "~$16.0B", "93.7% (Page 16)", "$2.5B (Page 18)"],
         "Change": ["+$100M ↗", "+191% ↗", "-9.2% ↘", "+340% ↗"],
-        "Reality": ["Debt increased", "Mostly nominal growth", "Ratio improved via denominator", "Service burden exploded"]
+        "Reality": ["Debt increased", "Mostly nominal/inflationary growth", "Ratio improved via denominator", "Service burden exploded"]
     })
 
     st.dataframe(
