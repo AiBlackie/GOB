@@ -5580,10 +5580,12 @@ elif view_option == "2026 Reality Check":
 
     | | Official Debt (93.7%) | True Debt (≈128%) |
     |---|---|---|
-    | **Additional $7.4B borrowing** | Would reach ~145% of GDP | Would reach ~190% of GDP |
+    | **Additional $7.4B borrowing** | Would reach ~140% of GDP | Would reach ~174% of GDP |
     | **60% target by 2035** | Requires 36% reduction | Requires 53% reduction |
-    | **Annual debt reduction needed** | ~2.4% of GDP per year | ~4.5% of GDP per year |
+    | **Annual debt reduction needed** | ~3.8% of GDP per year | ~7.6% of GDP per year |
     | **Feasibility** | Challenging | Nearly impossible |
+    
+    Achieving 60% debt-to-GDP would require Barbados to cut its true debt by 7.6% of GDP every year for 9 years — a target that is mathematically and practically out of reach.
 
     **Critical Question:** Can Barbados responsibly execute its most ambitious economic transformation while its **true debt is 37% higher than reported** and its financial reporting remains unreliable?
     """)
