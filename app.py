@@ -5366,9 +5366,9 @@ elif view_option == "2026 Reality Check":
             "$5.5B (pensions + SOEs)"
         ],
         "Impact on 60% Target": [
-            "Requires ~36% reduction",
-            "Requires ~48% reduction",
-            "Requires ~53% reduction"
+            "Requires ~36% reduction in liabilities",
+            "Requires ~48% reduction in liabilities",
+            "Requires ~53% reduction in liabilities"
         ],
         "Source & Reference": [
             "2026 Pre-election Update, Page 16",
@@ -5613,8 +5613,9 @@ elif view_option == "2026 Reality Check":
     <div style="text-align: center; padding: 20px; background-color: #00267F; color: white; border-radius: 10px; margin: 20px 0;">
         <h4 style="color: white; margin-top: 0;">🎯 THE BOTTOM-LINE REALITY CHECK</h4>
         <p style="margin: 10px 0; font-size: 1.1rem;">
-        Barbados cannot achieve <strong>sustainable</strong> 60% debt-to-GDP<br>
-        while ignoring <strong>34% higher true debt</strong> and <strong>quadrupled debt service</strong>
+        The 60% debt target is mathematically out of reach because it ignores unaccounted pension and SOE liabilities.<br>
+        When included, the true debt burden rises to an estimated <strong>$20.53 billion</strong> — requiring a <strong>53% cut</strong> just to hit 60%.<br>
+        <strong>This is the reality.</strong> Anything less endangers Barbados' fiscal stability and credibility.
         </p>
         <div style="display: inline-flex; gap: 30px; margin-top: 15px;">
             <div>
@@ -5640,7 +5641,6 @@ elif view_option == "2026 Reality Check":
         </p>
     </div>
     """, unsafe_allow_html=True)
-
 # ============================================================================
 # FOOTER
 # ============================================================================
