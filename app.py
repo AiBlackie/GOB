@@ -5634,7 +5634,7 @@ elif view_option == "2026 Reality Check":
         </div>
         <div style="margin-top: 20px; padding: 15px; background-color: rgba(255, 255, 255, 0.1); border-radius: 8px;">
             <p style="margin: 0; font-size: 0.9rem;">
-            <strong>The Unavoidable Truth:</strong> The 93.7% ratio improvement comes from <strong>nominal GDP growth (+191%)</strong>,<br>
+            <strong>The Unavoidable Truth:</strong> The 93.7% ratio improvement comes from <strong>nominal/inflationary GDP growth (+191%)</strong>,<br>
             not debt reduction. Absolute debt <strong>increased</strong>, debt service <strong>quadrupled</strong>, and <strong>hidden liabilities remain.</strong>
             </p>
         </div>
