@@ -1,3 +1,4 @@
+
 # Barbados Government Financial Statements 2023 Dashboard
 # =====================================================
 
@@ -3470,8 +3471,8 @@ elif view_option == "BERT 2026 Risk Analysis":
         else:
             return 'background-color: #3B82F6; color: white;'
     
-    # Apply styling
-    styled_credibility = credibility_data.style.applymap(color_impact, subset=['Impact'])
+    # Apply styling - FIXED: applymap replaced with map
+    styled_credibility = credibility_data.style.map(color_impact, subset=['Impact'])
     
     # Display the table
     st.dataframe(
@@ -4321,8 +4322,8 @@ elif view_option == "BERT 2026 Risk Analysis":
         else:
             return 'background-color: #10B981; color: white;'
     
-    # Apply styling
-    styled_risks = risk_data.style.applymap(style_risk_grid, subset=['Likelihood', 'Impact'])
+    # Apply styling - FIXED: applymap replaced with map
+    styled_risks = risk_data.style.map(style_risk_grid, subset=['Likelihood', 'Impact'])
     
     # Display the risk heat map
     st.dataframe(
@@ -4442,8 +4443,11 @@ elif view_option == "BERT 2026 Risk Analysis":
         ]
     })
     
+    # Apply styling - FIXED: applymap replaced with map
+    styled_lessons = lessons_data.style.map(style_risk_grid, subset=['Risk Level'])
+    
     st.dataframe(
-        lessons_data.style.applymap(style_risk_grid, subset=['Risk Level']),
+        styled_lessons,
         use_container_width=True,
         height=300,
         column_config={
@@ -4888,7 +4892,7 @@ elif view_option == "2026 Reality Check":
     
     df_comparison = pd.DataFrame(comparison_data)
     
-    # Color code the changes
+    # Color code the changes - FIXED: applymap replaced with map
     def color_change(val):
         if '▲' in str(val):
             return 'background-color: #FEF2F2; color: #DC2626; font-weight: bold;'
@@ -4901,7 +4905,8 @@ elif view_option == "2026 Reality Check":
         else:
             return ''
     
-    styled_df = df_comparison.style.applymap(color_change, subset=['2026 Update'])
+    # Apply styling - FIXED: applymap replaced with map
+    styled_df = df_comparison.style.map(color_change, subset=['2026 Update'])
     
     # Display the comparison
     st.dataframe(
@@ -5666,3 +5671,5 @@ with col2:
         </p>
     </div>
     """, unsafe_allow_html=True)
+
+
