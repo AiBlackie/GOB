@@ -2398,7 +2398,7 @@ with col2:
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Reports (2003-2023) • 
-            Dashboard Version 7.3 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Dashboard Version 8.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
             ⚠️ 15 consecutive Adverse/Disclaimer opinions (2008-2023)
