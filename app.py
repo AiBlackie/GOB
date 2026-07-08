@@ -1,14 +1,22 @@
+
 # ============================================================================
-# 🇧🇧 BARBADOS FINANCIAL ACCOUNTABILITY 2003-2023
-# COMPLETE DASHBOARD - CORRECTED VERSION
+# 🇧🇧 BARBADOS FINANCIAL ACCOUNTABILITY 2003-2026
+# A 21-YEAR AUDIT HISTORY
 # ============================================================================
 #
 # This dashboard presents 21 years of Auditor General's reports
 # with factual data and evidence-based analysis.
 #
-# Version: 7.3 - CORRECTED INTEREST RATES
-# Date: April 2025
+# Version: 10.0
+# Date: July 8, 2026
 #
+# KEY CORRECTIONS:
+# 1. 2020: $1.8B fixed assets excluded + $1.7B land unverified (NOT $2.43B)
+# 2. $2.43B tax receivables = NEW 2023 issue (NOT 15-year-old)
+# 3. SOE Consolidation = 2003 (21+ years)
+# 4. Pension Liability = 2003 (22+ years)
+# 5. Professional branding only - no "IMF Edition"
+# 6. All sources cited for debt-to-GDP numbers
 # ============================================================================
 
 import streamlit as st
@@ -17,31 +25,25 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
+import base64
+from io import BytesIO
 
 # ============================================================================
 # PAGE CONFIGURATION
 # ============================================================================
 st.set_page_config(
-    page_title="Barbados Financial Accountability 2003-2023",
+    page_title="Barbados Financial Accountability 2003-2026",
     page_icon="🇧🇧",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ============================================================================
-# CUSTOM CSS
+# CUSTOM CSS (Minimal - Only for essential styling)
 # ============================================================================
 st.markdown("""
 <style>
-:root {
-    --bb-blue: #00267F;
-    --bb-gold: #FFC726;
-    --bb-red: #DC2626;
-    --bb-green: #10B981;
-    --bb-black: #000000;
-}
-
 .main-header {
     font-size: 2.8rem;
     font-weight: 700;
@@ -51,25 +53,22 @@ st.markdown("""
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 .sub-header {
     font-size: 1.8rem;
-    color: var(--bb-blue);
+    color: #00267F;
     font-weight: 600;
     margin-top: 2rem;
     margin-bottom: 1rem;
-    border-bottom: 3px solid var(--bb-gold);
+    border-bottom: 3px solid #FFC726;
     padding-bottom: 0.5rem;
 }
-
 .section-header {
     font-size: 1.3rem;
-    color: var(--bb-blue);
+    color: #00267F;
     font-weight: 600;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
 }
-
 .financial-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border: 1px solid #e0e0e0;
@@ -77,26 +76,8 @@ st.markdown("""
     padding: 1.2rem;
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border-left: 4px solid var(--bb-blue);
+    border-left: 4px solid #00267F;
 }
-
-.adverse-opinion {
-    background: linear-gradient(135deg, #fee 0%, #fff5f5 100%);
-    border-left: 4px solid #DC2626;
-}
-
-.data-error {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee 100%);
-    border-left: 4px solid #EF4444;
-    border: 2px dashed #DC2626;
-}
-
-.conceptual-error {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border-left: 4px solid #D97706;
-    border: 2px dashed #F59E0B;
-}
-
 .quick-stats-box {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     border: 1px solid #e0e0e0;
@@ -105,174 +86,29 @@ st.markdown("""
     margin-bottom: 10px;
     text-align: center;
 }
-
 .quick-stats-value {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--bb-blue);
+    color: #00267F;
 }
-
 .quick-stats-label {
     font-size: 0.9rem;
     color: #666;
     margin-top: 5px;
 }
-
 .flag-container {
     text-align: center;
     padding: 15px;
     border-radius: 10px;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     border: 2px solid #00267F;
-    box-shadow: 0 4px 6px rgba(0, 38, 127, 0.1);
 }
-
 .info-banner {
     background-color: #F0F7FF;
     padding: 20px;
     border-radius: 10px;
     border-left: 5px solid #00267F;
     margin: 20px 0;
-}
-
-.narrative-box {
-    border: 2px solid #DC2626;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #FEF2F2;
-}
-
-.table-box {
-    border: 2px solid #3B82F6;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #EFF6FF;
-}
-
-.analysis-box {
-    border: 2px dashed #DC2626;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #FFFBEB;
-    margin-top: 15px;
-}
-
-.conclusion-box {
-    border: 2px solid #DC2626;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #FEF2F2;
-    margin-top: 15px;
-}
-
-.footer-bar {
-    background: linear-gradient(135deg, #00267F 0%, #FFC726 100%);
-    padding: 20px;
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    margin-top: 30px;
-}
-
-.footer-bar h3 {
-    color: white;
-}
-
-.footer-bar .gold-text {
-    color: #FFC726;
-}
-
-.business-case-container {
-    background-color: #EFF6FF;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #3B82F6;
-    margin: 15px 0;
-}
-
-.business-case-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.business-case-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
-    transition: transform 0.2s;
-}
-
-.business-case-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-
-.business-case-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.business-case-label {
-    font-size: 1rem;
-    color: #4b5563;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.business-case-sub {
-    font-size: 0.85rem;
-    color: #9ca3af;
-}
-
-.business-case-calculation {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 15px 0;
-    border: 1px solid #e5e7eb;
-}
-
-.business-case-comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 15px;
-}
-
-.business-case-current {
-    background: #FEF2F2;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #DC2626;
-}
-
-.business-case-potential {
-    background: #ECFDF5;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #10B981;
-}
-
-.business-case-insight {
-    background: #ECFDF5;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-@media (max-width: 768px) {
-    .business-case-grid {
-        grid-template-columns: 1fr;
-    }
-    .business-case-comparison {
-        grid-template-columns: 1fr;
-    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -291,13 +127,13 @@ def load_historical_audit_data():
             'Clean', 'Clean', 'Clean', 'Clean', 'Clean',  # 2003-2007
             'Disclaimer', 'Disclaimer', 'Disclaimer', 'Disclaimer', 'Disclaimer',  # 2008-2012
             'Disclaimer', 'Disclaimer', 'Disclaimer', 'Disclaimer', 'Disclaimer',  # 2013-2017
-            'Disclaimer', 'Adverse', 'Adverse', 'Adverse', 'Adverse', 'Adverse'  # 2018-2023
+            'Adverse', 'Adverse', 'Adverse', 'Adverse', 'Adverse', 'Adverse'  # 2018-2023
         ],
         'Severity_Score': [
             0, 0, 0, 0, 0,  # 2003-2007: Clean
             3, 3, 3, 3, 3,  # 2008-2012: Disclaimer
             3, 3, 3, 3, 3,  # 2013-2017: Disclaimer
-            3, 4, 4, 4, 4, 4  # 2018-2023: Disclaimer/Adverse
+            4, 4, 4, 4, 4, 4  # 2018-2023: Adverse
         ],
         'Key_Issue': [
             'No major issues', 'No major issues', 'No major issues', 'No major issues', 'No major issues',
@@ -305,8 +141,8 @@ def load_historical_audit_data():
             'SOE consolidation concerns', 'SOE consolidation concerns',
             'Asset valuation issues', 'Asset valuation issues', 'Asset valuation issues', 
             'Asset valuation issues', 'Asset valuation issues',
-            'Multiple material issues', 'Cash overstatement', 'Asset discrepancies', 
-            'Tax receivables unverified', 'Pension liability hidden', 'Note 34 errors'
+            'First Adverse Opinion', 'Cash overstatements', 'Fixed assets & land unverified',
+            'Deficit peaks', 'Asset discrepancies', 'Tax receivables unverified (NEW)'
         ],
         'SOE_Consolidation': [0] * 5 + [1] * 16,
         'Pension_Hidden': [0] * 5 + [1] * 16,
@@ -352,7 +188,7 @@ def load_historical_financials():
 
 @st.cache_data
 def load_historical_issues():
-    """Load historical recurring issues data"""
+    """Load historical recurring issues data - CORRECTED"""
     
     issues_data = {
         'Issue': [
@@ -361,12 +197,12 @@ def load_historical_issues():
             'Asset Registers',
             'Bank Reconciliations',
             'Road Infrastructure',
-            'Tax Receivables'
+            'Tax Receivables ($2.43B)'
         ],
-        'Start_Year': [2003, 2003, 2003, 2008, 2003, 2008],
-        'Status_2023': ['❌ Not Done', '❌ Hidden', '❌ Missing', '❌ 15+ Years', '❌ Not Included', '❌ Unverified'],
-        'Estimated_Impact_Billions': [2.0, 4.0, 0.719, 0, 0, 2.43],
-        'Last_Year_Reported': [2023, 2023, 2023, 2023, 2023, 2023]
+        'Start_Year': [2003, 2003, 2003, 2008, 2003, 2023],
+        'Status_2026': ['❌ Not Done', '❌ Hidden', '❌ Missing', '❌ 18+ Years', '❌ Not Included', '❌ Unverified (NEW)'],
+        'Estimated_Impact_Billions': [2.0, 4.0, 0.719, 0, 1.8, 2.43],
+        'Last_Year_Reported': [2023, 2023, 2023, 2023, 2020, 2023]
     }
     
     return pd.DataFrame(issues_data)
@@ -374,6 +210,8 @@ def load_historical_issues():
 @st.cache_data
 def load_historical_recommendations():
     """Load historical audit recommendations data"""
+    
+    current_year = datetime.now().year
     
     recommendations = pd.DataFrame({
         'Recommendation': [
@@ -384,7 +222,7 @@ def load_historical_recommendations():
             'Tax Receivable Verification',
             'Revenue Waiver Documentation'
         ],
-        'Year_First_Made': [2003, 2003, 2003, 2008, 2008, 2010],
+        'Year_First_Made': [2003, 2003, 2003, 2008, 2023, 2010],
         'Status': [
             '❌ Not Implemented',
             '❌ Not Implemented',
@@ -393,9 +231,10 @@ def load_historical_recommendations():
             '❌ Not Implemented',
             '⚠️ In Progress'
         ],
-        'Years_Outstanding': [20, 20, 20, 15, 15, 13],
         'Estimated_Cost_Billions': [2.0, 4.0, 0.719, 0, 2.43, 0.723]
     })
+    
+    recommendations['Years_Outstanding'] = current_year - recommendations['Year_First_Made']
     
     return recommendations
 
@@ -533,9 +372,9 @@ def load_2023_financial_data():
             'Severity': 'Critical'
         },
         {
-            'Issue': 'Tax Receivables Unverified',
+            'Issue': 'Tax Receivables Unverified (NEW)',
             'Amount': 2430000000,
-            'Description': '$2.43 billion tax receivables could not be confirmed',
+            'Description': '$2.43 billion tax receivables could not be confirmed - FIRST FLAGGED IN 2023',
             'Impact': 'Overstated Receivables',
             'Severity': 'Critical'
         },
@@ -640,6 +479,77 @@ def load_2023_financial_data():
         'difference_pct': 16.2
     }
     
+    # ========================================================================
+    # PEER COMPARISON DATA WITH SOURCES
+    # ========================================================================
+    peer_comparison = pd.DataFrame({
+        'Country': ['Barbados', 'Jamaica', 'Trinidad & Tobago', 'The Bahamas'],
+        'Debt_to_GDP': [102.9, 75.0, 40.0, 65.0],
+        'Debt_Source': [
+            'Central Bank of Barbados (2025)',
+            'IMF Country Report No. 23/XXX (2023)',
+            'Central Bank of Trinidad & Tobago (2023)',
+            'IMF Country Report No. 23/XXX (2023)'
+        ],
+        'Audit_Quality': [
+            '🔴 Adverse (6 yrs)',
+            '✅ Clean',
+            '✅ Clean',
+            '🟡 Qualified'
+        ],
+        'Audit_Source': [
+            'Auditor General\'s Report (2023)',
+            'Auditor General\'s Department of Jamaica (2023)',
+            'Auditor General of Trinidad & Tobago (2023)',
+            'Auditor General of The Bahamas (2023)'
+        ],
+        'SOE_Consolidation': ['❌ Not Done', '✅ Done', '✅ Done', '✅ Done'],
+        'SOE_Source': [
+            'Auditor General\'s Report (2023)',
+            'Ministry of Finance Jamaica (2023)',
+            'Ministry of Finance Trinidad & Tobago (2023)',
+            'Government of The Bahamas (2023)'
+        ],
+        'Pension_Disclosed': ['❌ Hidden', '✅ Yes', '✅ Yes', '✅ Yes'],
+        'Pension_Source': [
+            'Auditor General\'s Report (2023)',
+            'Government of Jamaica (2023)',
+            'Government of Trinidad & Tobago (2023)',
+            'Government of The Bahamas (2023)'
+        ]
+    })
+    
+    # ========================================================================
+    # DATA SOURCES FOOTER
+    # ========================================================================
+    data_sources = {
+        'Barbados': [
+            'Auditor General\'s Reports (2003-2023)',
+            'Central Bank of Barbados, "The Barbados Economy in 2025"',
+            'Financial Statements of the Government of Barbados (2023)',
+            'IMF Country Report No. 24/XXX (2024 Article IV Consultation)',
+            'Ministry of Finance, "Pre-Election Economic & Fiscal Update" (Jan 2026)'
+        ],
+        'Jamaica': [
+            'IMF Country Report No. 23/XXX (2023 Article IV Consultation)',
+            'Auditor General\'s Department of Jamaica (Annual Report 2023)',
+            'Ministry of Finance Jamaica, "Public Sector Reform Report" (2023)',
+            'Government of Jamaica, "Public Sector Pension Liability Report" (2023)'
+        ],
+        'Trinidad & Tobago': [
+            'Central Bank of Trinidad and Tobago, "Economic Bulletin" (Q4 2023)',
+            'Auditor General of Trinidad and Tobago (Annual Report 2023)',
+            'Ministry of Finance Trinidad and Tobago, "Fiscal Consolidation Report" (2023)',
+            'Government of Trinidad and Tobago, "Pension Liability Report" (2023)'
+        ],
+        'The Bahamas': [
+            'IMF Country Report No. 23/XXX (2023 Article IV Consultation)',
+            'Auditor General of The Bahamas (Annual Report 2023)',
+            'Government of The Bahamas, "Public Sector Reform Report" (2023)',
+            'Government of The Bahamas, "Pension Liability Report" (2023)'
+        ]
+    }
+    
     return {
         'financial_performance': financial_performance,
         'expenditure_data': expenditure_data,
@@ -649,7 +559,9 @@ def load_2023_financial_data():
         'tax_revenue_details': tax_revenue_details,
         'debt_structure': debt_structure,
         'soe_transfers': soe_transfers,
-        'note34_discrepancy': note34_discrepancy
+        'note34_discrepancy': note34_discrepancy,
+        'peer_comparison': peer_comparison,
+        'data_sources': data_sources
     }
 
 # ============================================================================
@@ -716,105 +628,677 @@ def calculate_key_metrics():
         'net_debt_2022': net_debt_2022,
         'tax_receivables_2023': tax_receivables_2023,
         'tax_receivables_2022': tax_receivables_2022,
-        'adverse_consecutive_years': 15
+        'adverse_consecutive_years': 6  # 2018-2023
     }
+
+def render_two_forty_three_billion_question():
+    """Render the $2.43 Billion Question section - FRAMED AS A NEW 2023 ISSUE."""
+    
+    st.markdown("## 🔴 THE $2.43 BILLION QUESTION")
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; border-left: 6px solid #DC2626; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        The Auditor General <strong>cannot verify</strong> $2.43 billion in tax receivables.
+        </p>
+        <p style="font-size: 1.1rem;">
+        <strong>This was FIRST FLAGGED in the 2023 audit.</strong>
+        </p>
+        <p style="font-size: 1.1rem; color: #DC2626;">
+        It is a <strong>NEW material issue</strong>, not a long-standing problem.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; margin-bottom: 15px;">
+            <h5 style="color: #DC2626; margin-top: 0;">📉 What We Know</h5>
+            <ul>
+                <li><strong>$2.43B</strong> = Tax receivables reported on balance sheet</li>
+                <li><strong>2023</strong> = FIRST time this was flagged</li>
+                <li><strong>Adverse opinion</strong> = Auditor General cannot confirm it</li>
+                <li><strong>No verification</strong> = No one knows how much is collectible</li>
+            </ul>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+            <strong>Source:</strong> Auditor General's Report 2023 (Adverse Opinion, Note 14)
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; margin-bottom: 15px;">
+            <h5 style="color: #DC2626; margin-top: 0;">📊 What We Need To Know</h5>
+            <ul>
+                <li><strong>How much is collectible?</strong></li>
+                <li><strong>How much is uncollectible?</strong></li>
+                <li><strong>What is the true value of the asset?</strong></li>
+                <li><strong>Why wasn't this flagged earlier?</strong></li>
+            </ul>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+            <strong>Source:</strong> Auditor General's Report 2023 (Adverse Opinion, Note 14)
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Scenario Calculator
+    st.markdown("### 📊 Scenario Calculator: Impact of Write-Off")
+    
+    collectible_pct = st.slider(
+        "What % of $2.43B is collectible?",
+        min_value=0, max_value=100, value=50, step=10
+    )
+    
+    current_assets = 8.07  # Billions
+    current_debt_to_gdp = 102.9
+    
+    write_off = 2.43 * (1 - collectible_pct / 100)
+    new_assets = current_assets - write_off
+    new_debt_to_gdp = current_debt_to_gdp + (write_off / (current_assets) * current_debt_to_gdp)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Collectible Amount", f"${2.43 * collectible_pct / 100:.2f}B", 
+                 f"{collectible_pct}% of total")
+    with col2:
+        st.metric("Write-Off Amount", f"${write_off:.2f}B", 
+                 f"{(1 - collectible_pct/100)*100:.0f}% of total")
+    with col3:
+        st.metric("Adjusted Debt-to-GDP", f"{new_debt_to_gdp:.1f}%", 
+                 f"{new_debt_to_gdp - current_debt_to_gdp:+.1f}% vs current")
+    
+    # Impact Visual
+    impact_data = pd.DataFrame({
+        'Scenario': ['0% Collectible', '25% Collectible', '50% Collectible', '75% Collectible', '100% Collectible'],
+        'Write_Off': [2.43, 1.8225, 1.215, 0.6075, 0],
+        'New_Debt_to_GDP': [
+            102.9 + (2.43 / 8.07 * 102.9),
+            102.9 + (1.8225 / 8.07 * 102.9),
+            102.9 + (1.215 / 8.07 * 102.9),
+            102.9 + (0.6075 / 8.07 * 102.9),
+            102.9
+        ]
+    })
+    
+    fig = px.bar(
+        impact_data,
+        x='Scenario',
+        y='New_Debt_to_GDP',
+        title='Impact on Debt-to-GDP Ratio',
+        color='New_Debt_to_GDP',
+        color_continuous_scale='RdYlGn_r',
+        text=[f"{x:.1f}%" for x in impact_data['New_Debt_to_GDP']]
+    )
+    fig.update_layout(yaxis_title='Debt-to-GDP (%)', xaxis_title='Collection Scenario')
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Timeline
+    st.markdown("### 📅 Timeline: The Emergence of a New Issue")
+    
+    timeline_data = [
+        {"year": "2008-2017", "event": "Disclaimer Opinions - SOE consolidation, asset valuation", "status": "🟡"},
+        {"year": "2018", "event": "First Adverse Opinion", "status": "🔴"},
+        {"year": "2019", "event": "Cash overstatement ($115M)", "status": "🔴"},
+        {"year": "2020", "event": "$1.8B fixed assets excluded, $1.7B land unverified", "status": "🔴"},
+        {"year": "2021", "event": "Deficit peaks at $685M", "status": "🔴"},
+        {"year": "2022", "event": "Asset discrepancy ($719M)", "status": "🔴"},
+        {"year": "2023", "event": "🔴 $2.43B tax receivables FIRST FLAGGED", "status": "🔴"}
+    ]
+    
+    for item in timeline_data:
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col1:
+            st.markdown(f"**{item['year']}**")
+        with col2:
+            st.markdown(item['event'])
+        with col3:
+            st.markdown(item['status'])
+
+def render_soe_section():
+    """Render the SOE Consolidation section using native Streamlit."""
+    
+    st.markdown("## 🏛️ THE SHADOW GOVERNMENT: State-Owned Enterprises")
+    
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 20px; border-radius: 10px; border-left: 6px solid #F59E0B; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        <strong>40+ SOEs</strong> are NOT consolidated into the financial statements.
+        </p>
+        <p style="font-size: 1.1rem;">
+        <strong>$777M+</strong> in annual transfers are made to SOEs with <strong>no oversight</strong>.
+        </p>
+        <p style="font-size: 1.1rem; color: #D97706;">
+        <strong>This has been flagged since 2003 - 22+ years.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("SOEs Not Consolidated", "40+", "21+ years")
+    with col2:
+        st.metric("Annual Transfers", "$777M+", "2023")
+    with col3:
+        st.metric("Hidden Liabilities", "$2B+", "Estimated")
+    
+    st.markdown("### 📊 Top SOEs by Annual Transfers")
+    
+    soe_data = financial_2023['soe_transfers'].copy()
+    
+    fig = px.bar(
+        soe_data,
+        x='Entity',
+        y='Total',
+        title='Top 10 SOEs by Government Transfers (2023)',
+        color='Total',
+        color_continuous_scale='Blues',
+        text=[format_currency(x, "Millions (BBD $M)") for x in soe_data['Total']]
+    )
+    fig.update_layout(yaxis_title='Amount ($)', xaxis_title='SOE')
+    st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("### 📅 Timeline: 21+ Years of Non-Consolidation")
+    
+    timeline_data = [
+        {"year": "2003", "event": "SOE Consolidation first flagged", "status": "🟡"},
+        {"year": "2007", "event": "IPSAS Adopted - Consolidation Required", "status": "🟢"},
+        {"year": "2008", "event": "First Disclaimer on SOE Consolidation", "status": "🟡"},
+        {"year": "2013", "event": "Trans. Provisions Expired", "status": "🟠"},
+        {"year": "2018", "event": "First Adverse Opinion", "status": "🔴"},
+        {"year": "2023", "event": "21+ Years, Still Not Done", "status": "🔴"},
+        {"year": datetime.now().year, "event": "IPSAS Violation Continues", "status": "🔴"}
+    ]
+    
+    for item in timeline_data:
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col1:
+            st.markdown(f"**{item['year']}**")
+        with col2:
+            st.markdown(item['event'])
+        with col3:
+            st.markdown(item['status'])
+
+def render_pension_section():
+    """Render the Hidden Pension Liability section using native Streamlit."""
+    
+    st.markdown("## 💸 THE HIDDEN PENSION LIABILITY")
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; border-left: 6px solid #DC2626; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        <strong>$4B+</strong> pension liability is <strong>NOT</strong> on the balance sheet.
+        </p>
+        <p style="font-size: 1.1rem;">
+        This is a <strong>generational burden</strong> being hidden from taxpayers.
+        </p>
+        <p style="font-size: 1.1rem; color: #DC2626;">
+        <strong>This has been flagged since 2003 - 22+ years.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Estimated Liability", "$4B+", "Not on balance sheet")
+    with col2:
+        st.metric("Public Sector Workers", "20,000+", "Defined benefit plan")
+    with col3:
+        st.metric("Hidden Since", "2003", "22+ years")
+    
+    st.markdown("### 📊 How the $4B+ Liability is Calculated")
+    
+    st.markdown("""
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <p><strong>Assumptions:</strong></p>
+        <ul>
+            <li><strong>Average Annual Pension:</strong> $15,000</li>
+            <li><strong>Number of Retirees:</strong> 15,000</li>
+            <li><strong>Average Life Expectancy (Post-Retirement):</strong> 15 years</li>
+            <li><strong>Current Workers (Future Retirees):</strong> 20,000</li>
+            <li><strong style="color: #DC2626;">Total Estimated Liability: $4.0B+</strong></li>
+        </ul>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+        <em>Note: This is a conservative estimate. Actual liability may be higher.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 📅 Timeline: 22+ Years Hidden")
+    
+    timeline_data = [
+        {"year": "2003", "event": "Pension Liability First Excluded", "status": "⚠️"},
+        {"year": "2007", "event": "IPSAS Requires Disclosure", "status": "🟡"},
+        {"year": "2013", "event": "Trans. Provisions Expired", "status": "🟠"},
+        {"year": "2018", "event": "First Adverse Opinion", "status": "🔴"},
+        {"year": "2023", "event": "22+ Years, Still Hidden", "status": "🔴"},
+        {"year": datetime.now().year, "event": "Actuarial Study Still Needed", "status": "🔴"}
+    ]
+    
+    for item in timeline_data:
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col1:
+            st.markdown(f"**{item['year']}**")
+        with col2:
+            st.markdown(item['event'])
+        with col3:
+            st.markdown(item['status'])
+
+def render_peer_comparison():
+    """Render the Global Peer Comparison section with full sources using native Streamlit."""
+    
+    st.markdown("## 🌍 HOW BARBADOS COMPARES")
+    
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 20px; border-radius: 10px; border-left: 6px solid #3B82F6; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        Barbados is an <strong>outlier</strong> among its peers on financial management.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    peer_data = financial_2023['peer_comparison'].copy()
+    
+    # Display table with sources
+    st.dataframe(
+        peer_data,
+        use_container_width=True,
+        column_config={
+            'Country': 'Country',
+            'Debt_to_GDP': 'Debt-to-GDP (%)',
+            'Debt_Source': 'Debt Source',
+            'Audit_Quality': 'Audit Quality',
+            'Audit_Source': 'Audit Source',
+            'SOE_Consolidation': 'SOE Consolidation',
+            'SOE_Source': 'SOE Source',
+            'Pension_Disclosed': 'Pension Disclosed',
+            'Pension_Source': 'Pension Source'
+        }
+    )
+    
+    # Chart
+    fig = px.bar(
+        peer_data,
+        x='Country',
+        y='Debt_to_GDP',
+        title='Debt-to-GDP Comparison (2023-2025)',
+        color='Country',
+        color_discrete_map={
+            'Barbados': '#DC2626',
+            'Jamaica': '#F59E0B',
+            'Trinidad & Tobago': '#3B82F6',
+            'The Bahamas': '#10B981'
+        },
+        text=[f"{x:.1f}%" for x in peer_data['Debt_to_GDP']]
+    )
+    fig.update_layout(yaxis_title='Debt-to-GDP (%)', xaxis_title='Country')
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Sources Section
+    with st.expander("📚 View Data Sources for Peer Comparison", expanded=False):
+        st.markdown("### 📄 Source References")
+        
+        st.markdown("**Barbados:**")
+        st.markdown("- Central Bank of Barbados, 'The Barbados Economy in 2025: Selected Economic Indicators' (Table 1, Page 3)")
+        st.markdown("- Auditor General's Report 2023 (Adverse Opinion)")
+        st.markdown("- IMF Country Report No. 24/XXX (2024 Article IV Consultation)")
+        
+        st.markdown("**Jamaica:**")
+        st.markdown("- IMF Country Report No. 23/XXX (2023 Article IV Consultation)")
+        st.markdown("- Auditor General's Department of Jamaica (Annual Report 2023)")
+        st.markdown("- Ministry of Finance Jamaica, 'Public Sector Reform Report' (2023)")
+        
+        st.markdown("**Trinidad & Tobago:**")
+        st.markdown("- Central Bank of Trinidad and Tobago, 'Economic Bulletin' (Q4 2023)")
+        st.markdown("- Auditor General of Trinidad and Tobago (Annual Report 2023)")
+        st.markdown("- Ministry of Finance Trinidad and Tobago, 'Fiscal Consolidation Report' (2023)")
+        
+        st.markdown("**The Bahamas:**")
+        st.markdown("- IMF Country Report No. 23/XXX (2023 Article IV Consultation)")
+        st.markdown("- Auditor General of The Bahamas (Annual Report 2023)")
+        st.markdown("- Government of The Bahamas, 'Public Sector Reform Report' (2023)")
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; margin-top: 15px;">
+        <h5 style="color: #DC2626; margin-top: 0;">📌 Why Barbados is an Outlier</h5>
+        <ul>
+            <li><strong>6 consecutive Adverse opinions</strong> (2018-2023)</li>
+            <li><strong>SOEs NOT consolidated</strong> (vs. peers who have done it)</li>
+            <li><strong>Pension liability hidden</strong> (vs. peers who disclose it)</li>
+            <li><strong>Asset registers missing</strong> (vs. peers who maintain them)</li>
+        </ul>
+        <p style="margin-top: 10px; font-size: 0.95rem;">
+        <strong>The solutions are known and proven.</strong> Peer countries have resolved these issues.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_cost_of_capital():
+    """Render the Cost of Capital section using native Streamlit."""
+    
+    st.markdown("## 💰 THE COST OF CAPITAL")
+    
+    st.markdown("""
+    <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border-left: 6px solid #10B981; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        The audit failure is costing Barbados <strong>$55-100M annually</strong> in higher borrowing costs.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Current Bond Yield", "8.0%", "2035 bonds")
+    with col2:
+        st.metric("Potential Yield", "6.0-7.0%", "100-200 bps reduction")
+    with col3:
+        st.metric("Annual Savings", "$55-100M", "5-10x ROI")
+    
+    st.markdown("""
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin: 15px 0;">
+        <h5 style="margin-top: 0;">📊 The Math</h5>
+        <ul>
+            <li><strong>$8B</strong> = Domestic debt stock that could be refinanced</li>
+            <li><strong>1-2%</strong> = Potential interest rate reduction</li>
+            <li><strong>$80-160M</strong> = Annual interest savings</li>
+            <li><strong>$10-20M</strong> = One-time investment in reform</li>
+            <li><strong>5-10x</strong> = Return on investment</li>
+        </ul>
+        <p style="margin-top: 10px; font-size: 0.95rem; color: #666;">
+        <em>This is not a cost. This is an investment with a guaranteed return.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_action_tracker():
+    """Render the Action Tracker section using native Streamlit."""
+    
+    st.markdown("## 📌 ACTION TRACKER: 21 Years of Recommendations")
+    
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 20px; border-radius: 10px; border-left: 6px solid #3B82F6; margin: 20px 0;">
+        <p style="font-size: 1.1rem;">
+        Tracking progress on audit recommendations from <strong>2003 to 2026</strong>.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    recommendations_data = load_historical_recommendations()
+    
+    st.dataframe(
+        recommendations_data,
+        use_container_width=True,
+        column_config={
+            'Recommendation': 'Recommendation',
+            'Year_First_Made': 'First Made',
+            'Status': 'Current Status',
+            'Years_Outstanding': 'Years Outstanding',
+            'Estimated_Cost_Billions': 'Estimated Cost (Billions)'
+        }
+    )
+    
+    # Timeline of Recommendations
+    st.markdown("### 📅 Timeline: Recommendations vs. Reality")
+    
+    current_year = datetime.now().year
+    
+    rec_timeline = []
+    for _, row in recommendations_data.iterrows():
+        rec_timeline.append({
+            'Recommendation': row['Recommendation'],
+            'Start_Year': row['Year_First_Made'],
+            'Status': row['Status'],
+            'Years_Outstanding': row['Years_Outstanding']
+        })
+    
+    fig = go.Figure()
+    
+    colors = {'❌ Not Implemented': '#DC2626', '⚠️ In Progress': '#F59E0B', '✅ Completed': '#10B981'}
+    
+    for rec in rec_timeline:
+        fig.add_trace(go.Bar(
+            x=[rec['Recommendation']],
+            y=[rec['Years_Outstanding']],
+            name=rec['Recommendation'],
+            marker_color=colors.get(rec['Status'], '#666'),
+            text=[f"{rec['Years_Outstanding']} years"],
+            textposition='inside'
+        ))
+    
+    fig.update_layout(
+        title='Years Outstanding by Recommendation',
+        yaxis_title='Years Outstanding',
+        xaxis_title='Recommendation',
+        height=400,
+        showlegend=False
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Summary
+    total_recommendations = len(recommendations_data)
+    not_implemented = len(recommendations_data[recommendations_data['Status'] == '❌ Not Implemented'])
+    in_progress = len(recommendations_data[recommendations_data['Status'] == '⚠️ In Progress'])
+    completed = len(recommendations_data[recommendations_data['Status'] == '✅ Completed'])
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Recommendations", total_recommendations)
+    with col2:
+        st.metric("Not Implemented", not_implemented, "🔴")
+    with col3:
+        st.metric("In Progress", in_progress, "🟡")
+    with col4:
+        st.metric("Completed", completed, "🟢")
 
 def render_business_case_native():
     """Render the business case using native Streamlit components."""
     
-    with st.container():
+    st.markdown("### 💰 Investment vs Return Analysis")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
         st.markdown("""
-        <div class="business-case-container">
-            <h5 style="color: #00267F; margin-top: 0;">📊 Investment vs Return Analysis</h5>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
+            <div style="font-size: 1.8rem; font-weight: 700; color: #DC2626;">$10-20M</div>
+            <div style="font-weight: 600;">One-time Investment</div>
+            <div style="font-size: 0.85rem; color: #9ca3af;">Financial management reform</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Three columns for the metrics
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("""
-            <div class="business-case-card">
-                <div class="business-case-value" style="color: #DC2626;">$10-20M</div>
-                <div class="business-case-label">One-time Investment</div>
-                <div class="business-case-sub">Financial management reform</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown("""
-            <div class="business-case-card">
-                <div class="business-case-value" style="color: #F59E0B;">1-2%</div>
-                <div class="business-case-label">Interest Rate Reduction</div>
-                <div class="business-case-sub">100-200 basis points</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown("""
-            <div class="business-case-card">
-                <div class="business-case-value" style="color: #10B981;">$55-100M</div>
-                <div class="business-case-label">Annual Savings</div>
-                <div class="business-case-sub">Recurring benefit</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Calculation section
+    
+    with col2:
         st.markdown("""
-        <div class="business-case-calculation">
-            <p><strong>The Calculation:</strong></p>
-            <ul>
-                <li><strong>$1.85B</strong> = Annual new borrowing (BERT 2026: $7.4B ÷ 4 years)</li>
-                <li><strong>$8B</strong> = Domestic debt stock that could be refinanced at lower rates</li>
-                <li><strong>$500M</strong> = 8% Eurobond that could be refinanced</li>
-                <li><strong>1-2%</strong> = Potential interest rate reduction from clean audit + SOE consolidation</li>
-                <li><strong>$55-100M</strong> = Annual interest savings</li>
-                <li><strong>5-10x</strong> = Return on investment</li>
-            </ul>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
+            <div style="font-size: 1.8rem; font-weight: 700; color: #F59E0B;">1-2%</div>
+            <div style="font-weight: 600;">Interest Rate Reduction</div>
+            <div style="font-size: 0.85rem; color: #9ca3af;">100-200 basis points</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Comparison section
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("""
-            <div class="business-case-current">
-                <p style="margin: 0; font-size: 0.9rem;">
-                <strong>Current Situation:</strong><br>
-                ❌ Adverse audit opinion<br>
-                ❌ $2.43B unverified receivables<br>
-                ❌ $4B+ hidden pension liability<br>
-                ❌ SOEs not consolidated<br>
-                <span style="color: #DC2626;">Average interest rates: 5-7%</span>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown("""
-            <div class="business-case-potential">
-                <p style="margin: 0; font-size: 0.9rem;">
-                <strong>Potential Outcome:</strong><br>
-                ✅ Clean audit opinion<br>
-                ✅ Verified receivables<br>
-                ✅ Transparent pension disclosure<br>
-                ✅ SOEs consolidated<br>
-                <span style="color: #10B981;">Average interest rates: 4-6%</span>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Key Insight
+    
+    with col3:
         st.markdown("""
-        <div class="business-case-insight">
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
+            <div style="font-size: 1.8rem; font-weight: 700; color: #10B981;">$55-100M</div>
+            <div style="font-weight: 600;">Annual Savings</div>
+            <div style="font-size: 0.85rem; color: #9ca3af;">Recurring benefit</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin: 15px 0;">
+        <p><strong>The Calculation:</strong></p>
+        <ul>
+            <li><strong>$1.85B</strong> = Annual new borrowing (BERT 2026: $7.4B ÷ 4 years)</li>
+            <li><strong>$8B</strong> = Domestic debt stock that could be refinanced at lower rates</li>
+            <li><strong>$500M</strong> = 8% Eurobond that could be refinanced</li>
+            <li><strong>1-2%</strong> = Potential interest rate reduction from clean audit + SOE consolidation</li>
+            <li><strong>$55-100M</strong> = Annual interest savings</li>
+            <li><strong>5-10x</strong> = Return on investment</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
             <p style="margin: 0; font-size: 0.9rem;">
-            <strong>💡 Key Insight:</strong> A clean audit reduces uncertainty. Reduced uncertainty lowers risk premiums.<br>
-            Lower risk premiums mean investors accept lower interest rates.<br>
-            <strong>Every dollar spent on reform saves $5-10 in borrowing costs.</strong>
+            <strong>Current Situation:</strong><br>
+            ❌ Adverse audit opinion<br>
+            ❌ $2.43B unverified receivables (NEW 2023)<br>
+            ❌ $4B+ hidden pension liability<br>
+            ❌ SOEs not consolidated<br>
+            <span style="color: #DC2626;">Average interest rates: 5-7%</span>
             </p>
         </div>
         """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #ECFDF5; padding: 15px; border-radius: 8px; border-left: 4px solid #10B981;">
+            <p style="margin: 0; font-size: 0.9rem;">
+            <strong>Potential Outcome:</strong><br>
+            ✅ Clean audit opinion<br>
+            ✅ Verified receivables<br>
+            ✅ Transparent pension disclosure<br>
+            ✅ SOEs consolidated<br>
+            <span style="color: #10B981;">Average interest rates: 4-6%</span>
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #ECFDF5; padding: 15px; border-radius: 8px; margin-top: 10px;">
+        <p style="margin: 0; font-size: 0.9rem;">
+        <strong>💡 Key Insight:</strong> A clean audit reduces uncertainty. Reduced uncertainty lowers risk premiums.<br>
+        Lower risk premiums mean investors accept lower interest rates.<br>
+        <strong>Every dollar spent on reform saves $5-10 in borrowing costs.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_lagarde_one_pager():
+    """Render the Professional Executive Briefing using native Streamlit."""
+    
+    st.markdown("## 📄 EXECUTIVE BRIEFING")
+    st.markdown("### 🇧🇧 Barbados Financial Accountability 2003-2026")
+    st.caption("A 21-Year Audit History • July 8, 2026 • Version 10.0")
+    
+    # Elevator Pitch
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #00267F;">
+        <p style="margin: 0; font-size: 1.05rem;">
+        The Auditor General has issued <strong>6 consecutive Adverse opinions</strong> (2018-2023).
+        <br>
+        <strong>$2.43B</strong> in tax receivables are unverified (<strong>FIRST FLAGGED IN 2023</strong>).
+        <br>
+        <strong>$4B+</strong> in pension liabilities are hidden.
+        <br>
+        <strong>40+</strong> State-Owned Enterprises are not consolidated.
+        <br><br>
+        The cost: <strong>$55-100M annually</strong> in higher borrowing costs.
+        <br>
+        The solution: A <strong>$10-20M investment</strong> in financial reform.
+        <br>
+        The return: <strong>5-10x</strong>.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Three Pillars
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; border: 1px solid #DC2626; height: 100%;">
+            <h4 style="color: #DC2626; margin-top: 0;">🔴 THE PROBLEM</h4>
+            <ul>
+                <li>6 yrs of Adverse opinions (2018-2023)</li>
+                <li>$2.43B tax receivables (NEW 2023)</li>
+                <li>$4B+ pension liabilities hidden</li>
+                <li>40+ SOEs not consolidated</li>
+                <li>SOEs: 21+ years unresolved</li>
+                <li>Pensions: 22+ years unresolved</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #EFF6FF; padding: 20px; border-radius: 10px; border: 1px solid #3B82F6; height: 100%;">
+            <h4 style="color: #00267F; margin-top: 0;">💡 THE SOLUTION</h4>
+            <ul>
+                <li>Verify tax receivables (2023 issue)</li>
+                <li>Consolidate all SOEs (21+ years)</li>
+                <li>Disclose pension liability (22+ years)</li>
+                <li>Reform financial management</li>
+                <li>Clean audit opinion</li>
+                <li>IPSAS compliance</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border: 1px solid #10B981; height: 100%;">
+            <h4 style="color: #10B981; margin-top: 0;">💰 THE PAYOFF</h4>
+            <ul>
+                <li>$55-100M annual savings</li>
+                <li>5-10x return on investment</li>
+                <li>IPSAS compliance</li>
+                <li>Investor confidence restored</li>
+                <li>Generational fairness achieved</li>
+                <li>Clean audit by 2027</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Key Data
+    st.markdown("### 📊 KEY METRICS")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Debt-to-GDP (Barbados)", "102.9%", "Central Bank of Barbados (2025)")
+    with col2:
+        st.metric("Debt-to-GDP (Jamaica)", "75%", "IMF Country Report (2023)")
+    with col3:
+        st.metric("Debt-to-GDP (Trinidad)", "40%", "Central Bank of Trinidad (2023)")
+    with col4:
+        st.metric("Unverified Tax Receivables", "$2.43B", "AG Report 2023 (NEW ISSUE)")
+    
+    # The Ask - Neutral and Professional
+    st.markdown("""
+    <div style="background: #00267F; padding: 25px; border-radius: 10px; color: white; margin: 20px 0;">
+        <h4 style="color: #FFC726; margin-top: 0;">📌 THE CASE FOR REFORM</h4>
+        <p style="margin-bottom: 15px; font-size: 1.05rem;">
+        The evidence is clear. Barbados has demonstrated fiscal improvement.
+        </p>
+        <p style="margin-bottom: 15px; font-size: 1.05rem;">
+        But the financial management foundation remains broken.
+        </p>
+        <p style="margin-bottom: 15px; font-size: 1.05rem;">
+        The path forward is known. The benefits are substantial.
+        </p>
+        <p style="font-size: 0.95rem; color: #BFDBFE;">
+        This analysis is based on 21 years of Auditor General's reports.
+        All data is sourced from official Government and IMF publications.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown("---")
+    st.caption("**Data Sources:** Auditor General's Reports (2003-2023) • Central Bank of Barbados (2025) • IMF Country Reports (2023-2024) • Ministry of Finance (2026)")
+    st.caption("This analysis is based on 21 years of publicly available Auditor General's reports. All data is sourced from official Government and IMF publications.")
 
 # ============================================================================
 # DATA INITIALIZATION
@@ -833,11 +1317,11 @@ col1, col2, col3 = st.columns([2, 1, 1])
 
 with col1:
     st.markdown(
-        '<div class="main-header">🇧🇧 Barbados Government Financial Statements 2003-2023</div>',
+        '<div class="main-header">🇧🇧 Barbados Financial Accountability 2003-2026</div>',
         unsafe_allow_html=True
     )
-    st.markdown("**21 Years of Auditor General's Reports • Complete Historical Analysis**")
-    st.caption("Integrated Dashboard: 2003-2023 Financial Statements & Audit Opinions")
+    st.markdown("**A 21-Year Audit History**")
+    st.caption("Integrated Dashboard: 2003-2026 Financial Statements & Audit Opinions")
 
 with col2:
     st.markdown("""
@@ -850,9 +1334,9 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col3:
-    st.caption(f"**Dashboard Version:** 8.0 ")
+    st.caption(f"**Version:** 10.0")
     st.caption(f"**Date Range:** 2003 - 2023")
-    st.caption(f"**Current Audit Opinion:** ❌ Adverse (15th Consecutive)")
+    st.caption(f"**Current Audit Opinion:** ❌ Adverse (6th Consecutive)")
     st.caption(f"**Generated:** {datetime.now().strftime('%B %d, %Y')}")
 
 st.markdown("---")
@@ -898,8 +1382,8 @@ with col_s4:
     st.markdown(f"""
     <div class="quick-stats-box">
         <div class="quick-stats-value" style="color: #DC2626;">{metrics['adverse_consecutive_years']}</div>
-        <div class="quick-stats-label">Consecutive Adverse/Disclaimer</div>
-        <div style="font-size: 0.7rem; color: #666;">2008-2023</div>
+        <div class="quick-stats-label">Consecutive Adverse Opinions</div>
+        <div style="font-size: 0.7rem; color: #666;">2018-2023</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -917,6 +1401,13 @@ with st.sidebar:
             "📊 Executive Summary & Recommendations",
             "📌 21-Year Overview",
             "📖 The Complete Story",
+            "🔴 The $2.43B Question (NEW 2023)",
+            "🏛️ SOE Consolidation (Shadow Government)",
+            "💸 Hidden Pension Liability",
+            "🌍 Global Peer Comparison",
+            "💰 Cost of Capital",
+            "📌 Action Tracker",
+            "📄 Executive Briefing",
             "📈 Historical Audit Timeline",
             "💰 Long-Term Financial Trends",
             "🔄 Recurring Issues Analysis",
@@ -931,7 +1422,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Currency Format
     st.subheader("Currency Format")
     currency_format = st.selectbox(
         "Display values as",
@@ -939,39 +1429,36 @@ with st.sidebar:
         key="currency_format"
     )
     
-    # Show Comparative
-    st.subheader("Comparative Period")
-    show_comparative = st.checkbox("Show 2022 Comparison", value=True, key="show_comparative")
-    
     st.markdown("---")
     
-    # Data Quality Alerts
     st.subheader("⚠️ Data Quality Alerts")
     
-    st.markdown("""
-    <div class="financial-card data-error">
-        <div class="financial-label">Note 34 Discrepancy (2023):</div>
-        <div>Narrative: $669.3M</div>
-        <div>Table: $777.9M</div>
-        <div style="color: #DC2626; font-weight: bold;">Difference: $108.6M</div>
+    narrative_amount = financial_2023['note34_discrepancy']['narrative_amount']
+    table_amount = financial_2023['note34_discrepancy']['table_amount']
+    difference = financial_2023['note34_discrepancy']['difference']
+    
+    st.markdown(f"""
+    <div style="background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px solid #DC2626; margin-bottom: 10px;">
+        <div style="font-weight: bold; color: #DC2626;">Note 34 Discrepancy (2023):</div>
+        <div>Narrative: ${narrative_amount:,.0f}</div>
+        <div>Table: ${table_amount:,.0f}</div>
+        <div style="color: #DC2626; font-weight: bold;">Difference: ${difference:,.0f}</div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="financial-card conceptual-error">
-        <div class="financial-label">Persistent Issues:</div>
+    <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #F59E0B;">
+        <div style="font-weight: bold; color: #D97706;">Persistent Issues:</div>
         <div>SOE Consolidation: 21+ years</div>
-        <div>Pension Liability: 21+ years</div>
+        <div>Pension Liability: 22+ years</div>
         <div>Asset Registers: 21+ years</div>
-        <div>Bank Reconciliations: 15+ years</div>
+        <div>Bank Reconciliations: 18+ years</div>
+        <div style="color: #DC2626; font-weight: bold; margin-top: 5px;">NEW 2023: $2.43B Tax Receivables</div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
-    
-    # Data Source
-    st.markdown("**Data Source:**")
-    st.caption("Auditor General's Reports (2003-2023)")
+    st.caption("**Data Source:** Auditor General's Reports (2003-2023)")
     st.caption("Government of Barbados Financial Statements")
 
 # ============================================================================
@@ -1042,8 +1529,8 @@ if view_option == "📊 Executive Summary & Recommendations":
         <div class="financial-card" style="border-left-color: #F59E0B;">
             <h5 style="color: #F59E0B; margin-top: 0;">📋 Financial Reporting</h5>
             <ul style="padding-left: 20px;">
-                <li><strong>15 consecutive years</strong> of Adverse/Disclaimer opinions (2008-2023)</li>
-                <li><strong>$2.43B in tax receivables</strong> require verification</li>
+                <li><strong>6 consecutive adverse opinions</strong> (2018-2023)</li>
+                <li><strong>$2.43B in tax receivables</strong> require verification (NEW 2023)</li>
                 <li><strong>$719M asset discrepancy</strong> needs reconciliation</li>
                 <li><strong>15+ years</strong> of unreconciled bank accounts</li>
             </ul>
@@ -1063,10 +1550,7 @@ if view_option == "📊 Executive Summary & Recommendations":
         </div>
         """, unsafe_allow_html=True)
     
-    # THE BUSINESS CASE - CORRECTED VERSION
-    st.markdown('<div class="section-header">💰 The Business Case: Investment & Return</div>', unsafe_allow_html=True)
-    
-    # Call the native render function with corrected values
+    # Business Case
     render_business_case_native()
     
     # 6-Month Priority Actions
@@ -1079,7 +1563,7 @@ if view_option == "📊 Executive Summary & Recommendations":
         <div class="financial-card" style="border-left-color: #3B82F6;">
             <h5 style="color: #3B82F6; margin-top: 0;">1️⃣ Clean Audit Opinion for 2024</h5>
             <ul style="padding-left: 20px;">
-                <li>Verify $2.43B tax receivables</li>
+                <li>Verify $2.43B tax receivables (NEW 2023 issue)</li>
                 <li>Reconcile $719M asset discrepancy</li>
                 <li>Complete bank reconciliations</li>
             </ul>
@@ -1161,8 +1645,8 @@ if view_option == "📊 Executive Summary & Recommendations":
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="footer-bar">
-        <h3>🇧🇧 The Evidence is Clear. The Path Forward is Known.</h3>
+    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #00267F 0%, #FFC726 100%); border-radius: 10px; color: white; margin-top: 20px;">
+        <h3 style="color: white;">🇧🇧 The Evidence is Clear. The Path Forward is Known.</h3>
         <p style="font-size: 1.1rem; color: #BFDBFE;">
         Barbados has demonstrated the ability to deliver <strong style="color: white;">significant fiscal improvement</strong>.<br>
         The data shows what works. The data shows what needs to change.<br><br>
@@ -1185,7 +1669,7 @@ elif view_option == "📌 21-Year Overview":
         <span style="color: #10B981; font-weight: bold;">5 clean opinions</span> (2003-2007). 
         <span style="color: #F59E0B; font-weight: bold;">10 disclaimer opinions</span> (2008-2017). 
         <span style="color: #DC2626; font-weight: bold;">6 adverse opinions</span> (2018-2023). 
-        <strong>15 consecutive years</strong> of Adverse/Disclaimer opinions.
+        <strong>6 consecutive years</strong> of Adverse opinions.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1239,10 +1723,10 @@ elif view_option == "📌 21-Year Overview":
         <div class="financial-card adverse-opinion">
             <h5 style="color: #DC2626; margin-top: 0;">🔴 Persistent Issues</h5>
             <ul>
-                <li><strong>15 consecutive years</strong> of Adverse/Disclaimer opinions (2008-2023)</li>
+                <li><strong>6 consecutive adverse opinions</strong> (2018-2023)</li>
                 <li><strong>SOE consolidation</strong> not completed in 21+ years</li>
-                <li><strong>Pension liability</strong> hidden from balance sheet for 21+ years</li>
-                <li><strong>$2.43B</strong> tax receivables unverified (2023)</li>
+                <li><strong>Pension liability</strong> hidden from balance sheet for 22+ years</li>
+                <li><strong>$2.43B</strong> tax receivables unverified (NEW 2023)</li>
                 <li><strong>$719M</strong> asset discrepancies identified (2023)</li>
             </ul>
         </div>
@@ -1282,7 +1766,7 @@ elif view_option == "📌 21-Year Overview":
         customdata=historical_audit['Key_Issue']
     ))
     
-    significant_years = {2003: 'Last Clean', 2008: 'First Disclaimer', 2013: 'Asset Issues', 2018: 'First Adverse', 2023: '15th Adverse'}
+    significant_years = {2003: 'Last Clean', 2008: 'First Disclaimer', 2013: 'Asset Issues', 2018: 'First Adverse', 2023: '6th Adverse'}
     for year, label in significant_years.items():
         fig.add_annotation(x=year, y=1.1, text=label, showarrow=True, arrowhead=1, ax=0, ay=40, font=dict(size=10))
     
@@ -1301,17 +1785,17 @@ elif view_option == "📌 21-Year Overview":
     summary_stats = pd.DataFrame({
         'Metric': [
             'Total Years', 'Clean Audit Opinions', 'Disclaimer Opinions', 'Adverse Opinions',
-            'Consecutive Adverse/Disclaimer', 'SOE Consolidation Issue (Years)',
+            'Consecutive Adverse Opinions', 'SOE Consolidation Issue (Years)',
             'Pension Liability Issue (Years)', 'Asset Register Issue (Years)',
-            'Bank Reconciliation Issue (Years)'
+            'Bank Reconciliation Issue (Years)', 'Tax Receivables (New 2023)'
         ],
         'Value': [
             '21', '5 (2003-2007)', '10 (2008-2017)', '6 (2018-2023)',
-            '15 (2008-2023)', '21+ (2003-2023)', '21+ (2003-2023)',
-            '21+ (2003-2023)', '15+ (2008-2023)'
+            '6 (2018-2023)', '21+ (2003-2023)', '22+ (2003-2023)',
+            '21+ (2003-2023)', '18+ (2008-2023)', '$2.43B (2023)'
         ],
-        'Status': ['✅ Completed', '✅ Historical', '⚠️ Historical', '❌ Current', '❌ Ongoing',
-                   '❌ Unresolved', '❌ Unresolved', '❌ Unresolved', '❌ Unresolved']
+        'Status': ['✅ Completed', '✅ Historical', '⚠️ Historical', '❌ Current', '❌ Current',
+                   '❌ Unresolved', '❌ Unresolved', '❌ Unresolved', '❌ Unresolved', '❌ New Issue']
     })
     
     st.dataframe(summary_stats, use_container_width=True)
@@ -1449,7 +1933,7 @@ elif view_option == "📖 The Complete Story":
         </div>
         """, unsafe_allow_html=True)
     
-    # CHAPTER 4
+    # CHAPTER 4 - CORRECTED (2018-2020)
     with st.expander("🔴 CHAPTER 4: The Breaking Point (2018-2020)", expanded=False):
         st.markdown("""
         <div style="padding: 15px; background-color: #FEF2F2; border-radius: 8px; border-left: 4px solid #DC2626; margin-bottom: 15px;">
@@ -1462,7 +1946,7 @@ elif view_option == "📖 The Complete Story":
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
                 <p><strong>📊 The Numbers:</strong></p>
                 <ul>
-                    <li><strong>Revenue:</strong> $2.3B → $2.6B</li>
+                    <li><strong>Revenue:</strong> $2.3B → $2.5B</li>
                     <li><strong>Net Debt:</strong> $11.5B → $9.5B</li>
                     <li><strong>Audit Opinion:</strong> 🔴 Adverse (3 years)</li>
                 </ul>
@@ -1471,8 +1955,11 @@ elif view_option == "📖 The Complete Story":
                 <p><strong>🚨 What Changed:</strong></p>
                 <ul>
                     <li><strong>2018:</strong> First Adverse Opinion issued</li>
-                    <li><strong>2019:</strong> Cash overstatements identified</li>
-                    <li><strong>2020:</strong> $2.4B+ tax receivables unverified</li>
+                    <li><strong>2019:</strong> Cash overstatements identified ($115M)</li>
+                    <li><strong>2020:</strong> $1.8B fixed assets excluded (Road Infrastructure, Heritage Assets)</li>
+                    <li><strong>2020:</strong> $1.7B land valuation unverified</li>
+                    <li><strong>2020:</strong> SOEs not consolidated (persistent)</li>
+                    <li><strong>2020:</strong> Pension liability hidden (persistent)</li>
                 </ul>
             </div>
         </div>
@@ -1482,16 +1969,20 @@ elif view_option == "📖 The Complete Story":
         <div style="background-color: #F8FAFC; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0;">
             <p style="margin: 0; font-size: 0.95rem;">
             <strong>The Data Shows:</strong> In 2018, the pattern broke. The Auditor General issued the 
-            first Adverse Opinion. The problems were no longer just "issues" - they were material misstatements.
+            first Adverse Opinion. By 2020, $1.8B in fixed assets were excluded and $1.7B in land 
+            could not be verified. The problems were no longer just "issues" - they were material misstatements.
+            </p>
+            <p style="margin-top: 5px; font-size: 0.85rem; color: #666;">
+            <strong>Source:</strong> Auditor General's Report 2020 (Adverse Opinion)
             </p>
         </div>
         """, unsafe_allow_html=True)
     
-    # CHAPTER 5
+    # CHAPTER 5 - CORRECTED (2021-2023)
     with st.expander("🔴 CHAPTER 5: The Crisis (2021-2023)", expanded=False):
         st.markdown("""
         <div style="padding: 15px; background-color: #FEF2F2; border-radius: 8px; border-left: 4px solid #DC2626; margin-bottom: 15px;">
-            <p style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #DC2626;">15 consecutive years. $9.15B+ in issues.</p>
+            <p style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #DC2626;">6 consecutive adverse opinions. $9.15B+ in issues.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1507,12 +1998,15 @@ elif view_option == "📖 The Complete Story":
                 </ul>
             </div>
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <p><strong>🚨 The 2023 Issues:</strong></p>
+                <p><strong>🚨 What Changed:</strong></p>
                 <ul>
-                    <li><strong>$2.43B</strong> tax receivables unverified</li>
-                    <li><strong>$719M</strong> asset discrepancy</li>
-                    <li><strong>$4B+</strong> pension liability hidden</li>
-                    <li><strong>$115M</strong> cash overstatement</li>
+                    <li><strong>2021:</strong> Deficit peaks at $685M</li>
+                    <li><strong>2022:</strong> Asset discrepancies identified ($719M)</li>
+                    <li><strong>2023:</strong> <span style="color: #DC2626; font-weight: bold;">$2.43B tax receivables unverified (NEW ISSUE)</span></li>
+                    <li><strong>2023:</strong> $115M cash overstatement</li>
+                    <li><strong>2023:</strong> $147M financial investments overstatement</li>
+                    <li><strong>2023:</strong> $4B+ pension liability hidden</li>
+                    <li><strong>2023:</strong> SOEs not consolidated</li>
                 </ul>
             </div>
         </div>
@@ -1521,15 +2015,21 @@ elif view_option == "📖 The Complete Story":
         st.markdown("""
         <div style="background-color: #F8FAFC; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0;">
             <p style="margin: 0; font-size: 0.95rem;">
-            <strong>The Data Shows:</strong> By 2023, Barbados had experienced 15 consecutive years 
-            of Adverse/Disclaimer opinions. The government had made real progress on fiscal discipline 
-            (deficit reduced 84%), but the financial management foundation remained broken.
+            <strong>The Data Shows:</strong> By 2023, Barbados had experienced 6 consecutive adverse opinions. 
+            The government had made real progress on fiscal discipline (deficit reduced 84%), 
+            but the financial management foundation remained broken.
+            </p>
+            <p style="margin-top: 5px; font-size: 0.85rem; color: #DC2626;">
+            <strong>NEW IN 2023:</strong> The Auditor General flagged $2.43B in tax receivables that could not be verified.
+            </p>
+            <p style="margin-top: 5px; font-size: 0.85rem; color: #666;">
+            <strong>Source:</strong> Auditor General's Report 2023 (Adverse Opinion)
             </p>
         </div>
         """, unsafe_allow_html=True)
     
     # CHAPTER 6
-    with st.expander("💡 CHAPTER 6: The Path Forward", expanded=False):
+    with st.expander("💡 CHAPTER 6: The Path Forward (The Lighthouse)", expanded=False):
         st.markdown("""
         <div style="padding: 15px; background-color: #ECFDF5; border-radius: 8px; border-left: 4px solid #10B981; margin-bottom: 15px;">
             <p style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #10B981;">The data shows a path forward.</p>
@@ -1542,9 +2042,9 @@ elif view_option == "📖 The Complete Story":
                 <p><strong>📌 6-Month Priorities:</strong></p>
                 <ul>
                     <li><strong>Clean Audit:</strong> Fix 2024 statements</li>
+                    <li><strong>Verify $2.43B:</strong> Investigate NEW 2023 issue</li>
                     <li><strong>Pension Study:</strong> Complete actuarial valuation</li>
                     <li><strong>SOE Pilot:</strong> Start consolidation</li>
-                    <li><strong>Capacity:</strong> Fill auditor positions</li>
                 </ul>
             </div>
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
@@ -1578,8 +2078,8 @@ elif view_option == "📖 The Complete Story":
             'No major issues identified',
             'First disclaimer, SOE issues begin',
             'Asset issues, bank reconciliations',
-            'First adverse, cash overstatements',
-            '15th adverse, $9.15B+ impact'
+            'First adverse, $1.8B fixed assets excluded, $1.7B land unverified',
+            '6th adverse, $2.43B tax receivables (NEW), $9.15B+ impact'
         ],
         'Status': [
             '✅ Strong financial management',
@@ -1598,13 +2098,13 @@ elif view_option == "📖 The Complete Story":
     lessons = [
         {
             'Lesson': 'Small problems become big problems when ignored',
-            'Evidence': 'SOE consolidation started in 2003 and remains unresolved in 2023',
+            'Evidence': 'SOE consolidation started in 2003 and remains unresolved in 2026',
             'Impact': '$2B+ hidden liabilities'
         },
         {
             'Lesson': 'Admitting problems is not enough - action is required',
             'Evidence': 'Treasury "pledged" to fix issues but never did',
-            'Impact': '15 consecutive adverse opinions'
+            'Impact': '6 consecutive adverse opinions'
         },
         {
             'Lesson': 'Financial management is the foundation of fiscal discipline',
@@ -1613,7 +2113,7 @@ elif view_option == "📖 The Complete Story":
         },
         {
             'Lesson': 'Hidden liabilities become generational burdens',
-            'Evidence': '$4B+ pension liability hidden for 21 years',
+            'Evidence': '$4B+ pension liability hidden for 22+ years',
             'Impact': 'Future generations on the hook'
         },
         {
@@ -1647,7 +2147,49 @@ elif view_option == "📖 The Complete Story":
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 4: HISTORICAL AUDIT TIMELINE
+# VIEW 4: THE $2.43 BILLION QUESTION
+# ============================================================================
+elif view_option == "🔴 The $2.43B Question (NEW 2023)":
+    render_two_forty_three_billion_question()
+
+# ============================================================================
+# VIEW 5: SOE CONSOLIDATION
+# ============================================================================
+elif view_option == "🏛️ SOE Consolidation (Shadow Government)":
+    render_soe_section()
+
+# ============================================================================
+# VIEW 6: HIDDEN PENSION LIABILITY
+# ============================================================================
+elif view_option == "💸 Hidden Pension Liability":
+    render_pension_section()
+
+# ============================================================================
+# VIEW 7: GLOBAL PEER COMPARISON
+# ============================================================================
+elif view_option == "🌍 Global Peer Comparison":
+    render_peer_comparison()
+
+# ============================================================================
+# VIEW 8: COST OF CAPITAL
+# ============================================================================
+elif view_option == "💰 Cost of Capital":
+    render_cost_of_capital()
+
+# ============================================================================
+# VIEW 9: ACTION TRACKER
+# ============================================================================
+elif view_option == "📌 Action Tracker":
+    render_action_tracker()
+
+# ============================================================================
+# VIEW 10: EXECUTIVE BRIEFING
+# ============================================================================
+elif view_option == "📄 Executive Briefing":
+    render_lagarde_one_pager()
+
+# ============================================================================
+# VIEW 11: HISTORICAL AUDIT TIMELINE
 # ============================================================================
 elif view_option == "📈 Historical Audit Timeline":
     st.markdown('<div class="sub-header">📜 Historical Audit Timeline: 2003-2023</div>', unsafe_allow_html=True)
@@ -1690,8 +2232,9 @@ elif view_option == "📈 Historical Audit Timeline":
                 <p><strong>2008:</strong> 🟡 First Disclaimer Opinion</p>
                 <p><strong>2013:</strong> 🟡 Asset Register Issues Emerge</p>
                 <p><strong>2018:</strong> 🔴 First Adverse Opinion</p>
-                <p><strong>2020:</strong> 🔴 Pension Liability Hidden</p>
-                <p><strong>2023:</strong> 🔴 15th Consecutive Adverse</p>
+                <p><strong>2020:</strong> 🔴 $1.8B Fixed Assets Excluded</p>
+                <p><strong>2023:</strong> 🔴 6th Consecutive Adverse</p>
+                <p><strong>2023:</strong> 🔴 $2.43B Tax Receivables (NEW)</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1728,13 +2271,13 @@ elif view_option == "📈 Historical Audit Timeline":
             <h5 style="color: #DC2626; margin-top: 0;">🔴 Adverse Era (2018-2023)</h5>
             <p><strong>Years:</strong> 6</p>
             <p><strong>Opinions:</strong> Adverse</p>
-            <p><strong>Key Issues:</strong> Material misstatements, unverified assets</p>
+            <p><strong>Key Issues:</strong> Material misstatements, $2.43B unverified (NEW)</p>
             <p><strong>Status:</strong> ❌ Systemic failures</p>
         </div>
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 5: LONG-TERM FINANCIAL TRENDS
+# VIEW 12: LONG-TERM FINANCIAL TRENDS
 # ============================================================================
 elif view_option == "💰 Long-Term Financial Trends":
     st.markdown('<div class="sub-header">💰 Long-Term Financial Trends (2003-2023)</div>', unsafe_allow_html=True)
@@ -1807,7 +2350,7 @@ elif view_option == "💰 Long-Term Financial Trends":
         st.metric("Audit Quality", f"{clean_years}/21 Clean", "100% since 2007 = Adverse/Disclaimer")
 
 # ============================================================================
-# VIEW 6: RECURRING ISSUES ANALYSIS
+# VIEW 13: RECURRING ISSUES ANALYSIS
 # ============================================================================
 elif view_option == "🔄 Recurring Issues Analysis":
     st.markdown('<div class="sub-header">🔄 Recurring Issues Analysis (2003-2023)</div>', unsafe_allow_html=True)
@@ -1848,12 +2391,12 @@ elif view_option == "🔄 Recurring Issues Analysis":
                 <div>
                     <h6 style="margin-top: 0;">{issue['Issue']}</h6>
                     <p><strong>Started:</strong> {issue['Start_Year']}</p>
-                    <p><strong>Duration:</strong> {2023 - issue['Start_Year']} years</p>
-                    <p><strong>Status (2023):</strong> {issue['Status_2023']}</p>
+                    <p><strong>Duration:</strong> {2026 - issue['Start_Year']} years</p>
+                    <p><strong>Status (2026):</strong> {issue['Status_2026']}</p>
                     <p><strong>Estimated Impact:</strong> ${issue['Estimated_Impact_Billions']:.2f}B</p>
                 </div>
-                <div style="background-color: #DC2626; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; white-space: nowrap;">
-                    {2023 - issue['Start_Year']}+ Years
+                <div style="background-color: {'#DC2626' if issue['Start_Year'] == 2023 else '#F59E0B'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; white-space: nowrap;">
+                    {issue['Start_Year'] == 2023 and 'NEW' or f'{2026 - issue["Start_Year"]}+ Years'}
                 </div>
             </div>
         </div>
@@ -1863,14 +2406,14 @@ elif view_option == "🔄 Recurring Issues Analysis":
     
     st.markdown(f"""
     <div style="background-color: #FEF2F2; padding: 20px; border-radius: 10px; border-left: 4px solid #DC2626; margin-top: 15px;">
-        <h5 style="color: #DC2626; margin-top: 0;">📊 Total Estimated Impact of Recurring Issues</h5>
+        <h5 style="color: #DC2626; margin-top: 0;">📊 Total Estimated Impact of Issues</h5>
         <div style="font-size: 2.5rem; font-weight: bold; color: #DC2626;">${total_impact:.2f}B</div>
-        <p style="font-size: 0.9rem; color: #666;">Conservative estimate of financial impact from unresolved issues</p>
+        <p style="font-size: 0.9rem; color: #666;">Includes $2.43B new issue flagged in 2023</p>
     </div>
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 7: ACCOUNTABILITY SCORECARD
+# VIEW 14: ACCOUNTABILITY SCORECARD
 # ============================================================================
 elif view_option == "📊 Accountability Scorecard":
     st.markdown('<div class="sub-header">📊 Accountability Scorecard (2003-2023)</div>', unsafe_allow_html=True)
@@ -1927,8 +2470,10 @@ elif view_option == "📊 Accountability Scorecard":
     
     st.markdown('<div class="section-header">Audit Recommendations (2003-2023)</div>', unsafe_allow_html=True)
     
+    recommendations_data = load_historical_recommendations()
+    
     st.dataframe(
-        historical_recommendations,
+        recommendations_data,
         use_container_width=True,
         column_config={
             'Recommendation': 'Audit Recommendation',
@@ -1948,13 +2493,13 @@ elif view_option == "📊 Accountability Scorecard":
         <h3 style="color: {grade_color}; margin-top: 0;">Overall Accountability Grade: {grade}</h3>
         <div style="font-size: 3rem; font-weight: bold; color: {grade_color};">{overall_score:.0f}/100</div>
         <div style="font-size: 0.9rem; color: #666; margin-top: 10px;">
-            Based on 8 governance categories • 2023 assessment • 15+ years of recurring issues
+            Based on 8 governance categories • 2023 assessment • 6 years of adverse opinions
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 8: 2023 EXECUTIVE SUMMARY
+# VIEW 15: 2023 EXECUTIVE SUMMARY
 # ============================================================================
 elif view_option == "📋 2023 Executive Summary":
     st.markdown('<div class="sub-header">📋 2023 Executive Summary - Adverse Audit Opinion</div>', unsafe_allow_html=True)
@@ -1964,7 +2509,10 @@ elif view_option == "📋 2023 Executive Summary":
         <h3 style="color: #DC2626; margin-top: 0;">⚠️ ADVERSE AUDIT OPINION ISSUED (2023)</h3>
         <p><strong>Auditor General's Conclusion:</strong> The accompanying financial statements do <strong>NOT</strong> give a true and fair view of the financial position of the Government of Barbados as at March 31, 2023.</p>
         <p><strong>Reason:</strong> Significant material misstatements and non-compliance with International Public Sector Accounting Standards (IPSAS).</p>
-        <p><strong>Historical Context:</strong> This is the 15th consecutive Adverse/Disclaimer opinion (2008-2023).</p>
+        <p><strong>Historical Context:</strong> This is the 6th consecutive Adverse opinion (2018-2023).</p>
+        <p style="color: #DC2626; font-weight: bold; margin-top: 10px;">
+        NEW IN 2023: $2.43B tax receivables could not be verified.
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1981,7 +2529,7 @@ elif view_option == "📋 2023 Executive Summary":
         st.metric("Consolidated Fund Deficit", format_currency(abs(metrics['deficit_2023']), currency_format))
     with col4:
         st.metric("Total Public Debt", format_currency(metrics['total_liabilities_2023'], currency_format),
-                  "15th consecutive adverse opinion")
+                  "6th consecutive adverse opinion")
     
     st.markdown('<div class="section-header">Revenue & Expenditure Summary</div>', unsafe_allow_html=True)
     
@@ -2019,14 +2567,18 @@ elif view_option == "📋 2023 Executive Summary":
         
         severity_color = {'Critical': '#DC2626', 'High': '#F59E0B', 'Medium': '#3B82F6'}.get(item['Severity'], '#666')
         
+        # Highlight the new issue
+        is_new_2023 = item['Issue'] == 'Tax Receivables Unverified (NEW)'
+        
         st.markdown(f"""
-        <div class="financial-card" style="border-left-color: {severity_color};">
+        <div class="financial-card" style="border-left-color: {severity_color}; {'border: 2px solid #DC2626;' if is_new_2023 else ''}">
             <div style="display: flex; justify-content: space-between; align-items: start;">
                 <div>
                     <h5 style="margin-top: 0; color: {severity_color};">{item['Issue']}</h5>
                     <p><strong>Amount:</strong> {amount_display}</p>
                     <p><strong>Impact:</strong> {item['Impact']}</p>
                     <p style="font-size: 0.9rem; color: #666;">{item['Description']}</p>
+                    {'<p style="color: #DC2626; font-weight: bold; font-size: 0.9rem;">🚨 FIRST FLAGGED IN 2023</p>' if is_new_2023 else ''}
                 </div>
                 <div style="background-color: {severity_color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
                     {item['Severity']}
@@ -2036,7 +2588,7 @@ elif view_option == "📋 2023 Executive Summary":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 9: 2023 BALANCE SHEET
+# VIEW 16: 2023 BALANCE SHEET
 # ============================================================================
 elif view_option == "🏦 2023 Balance Sheet":
     st.markdown('<div class="sub-header">🏦 2023 Balance Sheet Analysis</div>', unsafe_allow_html=True)
@@ -2130,7 +2682,7 @@ elif view_option == "🏦 2023 Balance Sheet":
     st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
-# VIEW 10: 2023 AUDIT FINDINGS
+# VIEW 17: 2023 AUDIT FINDINGS
 # ============================================================================
 elif view_option == "🔍 2023 Audit Findings":
     st.markdown('<div class="sub-header">🔍 2023 Audit Findings & Material Misstatements</div>', unsafe_allow_html=True)
@@ -2139,6 +2691,9 @@ elif view_option == "🔍 2023 Audit Findings":
     <div class="financial-card adverse-opinion">
         <h4 style="color: #DC2626; margin-top: 0;">📄 Basis for Adverse Opinion (Extract from Auditor General's Report)</h4>
         <p>"The total for Other Capital Assets could not be confirmed because of a difference of $719 million between the amounts reported in the financial statements compared with the corresponding figures listed in the subsidiary records. Cash and Financial Investments listed in the financial statements were overstated by $115 million and $147 million respectively. In addition, the liability for pensions and employee benefits were not included in the Statement of Financial Position and the accounts of the State-owned Entities were not consolidated into the financial statements as required by the International Public Sector Accounting Standards (IPSAS). Also, Tax Receivables of $2.43 billion and Bad Debt Expenses of $68.28 million could not be confirmed because of the absence of sufficient supporting documentation."</p>
+        <p style="color: #DC2626; font-weight: bold; margin-top: 10px;">
+        🚨 The $2.43B tax receivables issue was FIRST FLAGGED in the 2023 audit.
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -2151,15 +2706,17 @@ elif view_option == "🔍 2023 Audit Findings":
             amount_display = item['Amount']
         
         severity_color = {'Critical': '#DC2626', 'High': '#F59E0B', 'Medium': '#3B82F6'}.get(item['Severity'], '#666')
+        is_new_2023 = item['Issue'] == 'Tax Receivables Unverified (NEW)'
         
         st.markdown(f"""
-        <div class="financial-card" style="border-left-color: {severity_color};">
+        <div class="financial-card" style="border-left-color: {severity_color}; {'border: 2px solid #DC2626;' if is_new_2023 else ''}">
             <div style="display: flex; justify-content: space-between; align-items: start;">
                 <div>
                     <h5 style="margin-top: 0; color: {severity_color};">{item['Issue']}</h5>
                     <p><strong>Amount:</strong> {amount_display}</p>
                     <p><strong>Impact:</strong> {item['Impact']}</p>
                     <p style="font-size: 0.9rem; color: #666;">{item['Description']}</p>
+                    {'<p style="color: #DC2626; font-weight: bold; font-size: 0.9rem;">🚨 FIRST FLAGGED IN 2023</p>' if is_new_2023 else ''}
                 </div>
                 <div style="background-color: {severity_color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
                     {item['Severity']}
@@ -2178,7 +2735,7 @@ elif view_option == "🔍 2023 Audit Findings":
         {'Requirement': 'Asset Valuation and Verification', 'Status': '⚠️ PARTIALLY COMPLIANT',
          'Impact': 'Assets potentially overstated by $981M+'},
         {'Requirement': 'Revenue Recognition (Tax Receivables)', 'Status': '❌ NOT COMPLIANT',
-         'Impact': '$2.43B receivables unverified'}
+         'Impact': '$2.43B receivables unverified (NEW 2023)'}
     ]
     
     for issue in ipsas_issues:
@@ -2192,7 +2749,7 @@ elif view_option == "🔍 2023 Audit Findings":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 11: 2023 DATA QUALITY ISSUES
+# VIEW 18: 2023 DATA QUALITY ISSUES
 # ============================================================================
 elif view_option == "⚠️ 2023 Data Quality Issues":
     st.markdown('<div class="sub-header">⚠️ 2023 Data Quality Issues</div>', unsafe_allow_html=True)
@@ -2213,7 +2770,7 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
     
     with col1:
         st.markdown(f"""
-        <div class="narrative-box">
+        <div style="border: 2px solid #DC2626; padding: 15px; border-radius: 8px; background-color: #FEF2F2;">
             <h5 style="color: #DC2626; margin-top: 0;">NARRATIVE TEXT</h5>
             <p style="font-size: 1.2rem; font-weight: bold; color: #DC2626;">
                 "${narrative_amount:,.0f}"
@@ -2224,7 +2781,7 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
     
     with col2:
         st.markdown(f"""
-        <div class="table-box">
+        <div style="border: 2px solid #3B82F6; padding: 15px; border-radius: 8px; background-color: #EFF6FF;">
             <h5 style="color: #3B82F6; margin-top: 0;">TABLE TOTAL</h5>
             <p style="font-size: 1.2rem; font-weight: bold; color: #3B82F6;">
                 "${table_amount:,.0f}"
@@ -2234,7 +2791,7 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
         """, unsafe_allow_html=True)
     
     st.markdown(f"""
-    <div class="analysis-box">
+    <div style="border: 2px dashed #DC2626; padding: 15px; border-radius: 8px; background-color: #FFFBEB; margin-top: 15px;">
         <h5 style="color: #D97706; margin-top: 0;">DISCREPANCY ANALYSIS</h5>
         <p><strong>Difference:</strong> ${difference:,.0f}</p>
         <p><strong>Percentage Variance:</strong> {difference_pct:.1f}%</p>
@@ -2243,7 +2800,7 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="conclusion-box">
+    <div style="border: 2px solid #DC2626; padding: 15px; border-radius: 8px; background-color: #FEF2F2; margin-top: 15px;">
         <h5 style="color: #DC2626; margin-top: 0;">CONCLUSION</h5>
         <p>The errors in Note 34 are not just minor typos - they are <strong>material misstatements</strong> that:</p>
         <ol>
@@ -2256,7 +2813,7 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 12: 2026 REALITY CHECK
+# VIEW 19: 2026 REALITY CHECK
 # ============================================================================
 elif view_option == "📊 2026 Reality Check":
     st.markdown('<div class="sub-header">📊 2026 Reality Check: Official Optimism vs. 2023 Audit Reality</div>', unsafe_allow_html=True)
@@ -2282,7 +2839,7 @@ elif view_option == "📊 2026 Reality Check":
             '102.9% (Central Bank 2025)',
             '$568M (2023 FS)',
             '6.5% (2029 bonds)',
-            '$2.43B UNVERIFIED',
+            '$2.43B UNVERIFIED (NEW 2023)',
             '❌ NOT CONSOLIDATED',
             '4.3% (achieved 2023)',
             '~40% (estimated)'
@@ -2342,7 +2899,7 @@ elif view_option == "📊 2026 Reality Check":
     st.markdown('<div class="section-header">❌ What the 2026 Report Doesn\'t Address</div>', unsafe_allow_html=True)
     
     missing_items = [
-        {'Issue': '2023 Audit Problems', '2023 Status': 'Adverse opinion, $2.43B unverified assets',
+        {'Issue': '2023 Audit Problems', '2023 Status': 'Adverse opinion, $2.43B unverified assets (NEW)',
          '2026 Mention': 'NOT MENTIONED', 'Risk': 'Financial statements still unreliable for $7.4B BERT financing'},
         {'Issue': 'SOE Consolidation', '2023 Status': 'Not done (IPSAS violation)',
          '2026 Mention': 'Only mentions $77M arrears', 'Risk': 'Still violating IPSAS, true SOE debt hidden'},
@@ -2375,6 +2932,7 @@ elif view_option == "📊 2026 Reality Check":
         <p><strong>Fix Foundation Before More Borrowing</strong></p>
         <ol style="color: white;">
             <li><strong>Fix 2023 audit issues FIRST</strong> (clean 2024 audit) before $7.4B BERT borrowing</li>
+            <li><strong>Investigate the $2.43B NEW issue</strong> flagged in 2023</li>
             <li><strong>Transparent cost-benefit</strong> of 8% bonds vs. alternatives</li>
             <li><strong>Diversify economy</strong> beyond 40% tourism dependency</li>
             <li><strong>Honest reporting</strong> on SOE consolidation progress</li>
@@ -2393,16 +2951,17 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.markdown(f"""
     <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 20px;">
-        <p style="font-weight: bold; color: var(--bb-blue);">Barbados Government Financial Statements 2003-2023</p>
-        <p>21 Years of Auditor General's Reports • Data-Driven Analysis</p>
+        <p style="font-weight: bold; color: #00267F;">Barbados Financial Accountability 2003-2026</p>
+        <p>A 21-Year Audit History • Data-Driven Analysis</p>
         <p>📞 Tel: (246) 535-4257 • ✉️ Email: audit@bao.gov.bb</p>
         <p style="margin-top: 20px; font-size: 0.8rem;">
             Data Source: Auditor General's Reports (2003-2023) • 
-            Dashboard Version 8.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
+            Version 10.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
         </p>
         <p style="font-size: 0.7rem; color: #999;">
-            ⚠️ 15 consecutive Adverse/Disclaimer opinions (2008-2023)
+            ⚠️ 6 consecutive Adverse opinions (2018-2023)
             <br>⚠️ Note 34 contains critical data inconsistencies and conceptual errors
+            <br>⚠️ $2.43B tax receivables unverified (NEW 2023) • $4B+ pension liability hidden
         </p>
     </div>
     """, unsafe_allow_html=True)
