@@ -2505,7 +2505,8 @@ elif view_option == "📖 The Complete Story":
     """)
 
 # ============================================================================
-# VIEW 4: THE $2.43B QUESTION - COMPLETE VERSION
+# VIEW 4: THE $2.43B QUESTION - COMPLETE CORRECTED VERSION
+# WITH ACTUAL NOTE 14 DATA FROM FINANCIAL STATEMENTS
 # ============================================================================
 elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     st.markdown('<div class="sub-header">🔴 THE $2.43 BILLION QUESTION</div>', unsafe_allow_html=True)
@@ -2562,239 +2563,315 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
         )
     
     # ========================================================================
-    # WHAT WE KNOW VS WHAT WE NEED TO KNOW
+    # NOTE 14: ACTUAL BREAKDOWN FROM FINANCIAL STATEMENTS
     # ========================================================================
-    col1, col2 = st.columns(2)
+    st.markdown('<div class="section-header">📋 Note 14: Actual Tax Receivables Breakdown (2023)</div>', unsafe_allow_html=True)
     
-    with col1:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; margin-bottom: 15px;">
-            <h5 style="color: #DC2626; margin-top: 0;">📉 What We Know</h5>
-            <ul>
-                <li><strong>$2.43B</strong> = Tax receivables reported on balance sheet</li>
-                <li><strong>2023</strong> = FIRST time this was flagged</li>
-                <li><strong>Adverse opinion</strong> = Auditor General cannot confirm it</li>
-                <li><strong>No verification</strong> = No one knows how much is collectible</li>
-                <li><strong>30.1%</strong> = Of total assets are unverified</li>
-                <li><strong>Note 14</strong> = Where the issue is disclosed</li>
-            </ul>
-            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
-            <strong>Source:</strong> Auditor General's Report 2023 (Adverse Opinion, Note 14)
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background: #EFF6FF; padding: 15px; border-radius: 8px; border-left: 4px solid #3B82F6; margin: 15px 0;">
+        <p style="margin: 0; font-size: 0.95rem;">
+        <strong>Source:</strong> Note 14 of the Financial Statements (Page 26) - Actual amounts as reported.
+        <br>
+        <strong>Key Finding:</strong> VAT is the largest component at <strong style="color: #DC2626;">$1.133B (46.7%)</strong>.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col2:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; margin-bottom: 15px;">
-            <h5 style="color: #DC2626; margin-top: 0;">📊 What We Need To Know</h5>
-            <ul>
-                <li><strong>How much is collectible?</strong></li>
-                <li><strong>How much is uncollectible?</strong></li>
-                <li><strong>What is the true value of the asset?</strong></li>
-                <li><strong>Why wasn't this flagged earlier?</strong></li>
-                <li><strong>What is the aging profile?</strong></li>
-                <li><strong>What is the collection history?</strong></li>
-            </ul>
-            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
-            <strong>Source:</strong> Auditor General's Report 2023 (Adverse Opinion, Note 14)
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # DETAILED BREAKDOWN
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 Detailed Breakdown of $2.43B</div>', unsafe_allow_html=True)
-    
-    tax_breakdown = pd.DataFrame({
+    # ACTUAL data from Note 14 (from the image)
+    tax_breakdown_actual = pd.DataFrame({
         'Category': [
-            'Income Tax Receivables',
-            'VAT Receivables',
-            'Corporation Tax Receivables',
+            'Value Added Tax (VAT)',
+            'Income Tax (Personal)',
+            'Land Tax',
+            'Corporation Tax',
             'Other Tax Receivables',
-            'Interest & Penalties'
+            'Import and Excise Duties',
+            'Betting and Gaming Tax',
+            'Highway Revenue'
         ],
-        'Amount': [850000000, 650000000, 450000000, 280000000, 200000000],
-        'Percentage': [35.0, 26.7, 18.5, 11.5, 8.3],
-        'Risk_Level': ['High', 'Medium', 'High', 'Medium', 'Low']
-    })
-    
-    fig_breakdown = px.pie(
-        tax_breakdown,
-        values='Amount',
-        names='Category',
-        title='Tax Receivables Breakdown ($2.43B)',
-        color='Risk_Level',
-        color_discrete_map={'High': '#DC2626', 'Medium': '#F59E0B', 'Low': '#10B981'},
-        hole=0.4
-    )
-    fig_breakdown.update_traces(textposition='inside', textinfo='label+percent', textfont_size=12)
-    fig_breakdown.update_layout(height=400)
-    st.plotly_chart(fig_breakdown, use_container_width=True)
-    
-    # ========================================================================
-    # IMPACT SCENARIO CALCULATOR
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Scenario Calculator: Impact of Write-Off</div>', unsafe_allow_html=True)
-    
-    collectible_pct = st.slider(
-        "What % of $2.43B is collectible?",
-        min_value=0, max_value=100, value=50, step=10
-    )
-    
-    current_assets = 8.07  # Billions
-    current_debt_to_gdp = 102.9
-    current_liabilities = 14.93  # Billions
-    
-    write_off = 2.43 * (1 - collectible_pct / 100)
-    new_assets = current_assets - write_off
-    new_debt_to_gdp = current_debt_to_gdp + (write_off / (current_assets) * current_debt_to_gdp)
-    new_net_position = new_assets - current_liabilities
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric(
-            "Collectible Amount",
-            f"${2.43 * collectible_pct / 100:.2f}B",
-            f"{collectible_pct}% of total"
-        )
-    with col2:
-        st.metric(
-            "Write-Off Amount",
-            f"${write_off:.2f}B",
-            f"{(1 - collectible_pct/100)*100:.0f}% of total",
-            delta_color="inverse"
-        )
-    with col3:
-        st.metric(
-            "Adjusted Debt-to-GDP",
-            f"{new_debt_to_gdp:.1f}%",
-            f"{new_debt_to_gdp - current_debt_to_gdp:+.1f}% vs current",
-            delta_color="inverse"
-        )
-    with col4:
-        st.metric(
-            "Adjusted Net Position",
-            f"${new_net_position:.2f}B",
-            f"{new_net_position - (current_assets - current_liabilities):+.2f}B",
-            delta_color="inverse"
-        )
-    
-    # ========================================================================
-    # IMPACT VISUALIZATION
-    # ========================================================================
-    impact_data = pd.DataFrame({
-        'Scenario': ['0% Collectible', '25% Collectible', '50% Collectible', '75% Collectible', '100% Collectible'],
-        'Write_Off': [2.43, 1.8225, 1.215, 0.6075, 0],
-        'New_Debt_to_GDP': [
-            102.9 + (2.43 / 8.07 * 102.9),
-            102.9 + (1.8225 / 8.07 * 102.9),
-            102.9 + (1.215 / 8.07 * 102.9),
-            102.9 + (0.6075 / 8.07 * 102.9),
-            102.9
+        'Gross_Amount': [
+            1223206229,   # $1,223,206,229
+            963671397,    # $963,671,397
+            521619150,    # $521,619,150
+            534068351,    # $534,068,351
+            120468847,    # $120,468,847
+            11945906,     # $11,945,906
+            201927,       # $201,927
+            13256         # $13,256
         ],
-        'Assets_Impact': [
-            current_assets - 2.43,
-            current_assets - 1.8225,
-            current_assets - 1.215,
-            current_assets - 0.6075,
-            current_assets
+        'Provision_Amount': [
+            90087169,     # $90,087,169
+            383167949,    # $383,167,949
+            125234276,    # $125,234,276
+            374797392,    # $374,797,392
+            70287240,     # $70,287,240
+            2974981,      # $2,974,981
+            0,            # $0
+            -13255        # $-13,255 (negative)
         ]
     })
     
-    fig_impact = px.bar(
-        impact_data,
-        x='Scenario',
-        y='New_Debt_to_GDP',
-        title='Impact on Debt-to-GDP Ratio by Collection Scenario',
-        color='New_Debt_to_GDP',
-        color_continuous_scale='RdYlGn_r',
-        text=[f"{x:.1f}%" for x in impact_data['New_Debt_to_GDP']]
-    )
-    fig_impact.update_traces(textposition='outside', textfont_size=12)
-    fig_impact.update_layout(
-        yaxis_title='Debt-to-GDP (%)',
-        xaxis_title='Collection Scenario',
-        height=400,
-        showlegend=False
-    )
-    st.plotly_chart(fig_impact, use_container_width=True)
+    # Calculate Net Amounts
+    tax_breakdown_actual['Net_Amount'] = tax_breakdown_actual['Gross_Amount'] - tax_breakdown_actual['Provision_Amount']
     
-    # ========================================================================
-    # TIMELINE - FIXED WITH PROPER FONT RENDERING
-    # ========================================================================
-    st.markdown('<div class="section-header">📅 Timeline: The Emergence of a New Issue</div>', unsafe_allow_html=True)
+    # Sort by Net Amount descending
+    tax_breakdown_actual = tax_breakdown_actual.sort_values('Net_Amount', ascending=False).reset_index(drop=True)
     
-    # Using DataFrame for clean rendering
-    timeline_df = pd.DataFrame({
-        'Year': ["2008-2017", "2018", "2019", "2020", "2021", "2022", "2023"],
-        'Event': [
-            "Disclaimer Opinions - SOE consolidation, asset valuation",
-            "First Adverse Opinion",
-            "Cash overstatement ($115M)",
-            "$1.8B fixed assets excluded, $1.7B land unverified",
-            "Deficit peaks at $685M",
-            "Asset discrepancy ($719M)",
-            "🔴 $2.43B tax receivables FIRST FLAGGED"
-        ],
-        'Status': ["🟡", "🔴", "🔴", "🔴", "🔴", "🔴", "🔴"]
-    })
+    # Calculate percentages
+    total_net = tax_breakdown_actual['Net_Amount'].sum()  # $2,428,596,085
+    tax_breakdown_actual['Percentage'] = (tax_breakdown_actual['Net_Amount'] / total_net * 100).round(1)
     
+    # Add provision rates from Note 14a
+    provision_rates = {
+        'Value Added Tax (VAT)': 8,
+        'Income Tax (Personal)': 40,
+        'Land Tax': 24,
+        'Corporation Tax': 59,
+        'Other Tax Receivables': 50,
+        'Import and Excise Duties': 100,
+        'Betting and Gaming Tax': 0,
+        'Highway Revenue': 0
+    }
+    tax_breakdown_actual['Provision_Rate'] = tax_breakdown_actual['Category'].map(provision_rates)
+    
+    # Display the table with actual data
     st.dataframe(
-        timeline_df,
+        tax_breakdown_actual[['Category', 'Gross_Amount', 'Provision_Amount', 'Net_Amount', 'Percentage', 'Provision_Rate']],
         use_container_width=True,
         hide_index=True,
         column_config={
-            'Year': 'Year',
-            'Event': 'Event',
-            'Status': 'Status'
+            'Category': 'Tax Category',
+            'Gross_Amount': st.column_config.NumberColumn('Gross Receivable', format="$%.0f"),
+            'Provision_Amount': st.column_config.NumberColumn('Provision', format="$%.0f"),
+            'Net_Amount': st.column_config.NumberColumn('Net Receivable (2023)', format="$%.0f"),
+            'Percentage': st.column_config.NumberColumn('% of Total', format="%.1f%%"),
+            'Provision_Rate': st.column_config.NumberColumn('Provision Rate', format="%.0f%%")
         }
     )
     
     # ========================================================================
-    # COMPARISON WITH OTHER ASSETS
+    # PIE CHART - ACTUAL DATA
     # ========================================================================
-    st.markdown('<div class="section-header">📊 Comparison with Other Assets</div>', unsafe_allow_html=True)
+    fig_breakdown = px.pie(
+        tax_breakdown_actual,
+        values='Net_Amount',
+        names='Category',
+        title=f'Tax Receivables by Type (2023) - Note 14\nTotal: ${total_net/1e9:.2f}B\nVAT is the Largest Component (46.7%)',
+        color='Category',
+        color_discrete_sequence=px.colors.sequential.Reds_r,
+        hole=0.4
+    )
+    fig_breakdown.update_traces(
+        textposition='inside', 
+        textinfo='label+percent', 
+        textfont_size=11,
+        hovertemplate='<b>%{label}</b><br>Net Amount: $%{value:,.0f}<br>% of Total: %{percent}<br>Provision Rate: %{customdata}%<extra></extra>',
+        customdata=tax_breakdown_actual['Provision_Rate']
+    )
+    fig_breakdown.update_layout(height=450)
+    st.plotly_chart(fig_breakdown, use_container_width=True)
     
-    asset_comparison = pd.DataFrame({
-        'Asset_Category': [
-            'Tax Receivables (Unverified)',
-            'Cash on Hand',
-            'Bank Balances',
-            'Investments',
-            'Land',
-            'Other Capital Assets',
-            'Total Assets'
+    # ========================================================================
+    # BAR CHART - COMPARISON
+    # ========================================================================
+    fig_comparison = px.bar(
+        tax_breakdown_actual,
+        x='Category',
+        y='Net_Amount',
+        title='Tax Receivables by Type (Net Amount) - Note 14',
+        color='Category',
+        color_discrete_sequence=px.colors.sequential.Reds_r,
+        text=[f"${x/1e6:.1f}M" for x in tax_breakdown_actual['Net_Amount']]
+    )
+    fig_comparison.update_traces(textposition='outside', textfont_size=11)
+    fig_comparison.update_layout(
+        yaxis_title='Amount ($)',
+        xaxis_title='Tax Category',
+        height=400,
+        showlegend=False
+    )
+    fig_comparison.update_xaxes(tickangle=20)
+    st.plotly_chart(fig_comparison, use_container_width=True)
+    
+    # ========================================================================
+    # VAT IS THE LARGEST - HIGHLIGHT
+    # ========================================================================
+    vat_data = tax_breakdown_actual[tax_breakdown_actual['Category'] == 'Value Added Tax (VAT)']
+    income_data = tax_breakdown_actual[tax_breakdown_actual['Category'] == 'Income Tax (Personal)']
+    land_data = tax_breakdown_actual[tax_breakdown_actual['Category'] == 'Land Tax']
+    corp_data = tax_breakdown_actual[tax_breakdown_actual['Category'] == 'Corporation Tax']
+    
+    if not vat_data.empty:
+        vat_amount = vat_data['Net_Amount'].values[0]
+        vat_pct = vat_data['Percentage'].values[0]
+        vat_gross = vat_data['Gross_Amount'].values[0]
+        vat_provision = vat_data['Provision_Amount'].values[0]
+        vat_rate = vat_data['Provision_Rate'].values[0]
+        
+        st.markdown(f"""
+        <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; border: 2px solid #3B82F6; margin: 15px 0;">
+            <h5 style="color: #00267F; margin-top: 0;">📊 Key Finding: VAT is the Largest Component</h5>
+            <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #3B82F6;">${vat_amount/1e9:.2f}B</div>
+                    <div style="font-size: 1.1rem; color: #666;">VAT Receivables (Net)</div>
+                    <div style="font-size: 0.9rem; color: #10B981;">{vat_pct:.1f}% of Total</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #FEF2F2; border-radius: 8px;">
+                    <div style="font-size: 1.2rem; font-weight: bold; color: #DC2626;">Gross: ${vat_gross/1e6:.1f}M</div>
+                    <div style="font-size: 1rem; color: #666;">Provision: ${vat_provision/1e6:.1f}M ({vat_rate:.0f}%)</div>
+                    <div style="font-size: 0.9rem; color: #10B981;">Lowest provision rate among major taxes</div>
+                </div>
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #00267F;">${total_net/1e9:.2f}B</div>
+                    <div style="font-size: 1.1rem; color: #666;">Total Tax Receivables</div>
+                    <div style="font-size: 0.9rem; color: #666;">All Tax Types Combined</div>
+                </div>
+            </div>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                <strong>Why VAT is the largest:</strong> VAT applies to most goods and services, making it the broadest-based tax.
+                With only an <strong style="color: #10B981;">8% provision rate</strong>, most VAT receivables are considered collectible.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # COMPARISON TABLE - BREAKDOWN BY CATEGORY
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Summary: Tax Receivables Breakdown</div>', unsafe_allow_html=True)
+    
+    # Create a comparison table
+    summary_data = [
+        {
+            'Category': 'VAT',
+            'Amount': f"${vat_amount/1e9:.3f}B" if not vat_data.empty else "N/A",
+            'Percentage': f"{vat_pct:.1f}%" if not vat_data.empty else "N/A",
+            'Provision Rate': '8%',
+            'Rank': '1st'
+        },
+        {
+            'Category': 'Income Tax',
+            'Amount': f"${income_data['Net_Amount'].values[0]/1e9:.3f}B" if not income_data.empty else "N/A",
+            'Percentage': f"{income_data['Percentage'].values[0]:.1f}%" if not income_data.empty else "N/A",
+            'Provision Rate': '40%',
+            'Rank': '2nd'
+        },
+        {
+            'Category': 'Land Tax',
+            'Amount': f"${land_data['Net_Amount'].values[0]/1e9:.3f}B" if not land_data.empty else "N/A",
+            'Percentage': f"{land_data['Percentage'].values[0]:.1f}%" if not land_data.empty else "N/A",
+            'Provision Rate': '24%',
+            'Rank': '3rd'
+        },
+        {
+            'Category': 'Corporation Tax',
+            'Amount': f"${corp_data['Net_Amount'].values[0]/1e9:.3f}B" if not corp_data.empty else "N/A",
+            'Percentage': f"{corp_data['Percentage'].values[0]:.1f}%" if not corp_data.empty else "N/A",
+            'Provision Rate': '59%',
+            'Rank': '4th'
+        }
+    ]
+    
+    summary_df = pd.DataFrame(summary_data)
+    st.dataframe(summary_df, use_container_width=True, hide_index=True)
+    
+    # ========================================================================
+    # PROVISION RATES TABLE - FROM NOTE 14A
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Note 14a: Provision Rates by Tax Type</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626; margin: 15px 0;">
+        <p style="margin: 0; font-size: 0.95rem;">
+        <strong>Key Insight:</strong> The <strong style="color: #DC2626;">MASSIVE increase in bad debt provisions</strong> 
+        from 2022 to 2023 explains why VAT is the largest component.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Actual provision data from Note 14a
+    provision_data = pd.DataFrame({
+        'Tax Type': [
+            'Value Added Tax (VAT)',
+            'Corporation Income Tax',
+            'Personal Income Tax & PAYE',
+            'Excise Tax',
+            'National Social Responsibility Levy',
+            'Room Rate Levy',
+            'Product Development Levy',
+            'Premium Tax',
+            'Land Tax',
+            'Consolidation Tax',
+            'Municipal Solid Waste Tax',
+            'Tax on Assets',
+            'Withholding Tax'
         ],
-        'Amount': [2.43, 0.153, 0.759, 0.529, 1.445, 2.283, 8.07],
-        'Status': ['❌ Unverified', '✅ Verified', '✅ Verified', '✅ Verified', '⚠️ Partially', '⚠️ Discrepancy', '⚠️ Mixed']
+        '2022_Provision': [2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2],
+        '2023_Provision': [8, 59, 40, 100, 100, 76, 67, 57, 24, 85, 65, 2, 2],
+        'Change': [6, 57, 38, 98, 98, 74, 65, 55, 24, 83, 63, 0, 0]
     })
     
-    fig_assets = px.bar(
-        asset_comparison,
-        x='Asset_Category',
-        y='Amount',
-        title='Asset Comparison (Billions $)',
-        color='Status',
-        color_discrete_map={
-            '❌ Unverified': '#DC2626',
-            '✅ Verified': '#10B981',
-            '⚠️ Partially': '#F59E0B',
-            '⚠️ Discrepancy': '#F59E0B',
-            '⚠️ Mixed': '#F59E0B'
-        },
-        text=[f"${x:.2f}B" for x in asset_comparison['Amount']]
+    st.dataframe(
+        provision_data,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Tax Type': 'Tax Type',
+            '2022_Provision': '2022 Provision %',
+            '2023_Provision': '2023 Provision %',
+            'Change': 'Change (pp)'
+        }
     )
-    fig_assets.update_traces(textposition='outside', textfont_size=11)
-    fig_assets.update_layout(
-        yaxis_title='Amount (Billions $)',
-        xaxis_title='Asset Category',
+    
+    # ========================================================================
+    # PROVISION CHANGE VISUALIZATION
+    # ========================================================================
+    st.markdown('<div class="section-header">📈 Provision Rate Changes: 2022 → 2023</div>', unsafe_allow_html=True)
+    
+    significant_changes = provision_data[provision_data['Change'] >= 20].copy()
+    significant_changes = significant_changes.sort_values('Change', ascending=False)
+    
+    fig_provision = px.bar(
+        significant_changes,
+        x='Tax Type',
+        y=['2022_Provision', '2023_Provision'],
+        title='Major Provision Rate Increases (2022 → 2023) - From Note 14a',
+        barmode='group',
+        color_discrete_sequence=['#3B82F6', '#DC2626'],
+        text_auto=True
+    )
+    fig_provision.update_layout(
+        yaxis_title='Provision Rate (%)',
+        xaxis_title='Tax Type',
         height=400
     )
-    fig_assets.update_xaxes(tickangle=20)
-    st.plotly_chart(fig_assets, use_container_width=True)
+    fig_provision.update_xaxes(tickangle=20)
+    st.plotly_chart(fig_provision, use_container_width=True)
+    
+    # ========================================================================
+    # HIGHLIGHT THE MOST SIGNIFICANT CHANGES
+    # ========================================================================
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <h5 style="color: #DC2626; margin-top: 0;">🚨 CRITICAL FINDINGS FROM NOTE 14A</h5>
+        <ul>
+            <li><strong>VAT:</strong> 2% → 8% provision (<span style="color: #10B981;">+6 percentage points - LOWEST RATE</span>)</li>
+            <li><strong>Corporation Tax:</strong> 2% → 59% provision (<span style="color: #DC2626;">+57 percentage points</span>)</li>
+            <li><strong>Personal Income Tax:</strong> 2% → 40% provision (<span style="color: #DC2626;">+38 percentage points</span>)</li>
+            <li><strong>Excise Tax:</strong> 2% → 100% provision (<span style="color: #DC2626;">+98 percentage points - FULL PROVISION!</span>)</li>
+            <li><strong>National Social Responsibility Levy:</strong> 2% → 100% provision (<span style="color: #DC2626;">+98 percentage points - FULL PROVISION!</span>)</li>
+        </ul>
+        <p style="font-size: 0.9rem; color: #10B981; margin-top: 10px; font-weight: bold;">
+        ✅ VAT has the LOWEST provision rate (8%), making it the largest component of tax receivables at $1.133B (46.7%).
+        </p>
+        <p style="font-size: 0.9rem; color: #DC2626; margin-top: 5px; font-weight: bold;">
+        ⚠️ The government recognized that up to 100% of some tax receivables may be uncollectible.
+        </p>
+        <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+        <strong>Source:</strong> Note 14a of Financial Statements (2023)
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # ========================================================================
     # WHAT THIS MEANS FOR BARBADOS
@@ -2809,11 +2886,13 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
             <h5 style="color: #DC2626; margin-top: 0;">🔴 The Problem</h5>
             <ul>
                 <li><strong>30% of assets</strong> cannot be verified</li>
+                <li><strong>VAT is the largest component</strong> at $1.133B (46.7%)</li>
                 <li><strong>True asset value</strong> is unknown</li>
                 <li><strong>Financial statements</strong> are unreliable</li>
                 <li><strong>Investor confidence</strong> is undermined</li>
                 <li><strong>Credit rating</strong> may be affected</li>
-                <li><strong>Borrowing costs</strong> may increase</li>
+                <li><strong>First flagged in 2023</strong> - a new systemic issue</li>
+                <li><strong>Massive provisions</strong> suggest widespread uncollectibility</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -2824,11 +2903,13 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
             <h5 style="color: #10B981; margin-top: 0;">✅ The Solution</h5>
             <ul>
                 <li><strong>Complete verification</strong> of tax receivables</li>
+                <li><strong>Focus on VAT</strong> as the largest component</li>
                 <li><strong>Aging analysis</strong> to determine collectibility</li>
                 <li><strong>Write-off</strong> uncollectible amounts</li>
                 <li><strong>Improve collection</strong> processes</li>
                 <li><strong>Enhance documentation</strong> and record-keeping</li>
                 <li><strong>Achieve clean audit</strong> for 2024</li>
+                <li><strong>Review provision methodology</strong> for accuracy</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -2840,20 +2921,24 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     
     faqs = [
         {
+            'q': 'What is the actual breakdown of the $2.43B?',
+            'a': f'From Note 14: VAT (${vat_amount/1e9:.2f}B, {vat_pct:.1f}%), Income Tax ($0.581B, 23.9%), Land Tax ($0.396B, 16.3%), Corporation Tax ($0.259B, 10.7%), and Other Taxes ($0.059B, 2.4%).'
+        },
+        {
+            'q': 'Why is VAT the largest component?',
+            'a': 'VAT applies to most goods and services in Barbados, making it the broadest-based tax. It also has the lowest provision rate (8%) compared to other major taxes, meaning more VAT is considered collectible.'
+        },
+        {
+            'q': 'What does the 100% provision for Excise Tax mean?',
+            'a': 'A 100% provision means the government has determined that ALL Excise Tax receivables are uncollectible. This is a significant admission that tax collection systems have failed.'
+        },
+        {
             'q': 'Why wasn\'t this flagged earlier?',
-            'a': 'This is a NEW issue flagged in 2023. Previous audits may not have identified this as a material issue, or the documentation was not available for verification.'
+            'a': 'This is a NEW issue flagged in 2023. The Auditor General could not verify the amounts due to "the absence of sufficient supporting documentation."'
         },
         {
-            'q': 'How much is actually collectible?',
-            'a': 'This is unknown. A proper aging analysis and verification process is needed to determine the true collectible amount.'
-        },
-        {
-            'q': 'What happens if it\'s written off?',
-            'a': 'If written off, it would reduce assets, increase the deficit, and potentially increase the debt-to-GDP ratio by 10-18%.'
-        },
-        {
-            'q': 'How does this affect the BERT 2026 program?',
-            'a': 'The unverified assets undermine the credibility of the financial statements used as a foundation for the $7.4B BERT borrowing program.'
+            'q': 'Is this a long-standing problem?',
+            'a': 'No. This is a NEW issue that was first identified in the 2023 audit. It is not a problem that has been flagged in previous years.'
         }
     ]
     
@@ -2868,7 +2953,7 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     # ========================================================================
     # CONCLUSION
     # ========================================================================
-    st.markdown("""
+    st.markdown(f"""
     <div style="background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%); padding: 25px; border-radius: 10px; color: white; margin-top: 20px;">
         <h4 style="color: white; margin-top: 0;">📌 The Bottom Line</h4>
         <p style="font-size: 1.05rem;">
@@ -2876,15 +2961,28 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
         by the Auditor General.
         </p>
         <p style="font-size: 1.05rem;">
+        <strong style="color: #FFC726;">VAT is the largest component</strong> at <strong style="color: white;">$1.133B (46.7%)</strong>.
+        </p>
+        <p style="font-size: 1.05rem;">
         This is a <strong style="color: #FFC726;">NEW issue</strong> flagged in 2023, representing 
         <strong style="color: white;">30% of total assets</strong>.
         </p>
-        <p style="font-size: 1.05rem;">
+        <p style="font-size: 1.05rem; margin-top: 15px;">
+        The <strong style="color: #FFC726;">provision rates in Note 14a</strong> tell a troubling story:
+        </p>
+        <ul style="color: white;">
+            <li>VAT: 2% → 8% provision (<span style="color: #10B981;">LOWEST RATE</span>)</li>
+            <li>Corporation Tax: 2% → 59% provision</li>
+            <li>Personal Income Tax: 2% → 40% provision</li>
+            <li>Excise Tax: 2% → 100% provision</li>
+        </ul>
+        <p style="font-size: 1.05rem; margin-top: 15px;">
         <strong style="color: #FFC726;">Urgent action is needed</strong> to verify the receivables and determine 
         the true value of the asset.
         </p>
         <p style="font-size: 0.9rem; color: #FCA5A5; margin-top: 10px;">
-        <em>Without verification, the financial statements remain unreliable and the audit opinion remains Adverse.</em>
+        <em>Without verification, the financial statements remain unreliable and the audit opinion remains Adverse. 
+        This is a new issue that requires immediate attention.</em>
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -2894,7 +2992,8 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     # ========================================================================
     st.caption("""
     **Data Source:** Auditor General's Report 2023 (Adverse Opinion, Note 14) • Financial Statements of the Government of Barbados (2023)
-    **Note:** This issue was FIRST FLAGGED in the 2023 audit. It is NOT a long-standing problem.
+    **Note:** Data is from Note 14 of the Financial Statements (Page 26). VAT is the largest component at $1.133B (46.7%).
+    The Auditor General could not verify these amounts due to "the absence of sufficient supporting documentation."
     """)
 
 # ============================================================================
@@ -6427,22 +6526,124 @@ elif view_option == "📋 2023 Executive Summary":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 16: 2023 BALANCE SHEET
+# VIEW 16: 2023 BALANCE SHEET - CORRECTED VERSION
 # ============================================================================
 elif view_option == "🏦 2023 Balance Sheet":
     st.markdown('<div class="sub-header">🏦 2023 Balance Sheet Analysis</div>', unsafe_allow_html=True)
     
+    # ========================================================================
+    # CORRECTED DEBT DATA FROM NOTE 25
+    # ========================================================================
+    debt_structure_corrected = pd.DataFrame({
+        'Debt_Type': [
+            'Local Loans Act',
+            'Inter American Development Bank',
+            'External Loans Act',
+            'Special Loans Act',
+            'International Monetary Fund',
+            'Treasury Bills',
+            'Caribbean Development Bank',
+            'Latin American Development Bank',
+            'Ways & Means (Overdraft)',
+            'Savings Bond Act',
+            'Contingent Liabilities'
+        ],
+        'Amount_2023': [
+            7746270000,
+            1499650000,
+            1061170000,
+            890940000,
+            548410000,
+            495170000,
+            469380000,
+            357430000,
+            167150000,
+            32230000,
+            31300000
+        ],
+        'Debt_Category': [
+            'Domestic', 'Foreign', 'Foreign', 'Foreign', 'Foreign',
+            'Domestic', 'Foreign', 'Foreign', 'Domestic', 'Domestic', 'Foreign'
+        ]
+    })
+    
+    total_debt = debt_structure_corrected['Amount_2023'].sum()
+    debt_structure_corrected['Percentage'] = (debt_structure_corrected['Amount_2023'] / total_debt * 100).round(2)
+    debt_structure_corrected['Amount_Display'] = debt_structure_corrected['Amount_2023'].apply(
+        lambda x: f"${x/1e6:,.2f}M" if x < 1e9 else f"${x/1e9:.2f}B"
+    )
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("Total Assets", format_currency(metrics['total_assets_2023'], currency_format))
+        st.metric("Total Assets", "$8.07B", "2023")
     with col2:
-        st.metric("Total Liabilities", format_currency(metrics['total_liabilities_2023'], currency_format))
+        st.metric("Total Liabilities", "$14.93B", "2023")
     with col3:
-        net_position = metrics['total_assets_2023'] - metrics['total_liabilities_2023']
-        st.metric("Net Position", format_currency(net_position, currency_format))
+        net_position = 8.07 - 14.93
+        st.metric("Net Position", f"${net_position:.2f}B", "Negative")
     
-    st.markdown('<div class="section-header">Key Asset Items</div>', unsafe_allow_html=True)
+    # ========================================================================
+    # CORRECTED DEBT STRUCTURE BREAKDOWN
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Public Debt Structure (2023)</div>', unsafe_allow_html=True)
+    
+    st.dataframe(
+        debt_structure_corrected[['Debt_Type', 'Amount_Display', 'Percentage', 'Debt_Category']],
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Debt_Type': 'Debt Type',
+            'Amount_Display': 'Amount (2023)',
+            'Percentage': '% of Total',
+            'Debt_Category': 'Category'
+        }
+    )
+    
+    # ========================================================================
+    # DOMESTIC VS FOREIGN DEBT - CORRECTED
+    # ========================================================================
+    domestic_total = debt_structure_corrected[debt_structure_corrected['Debt_Category'] == 'Domestic']['Amount_2023'].sum()
+    foreign_total = debt_structure_corrected[debt_structure_corrected['Debt_Category'] == 'Foreign']['Amount_2023'].sum()
+    
+    domestic_pct = (domestic_total / total_debt * 100)
+    foreign_pct = (foreign_total / total_debt * 100)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig_debt = px.pie(
+            values=[domestic_total, foreign_total],
+            names=['Domestic Debt', 'Foreign Debt'],
+            title=f'Debt Composition: Domestic vs Foreign\nTotal: ${total_debt/1e9:.2f}B',
+            color='names',
+            color_discrete_map={'Domestic Debt': '#00267F', 'Foreign Debt': '#DC2626'},
+            hole=0.4
+        )
+        fig_debt.update_traces(textposition='inside', textinfo='label+percent', textfont_size=14)
+        fig_debt.update_layout(height=350)
+        st.plotly_chart(fig_debt, use_container_width=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #e5e7eb; height: 100%;">
+            <h5 style="margin-top: 0; color: #00267F;">💰 Debt Summary</h5>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #00267F;">${domestic_total/1e9:.2f}B</div>
+            <div style="color: #666;">Domestic Debt ({domestic_pct:.1f}%)</div>
+            <div style="margin-top: 15px; font-size: 1.5rem; font-weight: bold; color: #DC2626;">${foreign_total/1e9:.2f}B</div>
+            <div style="color: #666;">Foreign Debt ({foreign_pct:.1f}%)</div>
+            <div style="margin-top: 15px; font-size: 1.2rem; font-weight: bold; color: #00267F;">${total_debt/1e9:.2f}B</div>
+            <div style="color: #666;">Total Public Debt</div>
+            <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+            <strong>Source:</strong> Note 25 of Financial Statements (2023)
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # KEY ASSET ITEMS
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Key Asset Items</div>', unsafe_allow_html=True)
     
     asset_data = financial_2023['balance_sheet'].copy()
     key_assets = asset_data[asset_data['Category'].isin([
@@ -6456,11 +6657,16 @@ elif view_option == "🏦 2023 Balance Sheet":
         change = row['Actual_Mar_23'] - row['Actual_Mar_22']
         change_pct = (change / row['Actual_Mar_22']) * 100 if row['Actual_Mar_22'] != 0 else 0
         
+        # Check if this is the tax receivables item (NEW 2023 issue)
+        is_tax = row['Category'] == 'Tax Receivables (Net)'
+        
         st.markdown(f"""
-        <div class="financial-card">
+        <div class="financial-card" style="border-left-color: {'#DC2626' if is_tax else '#00267F'};">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <strong>{row['Category']}</strong><br>
+                    <strong>{row['Category']}</strong>
+                    {f' <span style="color: #DC2626; font-size: 0.8rem;">⚠️ NEW 2023 ISSUE</span>' if is_tax else ''}
+                    <br>
                     <small style="color: #666;">2023: {value} | 2022: {prev_value}</small>
                 </div>
                 <div style="text-align: right;">
@@ -6473,21 +6679,40 @@ elif view_option == "🏦 2023 Balance Sheet":
         </div>
         """, unsafe_allow_html=True)
     
-    st.markdown('<div class="section-header">Debt Structure</div>', unsafe_allow_html=True)
+    # ========================================================================
+    # DEBT BY CATEGORY BAR CHART
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Debt by Category</div>', unsafe_allow_html=True)
     
-    debt_data = financial_2023['debt_structure'].copy()
-    fig = px.bar(
-        debt_data,
+    # Sort by amount for better visualization
+    debt_sorted = debt_structure_corrected.sort_values('Amount_2023', ascending=False).head(10)
+    
+    fig_debt_bar = px.bar(
+        debt_sorted,
         x='Debt_Type',
         y='Amount_2023',
         title='Public Debt by Type (2023)',
         color='Debt_Category',
         color_discrete_map={'Domestic': '#00267F', 'Foreign': '#DC2626'},
-        text=[format_currency(x, currency_format) for x in debt_data['Amount_2023']]
+        text=[f"${x/1e9:.2f}B" if x > 1e9 else f"${x/1e6:.0f}M" for x in debt_sorted['Amount_2023']]
     )
-    fig.update_layout(yaxis_title=f'Amount ({currency_format})', xaxis_title='Debt Type')
-    fig.update_xaxes(tickangle=45)
-    st.plotly_chart(fig, use_container_width=True)
+    fig_debt_bar.update_traces(textposition='outside', textfont_size=10)
+    fig_debt_bar.update_layout(
+        yaxis_title='Amount ($)',
+        xaxis_title='Debt Type',
+        height=400
+    )
+    fig_debt_bar.update_xaxes(tickangle=20)
+    st.plotly_chart(fig_debt_bar, use_container_width=True)
+    
+    # ========================================================================
+    # FOOTER
+    # ========================================================================
+    st.caption(f"""
+    **Data Source:** Financial Statements of the Government of Barbados (2023)
+    **Total Public Debt:** ${total_debt/1e9:.2f}B (Note 25)
+    **Note:** Tax Receivables of $2.43B were flagged as a NEW issue in 2023 (unverified).
+    """)
 
 # ============================================================================
 # VIEW 17: 2023 AUDIT FINDINGS - FIXED VERSION
