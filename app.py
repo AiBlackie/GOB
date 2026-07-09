@@ -5145,8 +5145,10 @@ elif view_option == "📄 Executive Briefing":
     """)
 
 # ============================================================================
-# VIEW 11: HISTORICAL AUDIT TIMELINE - COMPLETE VERSION
+# VIEW: 📈 HISTORICAL AUDIT TIMELINE (REVISED)
+# Last Clean Audit: 2007 (CORRECTED)
 # ============================================================================
+
 elif view_option == "📈 Historical Audit Timeline":
     st.markdown('<div class="sub-header">📜 Historical Audit Timeline: 2003-2023</div>', unsafe_allow_html=True)
     
@@ -5159,6 +5161,11 @@ elif view_option == "📈 Historical Audit Timeline":
         <span style="color: #DC2626; font-weight: bold;">Adverse</span> opinions, 
         and the key issues identified each year.
         </p>
+        <p style="margin-top: 10px; font-size: 0.95rem; color: #00267F;">
+        <strong>✅ Last Clean Audit:</strong> 2007 &nbsp;|&nbsp; 
+        <strong>⚠️ First Disclaimer:</strong> 2008 &nbsp;|&nbsp; 
+        <strong>🔴 First Adverse:</strong> 2018
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -5168,58 +5175,89 @@ elif view_option == "📈 Historical Audit Timeline":
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        # Prepare data - CORRECTED: Last Clean is 2007
+        years = list(range(2003, 2024))
+        opinions = ['Clean']*5 + ['Disclaimer']*10 + ['Adverse']*6
+        colors = ['#10B981']*5 + ['#F59E0B']*10 + ['#DC2626']*6
+        
+        # Key issues for each year
+        key_issues = [
+            'No major issues',  # 2003
+            'No major issues',  # 2004
+            'No major issues',  # 2005
+            'No major issues',  # 2006
+            'No major issues (Last Clean)',  # 2007
+            'SOE consolidation concerns',  # 2008
+            'SOE consolidation concerns',  # 2009
+            'SOE consolidation concerns',  # 2010
+            'SOE consolidation concerns',  # 2011
+            'SOE consolidation concerns',  # 2012
+            'Asset valuation issues',  # 2013
+            'Asset valuation issues',  # 2014
+            'Asset valuation issues',  # 2015
+            'Asset valuation issues',  # 2016
+            'Asset valuation issues',  # 2017
+            'First Adverse Opinion',  # 2018
+            'Cash overstatements ($115M)',  # 2019
+            'Fixed assets & land unverified',  # 2020
+            'Deficit peaks ($685M)',  # 2021
+            'Asset discrepancies ($719M)',  # 2022
+            'Tax receivables unverified (NEW $2.43B)'  # 2023
+        ]
+        
         fig = go.Figure()
         
-        severity_map = {'Clean': 1, 'Disclaimer': 2, 'Adverse': 3}
-        color_map = {'Clean': '#10B981', 'Disclaimer': '#F59E0B', 'Adverse': '#DC2626'}
-        
         fig.add_trace(go.Bar(
-            x=historical_audit['Year'],
-            y=[severity_map[op] for op in historical_audit['Audit_Opinion']],
-            marker_color=[color_map[op] for op in historical_audit['Audit_Opinion']],
-            text=historical_audit['Audit_Opinion'],
+            x=years,
+            y=[1]*len(years),
+            marker_color=colors,
+            text=opinions,
             textposition='inside',
             textfont=dict(color='white', size=12, weight='bold'),
             name='Audit Opinion',
             hovertemplate='Year: %{x}<br>Opinion: %{text}<br>Key Issue: %{customdata}<extra></extra>',
-            customdata=historical_audit['Key_Issue']
+            customdata=key_issues
         ))
         
-        # Add annotations for key milestones
+        # Add era overlays
+        fig.add_vrect(x0=2002.5, x1=2007.5, fillcolor="rgba(16, 185, 129, 0.15)", line_width=0)
+        fig.add_annotation(x=2005, y=1.1, text="🟢 CLEAN ERA\n5 YEARS (2003-2007)", 
+                          showarrow=False, font=dict(size=13, color='#10B981', weight='bold'))
+        
+        fig.add_vrect(x0=2007.5, x1=2017.5, fillcolor="rgba(245, 158, 11, 0.15)", line_width=0)
+        fig.add_annotation(x=2012, y=1.1, text="🟡 DISCLAIMER ERA\n10 YEARS (2008-2017)", 
+                          showarrow=False, font=dict(size=13, color='#F59E0B', weight='bold'))
+        
+        fig.add_vrect(x0=2017.5, x1=2023.5, fillcolor="rgba(220, 38, 38, 0.15)", line_width=0)
+        fig.add_annotation(x=2020, y=1.1, text="🔴 ADVERSE ERA\n6 YEARS (2018-2023)", 
+                          showarrow=False, font=dict(size=13, color='#DC2626', weight='bold'))
+        
+        # Key milestone annotations - CORRECTED
         milestones = [
-            {'year': 2003, 'text': '🟢 Last Clean', 'y': 1.5},
-            {'year': 2008, 'text': '🟡 First Disclaimer', 'y': 1.5},
-            {'year': 2013, 'text': '🟡 Asset Issues Emerge', 'y': 1.5},
-            {'year': 2018, 'text': '🔴 First Adverse', 'y': 1.5},
-            {'year': 2020, 'text': '🔴 $1.8B Assets Excluded', 'y': 1.5},
-            {'year': 2023, 'text': '🔴 6th Adverse + $2.43B NEW', 'y': 1.5}
+            {'year': 2003, 'text': '🟢 FIRST CLEAN', 'y': 1.3, 'color': '#10B981'},
+            {'year': 2007, 'text': '🟢 LAST CLEAN ✅', 'y': 1.4, 'color': '#10B981'},
+            {'year': 2008, 'text': '🟡 FIRST DISCLAIMER', 'y': 1.3, 'color': '#F59E0B'},
+            {'year': 2018, 'text': '🔴 FIRST ADVERSE', 'y': 1.3, 'color': '#DC2626'},
+            {'year': 2023, 'text': '🔴 6TH ADVERSE\n$2.43B NEW', 'y': 1.4, 'color': '#DC2626'}
         ]
         
         for m in milestones:
             fig.add_annotation(
-                x=m['year'], 
-                y=m['y'], 
+                x=m['year'],
+                y=m['y'],
                 text=m['text'],
                 showarrow=True,
-                arrowhead=1,
+                arrowhead=2,
                 ax=0,
-                ay=-30,
-                font=dict(size=10, color='#333'),
-                bgcolor='rgba(255,255,255,0.8)',
-                bordercolor='#ccc',
-                borderwidth=1
+                ay=-40,
+                font=dict(size=10, color=m['color'], weight='bold')
             )
         
         fig.update_layout(
             title='Audit Opinion Timeline: 2003-2023',
-            yaxis=dict(
-                tickvals=[1, 2, 3], 
-                ticktext=['Clean', 'Disclaimer', 'Adverse'], 
-                title='Opinion Type', 
-                range=[0, 3.8]
-            ),
+            yaxis=dict(range=[0, 1.6], showticklabels=False, title=''),
             xaxis=dict(tickmode='linear', dtick=1, title='Year', tickangle=45),
-            height=400,
+            height=450,
             showlegend=False,
             hovermode='x unified'
         )
@@ -5231,13 +5269,14 @@ elif view_option == "📈 Historical Audit Timeline":
         <div class="financial-card">
             <h6 style="margin-top: 0; color: #00267F;">🔑 Key Milestones</h6>
             <div style="font-size: 0.9rem;">
-                <p><strong>2003-2007:</strong> 🟢 Clean Opinions</p>
-                <p><strong>2008:</strong> 🟡 First Disclaimer Opinion</p>
-                <p><strong>2013:</strong> 🟡 Asset Register Issues Emerge</p>
-                <p><strong>2018:</strong> 🔴 First Adverse Opinion</p>
-                <p><strong>2020:</strong> 🔴 $1.8B Fixed Assets Excluded</p>
-                <p><strong>2023:</strong> 🔴 6th Consecutive Adverse</p>
-                <p><strong>2023:</strong> 🔴 $2.43B Tax Receivables (NEW)</p>
+                <p><strong>🟢 2003-2007:</strong> Clean Opinions (5 years)</p>
+                <p><strong>✅ 2007:</strong> Last Clean Audit</p>
+                <p><strong>🟡 2008:</strong> First Disclaimer Opinion</p>
+                <p><strong>🟡 2008-2017:</strong> Disclaimer Era (10 years)</p>
+                <p><strong>🔴 2018:</strong> First Adverse Opinion</p>
+                <p><strong>🔴 2018-2023:</strong> Adverse Era (6 years)</p>
+                <p><strong>🔴 2023:</strong> 6th Consecutive Adverse</p>
+                <p><strong>🚨 2023:</strong> $2.43B Tax Receivables (NEW)</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -5249,10 +5288,9 @@ elif view_option == "📈 Historical Audit Timeline":
     
     era_col1, era_col2, era_col3 = st.columns(3)
     
-    # Clean Era (2003-2007)
-    clean_issues = historical_audit[historical_audit['Audit_Opinion'] == 'Clean']
-    clean_count = len(clean_issues)
-    clean_years = clean_issues['Year'].tolist()
+    # Clean Era (2003-2007) - CORRECTED
+    clean_years = list(range(2003, 2008))
+    clean_count = len(clean_years)
     
     with era_col1:
         st.markdown(f"""
@@ -5261,15 +5299,15 @@ elif view_option == "📈 Historical Audit Timeline":
             <p><strong>Years:</strong> {clean_count}</p>
             <p><strong>Opinions:</strong> Clean</p>
             <p><strong>Key Issues:</strong> No major issues identified</p>
-            <p><strong>Status:</strong> ✅ Historical baseline</p>
+            <p><strong>Status:</strong> ✅ Strong financial management</p>
             <p><strong>Years:</strong> {', '.join(map(str, clean_years))}</p>
+            <p style="color: #10B981; font-weight: bold;">✅ Last Clean: 2007</p>
         </div>
         """, unsafe_allow_html=True)
     
     # Disclaimer Era (2008-2017)
-    disclaimer_issues = historical_audit[historical_audit['Audit_Opinion'] == 'Disclaimer']
-    disclaimer_count = len(disclaimer_issues)
-    disclaimer_years = disclaimer_issues['Year'].tolist()
+    disclaimer_years = list(range(2008, 2018))
+    disclaimer_count = len(disclaimer_years)
     
     with era_col2:
         st.markdown(f"""
@@ -5279,14 +5317,14 @@ elif view_option == "📈 Historical Audit Timeline":
             <p><strong>Opinions:</strong> Disclaimer</p>
             <p><strong>Key Issues:</strong> SOE consolidation, asset valuation</p>
             <p><strong>Status:</strong> ⚠️ Recurring issues emerge</p>
-            <p><strong>Years:</strong> {', '.join(map(str, disclaimer_years))}</p>
+            <p><strong>Years:</strong> {', '.join(map(str, disclaimer_years[:5]))}...{disclaimer_years[-1]}</p>
+            <p style="color: #F59E0B; font-weight: bold;">⚠️ First Disclaimer: 2008</p>
         </div>
         """, unsafe_allow_html=True)
     
     # Adverse Era (2018-2023)
-    adverse_issues = historical_audit[historical_audit['Audit_Opinion'] == 'Adverse']
-    adverse_count = len(adverse_issues)
-    adverse_years = adverse_issues['Year'].tolist()
+    adverse_years = list(range(2018, 2024))
+    adverse_count = len(adverse_years)
     
     with era_col3:
         st.markdown(f"""
@@ -5294,9 +5332,11 @@ elif view_option == "📈 Historical Audit Timeline":
             <h5 style="color: #DC2626; margin-top: 0;">🔴 Adverse Era (2018-2023)</h5>
             <p><strong>Years:</strong> {adverse_count}</p>
             <p><strong>Opinions:</strong> Adverse</p>
-            <p><strong>Key Issues:</strong> Material misstatements, $2.43B unverified (NEW)</p>
+            <p><strong>Key Issues:</strong> Material misstatements, $2.43B unverified</p>
             <p><strong>Status:</strong> ❌ Systemic failures</p>
             <p><strong>Years:</strong> {', '.join(map(str, adverse_years))}</p>
+            <p style="color: #DC2626; font-weight: bold;">🔴 First Adverse: 2018</p>
+            <p style="color: #DC2626; font-weight: bold;">🚨 NEW 2023: $2.43B Tax Receivables</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -5305,12 +5345,11 @@ elif view_option == "📈 Historical Audit Timeline":
     # ========================================================================
     st.markdown('<div class="section-header">📋 Detailed Year-by-Year Timeline</div>', unsafe_allow_html=True)
     
-    # Create a detailed timeline dataframe
+    # Create a detailed timeline dataframe - CORRECTED
     timeline_data = []
-    for _, row in historical_audit.iterrows():
-        year = row['Year']
-        opinion = row['Audit_Opinion']
-        issue = row['Key_Issue']
+    for i, year in enumerate(range(2003, 2024)):
+        opinion = opinions[i]
+        issue = key_issues[i]
         
         # Determine era
         if year <= 2007:
@@ -5320,16 +5359,24 @@ elif view_option == "📈 Historical Audit Timeline":
         else:
             era = 'Adverse Era'
         
-        # Determine severity indicator
+        # Determine indicator
         if opinion == 'Clean':
             indicator = '🟢'
-            severity_class = 'success'
         elif opinion == 'Disclaimer':
             indicator = '🟡'
-            severity_class = 'warning'
         else:
             indicator = '🔴'
-            severity_class = 'danger'
+        
+        # Highlight special years
+        special = ''
+        if year == 2007:
+            special = '⭐ LAST CLEAN'
+        elif year == 2008:
+            special = '⭐ FIRST DISCLAIMER'
+        elif year == 2018:
+            special = '⭐ FIRST ADVERSE'
+        elif year == 2023:
+            special = '⭐ 6TH ADVERSE + $2.43B'
         
         timeline_data.append({
             'Year': year,
@@ -5337,7 +5384,7 @@ elif view_option == "📈 Historical Audit Timeline":
             'Opinion': opinion,
             'Key Issue': issue,
             'Era': era,
-            'Severity': severity_class
+            'Special': special
         })
     
     timeline_df = pd.DataFrame(timeline_data)
@@ -5352,7 +5399,7 @@ elif view_option == "📈 Historical Audit Timeline":
             'Opinion': 'Audit Opinion',
             'Key Issue': 'Key Issue Identified',
             'Era': 'Era',
-            'Severity': None
+            'Special': 'Special'
         },
         hide_index=True
     )
@@ -5362,44 +5409,14 @@ elif view_option == "📈 Historical Audit Timeline":
     # ========================================================================
     st.markdown('<div class="section-header">🔄 Issue Persistence Analysis</div>', unsafe_allow_html=True)
     
-    # Count how many years each issue has persisted
-    issue_persistence = []
-    
-    # SOE Consolidation
-    soe_years = sum(historical_audit['SOE_Consolidation'])
-    issue_persistence.append({
-        'Issue': 'SOE Consolidation',
-        'First Appeared': 2003,
-        'Years_Present': soe_years,
-        'Status': '❌ Unresolved'
-    })
-    
-    # Pension Hidden
-    pension_years = sum(historical_audit['Pension_Hidden'])
-    issue_persistence.append({
-        'Issue': 'Pension Liability Hidden',
-        'First Appeared': 2003,
-        'Years_Present': pension_years,
-        'Status': '❌ Unresolved'
-    })
-    
-    # Asset Issues
-    asset_years = sum(historical_audit['Asset_Issues'])
-    issue_persistence.append({
-        'Issue': 'Asset Register Issues',
-        'First Appeared': 2003,
-        'Years_Present': asset_years,
-        'Status': '❌ Unresolved'
-    })
-    
-    # Bank Reconciliation
-    bank_years = sum(historical_audit['Bank_Reconciliation_Issues'])
-    issue_persistence.append({
-        'Issue': 'Bank Reconciliation Issues',
-        'First Appeared': 2008,
-        'Years_Present': bank_years,
-        'Status': '❌ Unresolved'
-    })
+    # Count how many years each issue has persisted - CORRECTED
+    issue_persistence = [
+        {'Issue': 'SOE Consolidation', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
+        {'Issue': 'Pension Liability Hidden', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
+        {'Issue': 'Asset Register Issues', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
+        {'Issue': 'Bank Reconciliation Issues', 'First Appeared': 2008, 'Years_Present': 16, 'Status': '❌ Unresolved'},
+        {'Issue': 'Tax Receivables (NEW)', 'First Appeared': 2023, 'Years_Present': 1, 'Status': '🚨 New Issue'}
+    ]
     
     persistence_df = pd.DataFrame(issue_persistence)
     
@@ -5430,10 +5447,10 @@ elif view_option == "📈 Historical Audit Timeline":
             <h5 style="color: #DC2626; margin-top: 0;">🚨 Persistent Issues Summary</h5>
             <ul>
                 <li><strong>SOE Consolidation:</strong> 21+ years</li>
-                <li><strong>Pension Liability:</strong> 22+ years</li>
+                <li><strong>Pension Liability:</strong> 21+ years</li>
                 <li><strong>Asset Registers:</strong> 21+ years</li>
-                <li><strong>Bank Reconciliations:</strong> 18+ years</li>
-                <li><strong>NEW 2023:</strong> $2.43B Tax Receivables</li>
+                <li><strong>Bank Reconciliations:</strong> 16+ years</li>
+                <li><strong>🚨 NEW 2023:</strong> $2.43B Tax Receivables</li>
             </ul>
             <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
             <em>These issues have persisted for nearly two decades with no resolution.</em>
@@ -5442,7 +5459,7 @@ elif view_option == "📈 Historical Audit Timeline":
         """, unsafe_allow_html=True)
     
     # ========================================================================
-    # KEY STATISTICS
+    # KEY STATISTICS - CORRECTED
     # ========================================================================
     st.markdown('<div class="section-header">📊 Key Statistics</div>', unsafe_allow_html=True)
     
@@ -5452,19 +5469,16 @@ elif view_option == "📈 Historical Audit Timeline":
         st.metric("Total Years", "21", "2003-2023")
     
     with stat_col2:
-        clean_count = len(historical_audit[historical_audit['Audit_Opinion'] == 'Clean'])
-        st.metric("Clean Opinions", clean_count, "2003-2007")
+        st.metric("Clean Opinions", "5", "2003-2007 ✅ Last: 2007")
     
     with stat_col3:
-        disclaimer_count = len(historical_audit[historical_audit['Audit_Opinion'] == 'Disclaimer'])
-        st.metric("Disclaimer Opinions", disclaimer_count, "2008-2017")
+        st.metric("Disclaimer Opinions", "10", "2008-2017 ⚠️ First: 2008")
     
     with stat_col4:
-        adverse_count = len(historical_audit[historical_audit['Audit_Opinion'] == 'Adverse'])
-        st.metric("Adverse Opinions", adverse_count, "2018-2023")
+        st.metric("Adverse Opinions", "6", "2018-2023 🔴 6 Consecutive")
     
     # ========================================================================
-    # TRANSITION ANALYSIS
+    # TRANSITION ANALYSIS - CORRECTED
     # ========================================================================
     st.markdown('<div class="section-header">🔄 Transition Analysis</div>', unsafe_allow_html=True)
     
@@ -5474,7 +5488,7 @@ elif view_option == "📈 Historical Audit Timeline":
             'To': 'Disclaimer Era (2008-2017)',
             'Year': '2008',
             'Reason': 'SOE consolidation and asset valuation issues emerged',
-            'Impact': 'Loss of clean audit status after 5 years'
+            'Impact': 'Lost clean audit status after 5 years (last clean: 2007)'
         },
         {
             'From': 'Disclaimer Era (2008-2017)',
@@ -5519,7 +5533,9 @@ elif view_option == "📈 Historical Audit Timeline":
         <h5 style="color: white; margin-top: 0;">📌 Key Takeaway</h5>
         <p style="margin: 0; color: #BFDBFE;">
         The audit timeline shows a clear deterioration in financial management:
-        <strong style="color: white;">5 clean → 10 disclaimer → 6 adverse</strong> opinions.
+        <strong style="color: white;">5 clean (2003-2007) → 10 disclaimer (2008-2017) → 6 adverse (2018-2023)</strong> opinions.
+        The last clean audit was in <strong style="color: #FFC726;">2007</strong>, and we are now in our 
+        <strong style="color: #FFC726;">6th consecutive year of adverse opinions</strong>.
         The path forward requires addressing <strong style="color: #FFC726;">21+ year old issues</strong>
         that have never been resolved.
         </p>
