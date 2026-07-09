@@ -1837,7 +1837,7 @@ elif view_option == "📌 21-Year Overview":
     """)
 
 # ============================================================================
-# VIEW 3: THE COMPLETE STORY - COMPLETE VERSION (CORRECTED)
+# VIEW 3: THE COMPLETE STORY - COMPLETE VERSION WITH VISUAL ELEMENTS
 # ============================================================================
 elif view_option == "📖 The Complete Story":
     st.markdown('<div class="sub-header">📖 The Complete Story: 2003-2023</div>', unsafe_allow_html=True)
@@ -1854,6 +1854,39 @@ elif view_option == "📖 The Complete Story":
     </div>
     """, unsafe_allow_html=True)
     
+    # ========================================================================
+    # AUDIT OPINION PROGRESSION CHART - NEW VISUAL
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Audit Opinion Progression (2003-2023)</div>', unsafe_allow_html=True)
+
+    # Create progression data
+    progression_data = pd.DataFrame({
+        'Era': ['Clean Era\n(2003-2007)', 'Disclaimer Era\n(2008-2017)', 'Adverse Era\n(2018-2023)'],
+        'Years': [5, 10, 6],
+        'Opinion_Type': ['Clean', 'Disclaimer', 'Adverse'],
+        'Color': ['#10B981', '#F59E0B', '#DC2626'],
+        'Key_Issue': ['No major issues', 'SOE & asset issues', 'Material misstatements']
+    })
+
+    fig_progression = px.bar(
+        progression_data,
+        x='Era',
+        y='Years',
+        title='Audit Opinion Progression by Era',
+        color='Opinion_Type',
+        color_discrete_map={'Clean': '#10B981', 'Disclaimer': '#F59E0B', 'Adverse': '#DC2626'},
+        text='Years',
+        hover_data={'Key_Issue': True}
+    )
+    fig_progression.update_traces(textposition='inside', textfont_size=16, textfont_color='white')
+    fig_progression.update_layout(
+        yaxis_title='Number of Years',
+        xaxis_title='',
+        height=300,
+        showlegend=False
+    )
+    st.plotly_chart(fig_progression, use_container_width=True)
+
     # ========================================================================
     # CHAPTER 1: The Golden Years (2003-2007)
     # ========================================================================
@@ -2107,6 +2140,135 @@ elif view_option == "📖 The Complete Story":
         </div>
         """, unsafe_allow_html=True)
     
+    # ========================================================================
+    # FINANCIAL METRICS OVERLAY - NEW VISUAL
+    # ========================================================================
+    st.markdown('<div class="section-header">📈 Financial Metrics Across the Story</div>', unsafe_allow_html=True)
+
+    # Create era-based financial summary
+    era_financials = pd.DataFrame({
+        'Era': ['2003-2007', '2008-2012', '2013-2017', '2018-2020', '2021-2023'],
+        'Avg_Revenue': [1.4, 1.78, 2.08, 2.4, 2.93],
+        'Avg_Deficit': [-0.1, -0.16, -0.26, -0.43, -0.49],
+        'Avg_Debt': [6.0, 8.5, 11.0, 10.5, 9.7],
+        'Opinion': ['🟢 Clean', '🟡 Disclaimer', '🟡 Disclaimer', '🔴 Adverse', '🔴 Adverse']
+    })
+
+    fig_metrics = go.Figure()
+
+    # Revenue bars
+    fig_metrics.add_trace(go.Bar(
+        x=era_financials['Era'],
+        y=era_financials['Avg_Revenue'],
+        name='Avg Revenue',
+        marker_color='#00267F',
+        text=[f"${x:.2f}B" for x in era_financials['Avg_Revenue']],
+        textposition='outside',
+        hovertemplate='Revenue: $%{y:.2f}B<extra></extra>'
+    ))
+
+    # Deficit line
+    fig_metrics.add_trace(go.Scatter(
+        x=era_financials['Era'],
+        y=era_financials['Avg_Deficit'],
+        name='Avg Deficit',
+        mode='lines+markers',
+        line=dict(color='#DC2626', width=3),
+        marker=dict(size=10),
+        yaxis='y2',
+        text=[f"${x:.2f}B" for x in era_financials['Avg_Deficit']],
+        textposition='top center',
+        hovertemplate='Deficit: $%{y:.2f}B<extra></extra>'
+    ))
+
+    # Add shaded regions for audit opinion eras
+    fig_metrics.add_vrect(x0=-0.5, x1=0.5, fillcolor="rgba(16, 185, 129, 0.15)", line_width=0)
+    fig_metrics.add_vrect(x0=0.5, x1=2.5, fillcolor="rgba(245, 158, 11, 0.15)", line_width=0)
+    fig_metrics.add_vrect(x0=2.5, x1=4.5, fillcolor="rgba(220, 38, 38, 0.15)", line_width=0)
+
+    fig_metrics.update_layout(
+        title='Average Financial Metrics by Era',
+        height=400,
+        hovermode='x unified',
+        xaxis=dict(title=''),
+        yaxis=dict(title='Revenue (Billions $)', range=[0, 4]),
+        yaxis2=dict(title='Deficit (Billions $)', overlaying='y', side='right', range=[-1, 0.1]),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+
+    st.plotly_chart(fig_metrics, use_container_width=True)
+
+    # ========================================================================
+    # ISSUE EMERGENCE TIMELINE - NEW VISUAL
+    # ========================================================================
+    st.markdown('<div class="section-header">🚨 When Issues Emerged</div>', unsafe_allow_html=True)
+
+    issue_emergence = pd.DataFrame({
+        'Issue': ['SOE Consolidation', 'Pension Liability', 'Asset Registers', 'Bank Reconciliations', 'Adverse Opinions', 'Tax Receivables'],
+        'Year_First_Appeared': [2003, 2003, 2003, 2008, 2018, 2023],
+        'Status': ['❌ Unresolved', '❌ Unresolved', '❌ Unresolved', '❌ Unresolved', '❌ Ongoing', '❌ NEW'],
+        'Color': ['#DC2626' if x == 2023 else '#F59E0B' if x >= 2018 else '#3B82F6' for x in [2003, 2003, 2003, 2008, 2018, 2023]]
+    })
+
+    fig_emergence = px.bar(
+        issue_emergence,
+        x='Issue',
+        y=[1] * len(issue_emergence),
+        title='When Major Issues First Emerged',
+        color='Year_First_Appeared',
+        color_continuous_scale='Reds',
+        text=issue_emergence['Year_First_Appeared'].apply(lambda x: str(x)),
+        hover_data={'Status': True}
+    )
+    fig_emergence.update_traces(textposition='inside', textfont_size=14, textfont_color='white')
+    fig_emergence.update_layout(
+        yaxis=dict(range=[0, 1.5], showticklabels=False, title=''),
+        xaxis_title='Issue Category',
+        height=250,
+        showlegend=False
+    )
+    st.plotly_chart(fig_emergence, use_container_width=True)
+
+    # ========================================================================
+    # IMPACT SUMMARY CARDS - NEW VISUAL
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Impact by Era</div>', unsafe_allow_html=True)
+
+    impact_col1, impact_col2, impact_col3 = st.columns(3)
+
+    with impact_col1:
+        st.markdown("""
+        <div style="background: #ECFDF5; padding: 15px; border-radius: 10px; border-left: 4px solid #10B981; height: 100%;">
+            <h5 style="color: #10B981; margin-top: 0;">🟢 Clean Era (2003-2007)</h5>
+            <p><strong>Impact:</strong> Strong financial management</p>
+            <p><strong>Key Achievement:</strong> 5 consecutive clean opinions</p>
+            <p><strong>Deficit:</strong> ~$100M annually</p>
+            <p><strong>Status:</strong> ✅ Foundation built</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with impact_col2:
+        st.markdown("""
+        <div style="background: #FFFBEB; padding: 15px; border-radius: 10px; border-left: 4px solid #F59E0B; height: 100%;">
+            <h5 style="color: #D97706; margin-top: 0;">🟡 Disclaimer Era (2008-2017)</h5>
+            <p><strong>Impact:</strong> Recurring issues emerge</p>
+            <p><strong>Key Issue:</strong> SOE consolidation fails</p>
+            <p><strong>Debt:</strong> $7.5B → $12.0B</p>
+            <p><strong>Status:</strong> ⚠️ Problems ignored</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with impact_col3:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 15px; border-radius: 10px; border-left: 4px solid #DC2626; height: 100%;">
+            <h5 style="color: #DC2626; margin-top: 0;">🔴 Adverse Era (2018-2023)</h5>
+            <p><strong>Impact:</strong> Systemic failure</p>
+            <p><strong>Key Issue:</strong> $9.15B+ in issues</p>
+            <p><strong>NEW 2023:</strong> $2.43B unverified</p>
+            <p><strong>Status:</strong> ❌ Foundation broken</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ========================================================================
     # CHAPTER 6: The Path Forward
     # ========================================================================
