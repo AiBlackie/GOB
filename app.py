@@ -5848,12 +5848,129 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     )
     
     # ========================================================================
-    # SECTION 7: CONCLUSION - FACTUAL
+    # SECTION 7: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
+    # ========================================================================
+    st.markdown('<div class="section-header">⚠️ Document Quality: The Estimates Document Itself</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <h5 style="color: #DC2626; margin-top: 0;">🚨 CRITICAL: The 2026-27 Estimates Document Contains Material Errors</h5>
+        <p style="font-size: 1.05rem;">
+        A systematic review of the 2026-2027 Estimates document reveals <strong>25 material discrepancies</strong> 
+        between the narrative "Particulars of Service" amounts and the Budget Table figures.
+        </p>
+        <p style="font-size: 1.05rem; color: #666;">
+        <strong>Total discrepancy: $2.55B+</strong> across 89% of all spending Heads.
+        </p>
+        <p style="font-size: 0.95rem; color: #666;">
+        <strong>Only 1 Head</strong> (Parliament, Head 12) has perfect alignment between words and figures.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Top discrepancies summary
+    st.markdown('<div class="section-header">📋 Top 10 Discrepancies: Words vs Figures</div>', unsafe_allow_html=True)
+    
+    top_discrepancies = pd.DataFrame({
+        'Head': [19, 14, 96, 39, 33, 40, 50, 13, 63, 83],
+        'Ministry': [
+            'Treasury',
+            'Ministry of Finance',
+            'Educational Transformation',
+            'Legal Affairs & Criminal Justice',
+            'Home Affairs, Information & Public Affairs',
+            'Transport & Works',
+            'Post Office',
+            "Prime Minister's Office",
+            'Technological & Vocational Training',
+            'Agriculture, Food & Nutritional Security'
+        ],
+        'Words': [
+            '$54.0M',
+            '$325.9M',
+            '$285.4M',
+            '$194.8M',
+            '$84.2M',
+            '$159.9M',
+            '$13.7M',
+            '$355.0M',
+            '$270.5M',
+            '$94.3M'
+        ],
+        'Figures': [
+            '$1,653.6M',
+            '$781.5M',
+            '$453.9M',
+            '$278.1M',
+            '$128.0M',
+            '$186.1M',
+            '$30.8M',
+            '$380.2M',
+            '$285.9M',
+            '$106.8M'
+        ],
+        'Discrepancy': [
+            '$1.60B',
+            '$455.6M',
+            '$168.5M',
+            '$83.4M',
+            '$43.8M',
+            '$26.3M',
+            '$17.1M',
+            '$25.2M',
+            '$15.4M',
+            '$12.6M'
+        ]
+    })
+    
+    st.dataframe(
+        top_discrepancies,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Head': 'Head',
+            'Ministry': 'Ministry',
+            'Words': 'Words (Particulars)',
+            'Figures': 'Figures (Budget Table)',
+            'Discrepancy': 'Discrepancy'
+        }
+    )
+    
+    # Critical errors detail
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <h5 style="color: #DC2626; margin-top: 0;">🔴 CRITICAL ERRORS (>$100M)</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
+            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #DC2626;">
+                <strong>Head 19: Treasury</strong><br>
+                Words: $54M → Figures: $1.65B<br>
+                <span style="color: #DC2626; font-weight: bold;">Discrepancy: $1.60B</span>
+            </div>
+            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #DC2626;">
+                <strong>Head 14: Ministry of Finance</strong><br>
+                Words: $326M → Figures: $782M<br>
+                <span style="color: #DC2626; font-weight: bold;">Discrepancy: $456M</span>
+            </div>
+            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #DC2626;">
+                <strong>Head 96: Educational Transformation</strong><br>
+                Words: $285M → Figures: $454M<br>
+                <span style="color: #DC2626; font-weight: bold;">Discrepancy: $168M</span>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+        <strong>Impact:</strong> These discrepancies call into question the reliability of the Estimates document itself.
+        If the government cannot present a consistent budget document, how can the public trust the numbers?
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 8: CONCLUSION - FACTUAL
     # ========================================================================
     st.markdown("""
     <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
         <h3 style="color: white; text-align: center;">🇧🇧 Summary</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-top: 20px;">
             <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
                 <div style="font-size: 1.5rem; font-weight: bold; color: #FFC726;">+$1.59B</div>
                 <div style="font-size: 0.9rem; color: #BFDBFE;">Projected Revenue Increase</div>
@@ -5869,10 +5986,16 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
                 <div style="font-size: 0.9rem; color: #BFDBFE;">Unverified Tax Receivables</div>
                 <div style="font-size: 0.8rem; color: #93C5FD;">First flagged in 2023</div>
             </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$2.55B+</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Estimates Document Discrepancies</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">89% of Heads affected</div>
+            </div>
         </div>
         <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 20px;">
         The 2026-27 budget represents a significant increase in both revenue and expenditure projections.
-        Key assumptions include a 127% increase in Income Tax revenue and a 99% reduction in bad debt expense.
+        However, the budget document itself contains <strong style="color: #FFC726;">25 material discrepancies</strong> 
+        totaling <strong style="color: #FFC726;">$2.55B+</strong>, calling its credibility into question.
         </p>
         <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 10px;">
         <em>All figures are sourced from the 2023 Audited Financial Statements and the 2026-2027 Estimates of Revenue and Expenditure.</em>
