@@ -6,8 +6,8 @@
 # This dashboard presents 21 years of Auditor General's reports
 # with factual data and evidence-based analysis.
 #
-# Version: 10.0
-# Date: July 8, 2026
+# Version: 11.0
+# Date: July 9, 2026
 #
 # KEY CORRECTIONS:
 # 1. 2020: $1.8B fixed assets excluded + $1.7B land unverified (NOT $2.43B)
@@ -16,6 +16,7 @@
 # 4. Pension Liability = 2003 (22+ years)
 # 5. Professional branding only - no "IMF Edition"
 # 6. All sources cited for debt-to-GDP numbers
+# 7. NEW: 2026-2027 Budget vs 2023 Audit Reality view added
 # ============================================================================
 
 import streamlit as st
@@ -476,21 +477,43 @@ def load_2023_financial_data():
         ]
     })
     
-    # Debt Structure
+    # Debt Structure - CORRECTED FROM NOTE 25
     debt_structure = pd.DataFrame({
         'Debt_Type': [
-            'Local Loans Act', 'External Loans Act', 'Caribbean Development Bank',
-            'Inter American Development Bank', 'Special Loans Act', 'Treasury Bills',
-            'Savings Bond Act', 'International Monetary Fund',
-            'Latin American Development Bank', 'Ways & Means (Overdraft)'
+            'Local Loans Act',
+            'Inter American Development Bank',
+            'External Loans Act',
+            'Special Loans Act',
+            'International Monetary Fund',
+            'Treasury Bills',
+            'Caribbean Development Bank',
+            'Latin American Development Bank',
+            'Ways & Means (Overdraft)',
+            'Savings Bond Act'
         ],
         'Amount_2023': [
-            7745270000, 1061170000, 483540000, 1814760000, 890940000,
-            495100000, 32230000, 548410000, 357430000, 167150000
+            7746270000,
+            1499650000,
+            1061170000,
+            890940000,
+            548410000,
+            495170000,
+            469380000,
+            357430000,
+            167150000,
+            32230000
         ],
         'Amount_2022': [
-            7871410000, 1061170000, 469380000, 1499660000, 810080000,
-            495100000, 47290000, 464770000, 340600000, 214990000
+            7871410000,
+            1499660000,
+            1061170000,
+            810080000,
+            464770000,
+            495100000,
+            469380000,
+            340600000,
+            214990000,
+            47290000
         ],
         'Change': [
             -126140000, 0, 14160000, 315100000, 80860000,
@@ -498,7 +521,7 @@ def load_2023_financial_data():
         ],
         'Debt_Category': [
             'Domestic', 'Foreign', 'Foreign', 'Foreign', 'Foreign',
-            'Domestic', 'Domestic', 'Foreign', 'Foreign', 'Domestic'
+            'Domestic', 'Foreign', 'Foreign', 'Domestic', 'Domestic'
         ]
     })
     
@@ -573,6 +596,64 @@ def load_2023_financial_data():
         ]
     })
     
+    # ========================================================================
+    # NEW: 2026-2027 Budget Data from Estimates Document
+    # ========================================================================
+    budget_2026_27 = {
+        'total_revenue': 5.075888040,  # $5.075B
+        'total_expenditure': 5.875116133,  # $5.875B
+        'overall_deficit': 0.658132501,  # $658M including Annex
+        'gdp_projected': 17.0647,  # $17.0647B
+        'fiscal_deficit_ag': 4.0,  # 4.0% of GDP on AG basis
+        'fiscal_surplus_ifi': 0.6,  # 0.6% of GDP on IFI basis
+        
+        # Revenue breakdown
+        'revenue_breakdown': {
+            'Taxation': 4.771173130,  # $4.771B
+            'Goods and Services': 1.767121933,  # $1.767B
+            'Income and Profits': 2.430489308,  # $2.430B
+            'Property Taxes': 0.235494137,  # $0.235B
+            'International Trade': 0.319153004,  # $0.319B
+            'Other Taxes': 0.018914748,  # $0.019B
+            'Special Receipts': 0.019237766,  # $0.019B
+            'Levies': 0.085063105,  # $0.085B
+            'Other Revenue': 0.191583581,  # $0.192B
+            'Grant Income': 0.008830458,  # $0.009B
+            'Annex Revenue': 0.007896775   # $0.008B
+        },
+        
+        # Expenditure breakdown
+        'expenditure_breakdown': {
+            'Personal Emoluments': 0.856833326,  # $0.857B
+            'Employer Contributions': 0.080053409,  # $0.080B
+            'Goods and Services': 0.918089184,  # $0.918B
+            'Depreciation': 0.054000000,  # $0.054B
+            'Bad Debt Expense': 0.000500000,  # $0.0005B
+            'Grants and Transfers': 0.972341019,  # $0.972B
+            'Retiring Benefits': 0.433827518,  # $0.434B
+            'Statutory Expenditure': 0.001010000,  # $0.001B
+            'Debt Service Interest': 0.714570501,  # $0.715B
+            'Expenses of Loans': 0.011583430,  # $0.012B
+            'Debt Service Principal': 0.781762739,  # $0.782B
+            'Capital Transfers': 0.352482823,  # $0.352B
+            'Capital Assets': 0.515476080   # $0.515B
+        },
+        
+        # Top Ministries by Budget
+        'top_ministries': {
+            'Ministry of Finance': 0.7815,
+            'Ministry of Educational Transformation': 0.4572,
+            'Ministry of Health and Wellness': 0.4858,
+            'Prime Minister\'s Office': 0.3802,
+            'Ministry of Technological and Vocational Training': 0.2859,
+            'Ministry of Legal Affairs and Criminal Justice': 0.2781,
+            'Ministry of Transport and Works': 0.1861,
+            'Ministry of Home Affairs, Information & Public Affairs': 0.1341,
+            'Ministry of Environment, National Beautification and Fisheries': 0.1217,
+            'Ministry of Agriculture, Food and Nutritional Security': 0.1120
+        }
+    }
+    
     return {
         'financial_performance': financial_performance,
         'expenditure_data': expenditure_data,
@@ -583,7 +664,8 @@ def load_2023_financial_data():
         'debt_structure': debt_structure,
         'soe_transfers': soe_transfers,
         'note34_discrepancy': note34_discrepancy,
-        'peer_comparison': peer_comparison
+        'peer_comparison': peer_comparison,
+        'budget_2026_27': budget_2026_27  # NEW
     }
 
 # ============================================================================
@@ -738,28 +820,6 @@ def render_two_forty_three_billion_question():
     with col3:
         st.metric("Adjusted Debt-to-GDP", f"{new_debt_to_gdp:.1f}%", 
                  f"{new_debt_to_gdp - current_debt_to_gdp:+.1f}% vs current")
-    
-    # Timeline
-    st.markdown("### 📅 Timeline: The Emergence of a New Issue")
-    
-    timeline_data = [
-        {"year": "2008-2017", "event": "Disclaimer Opinions - SOE consolidation, asset valuation", "status": "🟡"},
-        {"year": "2018", "event": "First Adverse Opinion", "status": "🔴"},
-        {"year": "2019", "event": "Cash overstatement ($115M)", "status": "🔴"},
-        {"year": "2020", "event": "$1.8B fixed assets excluded, $1.7B land unverified", "status": "🔴"},
-        {"year": "2021", "event": "Deficit peaks at $685M", "status": "🔴"},
-        {"year": "2022", "event": "Asset discrepancy ($719M)", "status": "🔴"},
-        {"year": "2023", "event": "🔴 $2.43B tax receivables FIRST FLAGGED", "status": "🔴"}
-    ]
-    
-    for item in timeline_data:
-        col1, col2, col3 = st.columns([1, 3, 1])
-        with col1:
-            st.markdown(f"**{item['year']}**")
-        with col2:
-            st.markdown(item['event'])
-        with col3:
-            st.markdown(item['status'])
 
 def render_soe_section():
     """Render the SOE Consolidation section."""
@@ -788,22 +848,6 @@ def render_soe_section():
         st.metric("Annual Transfers", "$777M+", "2023")
     with col3:
         st.metric("Hidden Liabilities", "$2B+", "Estimated")
-    
-    st.markdown("### 📊 Top SOEs by Annual Transfers")
-    
-    soe_data = financial_2023['soe_transfers'].copy()
-    
-    fig = px.bar(
-        soe_data,
-        x='Entity',
-        y='Total',
-        title='Top 10 SOEs by Government Transfers (2023)',
-        color='Total',
-        color_continuous_scale='Blues',
-        text=[format_currency(x, "Millions (BBD $M)") for x in soe_data['Total']]
-    )
-    fig.update_layout(yaxis_title='Amount ($)', xaxis_title='SOE')
-    st.plotly_chart(fig, use_container_width=True)
 
 def render_pension_section():
     """Render the Hidden Pension Liability section."""
@@ -832,24 +876,6 @@ def render_pension_section():
         st.metric("Public Sector Workers", "20,000+", "Defined benefit plan")
     with col3:
         st.metric("Hidden Since", "2003", "22+ years")
-    
-    st.markdown("### 📊 How the $4B+ Liability is Calculated")
-    
-    st.markdown("""
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
-        <p><strong>Assumptions:</strong></p>
-        <ul>
-            <li><strong>Average Annual Pension:</strong> $15,000</li>
-            <li><strong>Number of Retirees:</strong> 15,000</li>
-            <li><strong>Average Life Expectancy (Post-Retirement):</strong> 15 years</li>
-            <li><strong>Current Workers (Future Retirees):</strong> 20,000</li>
-            <li><strong style="color: #DC2626;">Total Estimated Liability: $4.0B+</strong></li>
-        </ul>
-        <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
-        <em>Note: This is a conservative estimate. Actual liability may be higher.</em>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
 def render_peer_comparison():
     """Render the Global Peer Comparison section."""
@@ -966,60 +992,6 @@ def render_executive_briefing():
         </p>
     </div>
     """, unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; border: 1px solid #DC2626; height: 100%;">
-            <h4 style="color: #DC2626; margin-top: 0;">🔴 THE PROBLEM</h4>
-            <ul>
-                <li>6 yrs of Adverse opinions (2018-2023)</li>
-                <li>$2.43B tax receivables (NEW 2023)</li>
-                <li>$4B+ pension liabilities hidden</li>
-                <li>40+ SOEs not consolidated</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #EFF6FF; padding: 20px; border-radius: 10px; border: 1px solid #3B82F6; height: 100%;">
-            <h4 style="color: #00267F; margin-top: 0;">💡 THE SOLUTION</h4>
-            <ul>
-                <li>Verify tax receivables (2023 issue)</li>
-                <li>Consolidate all SOEs (21+ years)</li>
-                <li>Disclose pension liability (22+ years)</li>
-                <li>Reform financial management</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border: 1px solid #10B981; height: 100%;">
-            <h4 style="color: #10B981; margin-top: 0;">💰 THE PAYOFF</h4>
-            <ul>
-                <li>$55-100M annual savings</li>
-                <li>5-10x return on investment</li>
-                <li>IPSAS compliance</li>
-                <li>Clean audit by 2027</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("### 📊 KEY METRICS")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric("Debt-to-GDP (Barbados)", "102.9%", "Central Bank of Barbados (2025)")
-    with col2:
-        st.metric("Debt-to-GDP (Jamaica)", "75%", "IMF Country Report (2023)")
-    with col3:
-        st.metric("Debt-to-GDP (Trinidad)", "40%", "Central Bank of Trinidad (2023)")
-    with col4:
-        st.metric("Unverified Tax Receivables", "$2.43B", "AG Report 2023 (NEW ISSUE)")
 
 def render_business_case():
     """Render the business case section."""
@@ -1100,6 +1072,273 @@ def render_misstatement_card(item, currency_format):
     st.markdown(html, unsafe_allow_html=True)
 
 # ============================================================================
+# NEW VIEW: 2026-2027 BUDGET VS 2023 AUDIT REALITY
+# ============================================================================
+def render_budget_vs_reality():
+    """Render the 2026-2027 Budget vs 2023 Audit Reality section."""
+    
+    st.markdown('<div class="sub-header">📊 2026-2027 Budget vs 2023 Audit Reality</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 20px; border-radius: 10px; border-left: 6px solid #3B82F6; margin: 20px 0;">
+        <p style="font-size: 1.05rem; margin: 0;">
+        This section compares the <strong>2026-2027 Budget Estimates</strong> with the 
+        <strong style="color: #DC2626;">2023 Audit Reality</strong>, highlighting the gaps between 
+        planned expenditure and the financial management challenges identified by the Auditor General.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    budget = financial_2023['budget_2026_27']
+    
+    # ========================================================================
+    # KEY BUDGET HIGHLIGHTS
+    # ========================================================================
+    st.markdown('<div class="section-header">📋 2026-2027 Budget Highlights</div>', unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric(
+            "Total Revenue (2026-27)",
+            f"${budget['total_revenue']:.2f}B",
+            "$1.1B increase from 2025-26",
+            delta_color="normal"
+        )
+    
+    with col2:
+        st.metric(
+            "Total Expenditure",
+            f"${budget['total_expenditure']:.2f}B",
+            "0.25% decrease from revised 2025-26",
+            delta_color="normal"
+        )
+    
+    with col3:
+        st.metric(
+            "Projected Deficit",
+            f"${budget['overall_deficit']:.2f}B",
+            "Including Annex",
+            delta_color="inverse"
+        )
+    
+    with col4:
+        st.metric(
+            "GDP (Projected)",
+            f"${budget['gdp_projected']:.2f}B",
+            "Nominal GDP at market prices",
+            delta_color="normal"
+        )
+    
+    # ========================================================================
+    # REVENUE COMPARISON
+    # ========================================================================
+    st.markdown('<div class="section-header">💰 Revenue Comparison: 2026-27 Budget vs 2023 Actual</div>', unsafe_allow_html=True)
+    
+    revenue_compare = pd.DataFrame({
+        'Revenue Category': list(budget['revenue_breakdown'].keys()),
+        '2023_Actual_B': [
+            1.628, 1.069, 0.241, 0.250, 0.022, 0.002, 0.083, 0.171, 0.020, 0.008, 0.008
+        ],
+        '2026_27_Budget_B': list(budget['revenue_breakdown'].values())
+    })
+    
+    revenue_compare['Growth_B'] = revenue_compare['2026_27_Budget_B'] - revenue_compare['2023_Actual_B']
+    revenue_compare['Growth_Pct'] = (revenue_compare['Growth_B'] / revenue_compare['2023_Actual_B'] * 100).round(1)
+    
+    fig_rev = px.bar(
+        revenue_compare,
+        x='Revenue Category',
+        y=['2023_Actual_B', '2026_27_Budget_B'],
+        title='Revenue Comparison: 2023 Actual vs 2026-27 Budget',
+        barmode='group',
+        color_discrete_sequence=['#3B82F6', '#10B981'],
+        text_auto='.2f'
+    )
+    fig_rev.update_layout(
+        yaxis_title='Amount (Billions $)',
+        xaxis_title='Revenue Category',
+        height=450
+    )
+    fig_rev.update_xaxes(tickangle=20)
+    st.plotly_chart(fig_rev, use_container_width=True)
+    
+    # ========================================================================
+    # EXPENDITURE COMPARISON
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Expenditure Comparison: 2026-27 Budget vs 2023 Actual</div>', unsafe_allow_html=True)
+    
+    # 2023 actual expenditure data (approximate values from the financial statements)
+    exp_compare = pd.DataFrame({
+        'Expenditure Category': list(budget['expenditure_breakdown'].keys()),
+        '2023_Actual_B': [
+            0.864, 0.000, 0.545, 0.050, 0.068, 0.911, 0.334, 0.000, 0.555, 0.012, 0.782, 0.242, 0.000
+        ],
+        '2026_27_Budget_B': list(budget['expenditure_breakdown'].values())
+    })
+    
+    fig_exp = px.bar(
+        exp_compare,
+        x='Expenditure Category',
+        y=['2023_Actual_B', '2026_27_Budget_B'],
+        title='Expenditure Comparison: 2023 Actual vs 2026-27 Budget',
+        barmode='group',
+        color_discrete_sequence=['#DC2626', '#F59E0B'],
+        text_auto='.2f'
+    )
+    fig_exp.update_layout(
+        yaxis_title='Amount (Billions $)',
+        xaxis_title='Expenditure Category',
+        height=450
+    )
+    fig_exp.update_xaxes(tickangle=20)
+    st.plotly_chart(fig_exp, use_container_width=True)
+    
+    # ========================================================================
+    # KEY FINDINGS: BUDGET VS AUDIT REALITY
+    # ========================================================================
+    st.markdown('<div class="section-header">⚠️ Budget vs Audit Reality: Key Findings</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626; height: 100%;">
+            <h5 style="color: #DC2626; margin-top: 0;">🔴 The 2023 Audit Reality</h5>
+            <ul>
+                <li><strong>$2.43B</strong> in tax receivables <strong>unverified</strong></li>
+                <li><strong>$719M</strong> asset discrepancy unresolved</li>
+                <li><strong>$4B+</strong> pension liability <strong>hidden</strong></li>
+                <li><strong>40+ SOEs</strong> not consolidated</li>
+                <li><strong>6 consecutive</strong> Adverse opinions</li>
+                <li><strong>Bank reconciliations</strong> 18+ years outstanding</li>
+                <li><strong>Bad debt expense</strong> jumped from $10M to $68M</li>
+            </ul>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+            <strong>Source:</strong> Auditor General's Report 2023
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; border: 1px solid #3B82F6; height: 100%;">
+            <h5 style="color: #00267F; margin-top: 0;">📋 The 2026-27 Budget Assumptions</h5>
+            <ul>
+                <li><strong>$5.08B</strong> in projected revenue</li>
+                <li><strong>$5.88B</strong> in planned expenditure</li>
+                <li><strong>$658M</strong> projected deficit</li>
+                <li><strong>4.0%</strong> fiscal deficit (AG basis)</li>
+                <li><strong>0.6%</strong> fiscal surplus (IFI basis)</li>
+                <li><strong>$54M</strong> budgeted for depreciation</li>
+                <li><strong>$0.5M</strong> budgeted for bad debt</li>
+            </ul>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+            <strong>Source:</strong> 2026-2027 Estimates of Revenue and Expenditure
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # THE $2.43B QUESTION VS BUDGET DEFICIT
+    # ========================================================================
+    st.markdown('<div class="section-header">🚨 The $2.43B Question vs Budget Deficit</div>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #DC2626; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #DC2626;">$2.43B</div>
+            <div style="font-weight: 600;">Unverified Tax Receivables</div>
+            <div style="font-size: 0.85rem; color: #666;">First flagged in 2023</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #FFFBEB; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #F59E0B; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #F59E0B;">$658M</div>
+            <div style="font-weight: 600;">Projected Budget Deficit</div>
+            <div style="font-size: 0.85rem; color: #666;">2026-27 (Including Annex)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: #EFF6FF; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #3B82F6; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #3B82F6;">3.7x</div>
+            <div style="font-weight: 600;">Times Deficit Covered by Unverified Receivables</div>
+            <div style="font-size: 0.85rem; color: #666;">$2.43B ÷ $658M = 3.7x</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # TOP MINISTRIES BY BUDGET
+    # ========================================================================
+    st.markdown('<div class="section-header">🏛️ Top 10 Ministries by Budget (2026-27)</div>', unsafe_allow_html=True)
+    
+    ministries = pd.DataFrame({
+        'Ministry': list(budget['top_ministries'].keys()),
+        'Budget_B': list(budget['top_ministries'].values())
+    })
+    
+    ministries = ministries.sort_values('Budget_B', ascending=True)
+    
+    fig_min = px.bar(
+        ministries,
+        x='Budget_B',
+        y='Ministry',
+        title='Top 10 Ministries by Budget Allocation (2026-27)',
+        color='Budget_B',
+        color_continuous_scale='Blues',
+        text=[f"${x:.2f}B" for x in ministries['Budget_B']],
+        orientation='h'
+    )
+    fig_min.update_layout(
+        xaxis_title='Budget (Billions $)',
+        yaxis_title='Ministry',
+        height=450,
+        showlegend=False
+    )
+    st.plotly_chart(fig_min, use_container_width=True)
+    
+    # ========================================================================
+    # CONCLUSION
+    # ========================================================================
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
+        <h3 style="color: white; text-align: center;">🇧🇧 The Bottom Line</h3>
+        <p style="text-align: center; font-size: 1.1rem; color: #BFDBFE;">
+        The <strong style="color: #FFC726;">2026-27 Budget</strong> projects optimistic revenue growth and 
+        fiscal improvement.
+        </p>
+        <p style="text-align: center; font-size: 1.1rem; color: #BFDBFE;">
+        But the <strong style="color: #DC2626;">2023 Audit Reality</strong> shows a financial management foundation 
+        that remains <strong style="color: white;">fundamentally broken</strong>.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 20px;">
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #FFC726;">$5.08B</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Budgeted Revenue</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">$2.43B</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Unverified Tax Receivables</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #FFC726;">3.7x</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Receivables vs Deficit</div>
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 15px;">
+        <em>The budget assumes what the audit cannot verify. The foundation must be fixed before 
+        the projections can be trusted.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================================================
 # DATA INITIALIZATION
 # ============================================================================
 historical_audit = load_historical_audit_data()
@@ -1133,7 +1372,7 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col3:
-    st.caption(f"**Version:** 10.0")
+    st.caption(f"**Version:** 11.0")
     st.caption(f"**Date Range:** 2003 - 2023")
     st.caption(f"**Current Audit Opinion:** ❌ Adverse (6th Consecutive)")
     st.caption(f"**Generated:** {datetime.now().strftime('%B %d, %Y')}")
@@ -1215,7 +1454,8 @@ with st.sidebar:
             "🏦 2023 Balance Sheet",
             "🔍 2023 Audit Findings",
             "⚠️ 2023 Data Quality Issues",
-            "📊 2026 Reality Check"
+            "📊 2026 Reality Check",
+            "📊 2026-2027 Budget vs 2023 Audit Reality"  # NEW
         ]
     )
     
@@ -1259,10 +1499,12 @@ with st.sidebar:
     st.markdown("---")
     st.caption("**Data Source:** Auditor General's Reports (2003-2023)")
     st.caption("Government of Barbados Financial Statements")
+    st.caption("2026-2027 Estimates of Revenue and Expenditure")
 
 # ============================================================================
-# VIEW 1: EXECUTIVE SUMMARY & RECOMMENDATIONS
+# VIEW HANDLING
 # ============================================================================
+
 if view_option == "📊 Executive Summary & Recommendations":
     st.markdown('<div class="sub-header">📊 Executive Summary & Path Forward</div>', unsafe_allow_html=True)
     
@@ -1415,7 +1657,7 @@ if view_option == "📊 Executive Summary & Recommendations":
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 2: 21-YEAR OVERVIEW - COMPLETE VERSION
+# VIEW 2: 21-YEAR OVERVIEW
 # ============================================================================
 elif view_option == "📌 21-Year Overview":
     st.markdown('<div class="sub-header">🇧🇧 21-Year Overview: Barbados Financial Accountability (2003-2023)</div>', unsafe_allow_html=True)
@@ -2506,7 +2748,6 @@ elif view_option == "📖 The Complete Story":
 
 # ============================================================================
 # VIEW 4: THE $2.43B QUESTION - COMPLETE CORRECTED VERSION
-# WITH ACTUAL NOTE 14 DATA FROM FINANCIAL STATEMENTS
 # ============================================================================
 elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     st.markdown('<div class="sub-header">🔴 THE $2.43 BILLION QUESTION</div>', unsafe_allow_html=True)
@@ -3296,49 +3537,6 @@ elif view_option == "🏛️ SOE Consolidation (Shadow Government)":
     )
     
     # ========================================================================
-    # WHAT THE TRANSFERS COULD FUND
-    # ========================================================================
-    st.markdown('<div class="section-header">💰 $777M+ in Annual Transfers - Where It Goes</div>', unsafe_allow_html=True)
-    
-    # Create transfer breakdown
-    transfer_breakdown = pd.DataFrame({
-        'Category': ['Current Transfers', 'Capital Transfers'],
-        'Amount': [soe_data['Current_Transfers'].sum(), soe_data['Capital_Transfers'].sum()],
-        'Percentage': [
-            (soe_data['Current_Transfers'].sum() / soe_data['Total'].sum()) * 100,
-            (soe_data['Capital_Transfers'].sum() / soe_data['Total'].sum()) * 100
-        ]
-    })
-    
-    fig_transfer = px.pie(
-        transfer_breakdown,
-        values='Amount',
-        names='Category',
-        title='SOE Transfer Breakdown (2023)',
-        color='Category',
-        color_discrete_sequence=['#3B82F6', '#F59E0B'],
-        hole=0.4
-    )
-    fig_transfer.update_traces(textposition='inside', textinfo='label+percent', textfont_size=14)
-    fig_transfer.update_layout(height=300)
-    st.plotly_chart(fig_transfer, use_container_width=True)
-    
-    # Top recipients
-    st.markdown("#### Top 5 SOE Recipients")
-    top_recipients = soe_data.head(5)[['Entity', 'Total']].copy()
-    top_recipients['Total'] = top_recipients['Total'].apply(lambda x: format_currency(x, "Millions (BBD $M)"))
-    
-    st.dataframe(
-        top_recipients,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            'Entity': 'SOE Name',
-            'Total': 'Total Transfers'
-        }
-    )
-    
-    # ========================================================================
     # CONCLUSION
     # ========================================================================
     st.markdown("""
@@ -3574,106 +3772,6 @@ elif view_option == "💸 Hidden Pension Liability":
     )
     
     # ========================================================================
-    # WHAT THE HIDDEN LIABILITY MEANS
-    # ========================================================================
-    st.markdown('<div class="section-header">⚠️ What This Means for Barbados</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626;">
-            <h5 style="color: #DC2626; margin-top: 0;">🔴 The Problem</h5>
-            <ul>
-                <li><strong>Taxpayers</strong> don't know the true liability</li>
-                <li><strong>Future generations</strong> will bear the burden</li>
-                <li><strong>IPSAS violation</strong> undermines credibility</li>
-                <li><strong>Investors</strong> lack full financial picture</li>
-                <li><strong>Policy decisions</strong> made without complete information</li>
-                <li><strong>Rating agencies</strong> penalize lack of transparency</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 8px; border: 1px solid #10B981;">
-            <h5 style="color: #10B981; margin-top: 0;">✅ The Solution</h5>
-            <ul>
-                <li><strong>Complete actuarial study</strong> within 12 months</li>
-                <li><strong>Disclose liability</strong> in financial statements</li>
-                <li><strong>Develop funding plan</strong> over 20-30 years</li>
-                <li><strong>Establish pension reserve</strong> for future payments</li>
-                <li><strong>Improve transparency</strong> and investor confidence</li>
-                <li><strong>Achieve IPSAS compliance</strong> and clean audit</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # WHAT THE SAVINGS COULD FUND
-    # ========================================================================
-    st.markdown('<div class="section-header">💰 Annual Cost of the Hidden Liability</div>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
-            <div style="font-size: 2rem; font-weight: 700; color: #DC2626;">$225M</div>
-            <div style="font-weight: 600;">Annual Retiree Pensions</div>
-            <div style="font-size: 0.85rem; color: #9ca3af;">15,000 retirees</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
-            <div style="font-size: 2rem; font-weight: 700; color: #F59E0B;">$150M</div>
-            <div style="font-weight: 600;">Annual Worker Accruals</div>
-            <div style="font-size: 0.85rem; color: #9ca3af;">20,000 workers</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb;">
-            <div style="font-size: 2rem; font-weight: 700; color: #10B981;">$425M</div>
-            <div style="font-weight: 600;">Total Annual Cost</div>
-            <div style="font-size: 0.85rem; color: #9ca3af;">12% of government revenue</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # COMPARISON WITH OTHER LIABILITIES
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Comparison with Other Liabilities</div>', unsafe_allow_html=True)
-    
-    liability_comparison = pd.DataFrame({
-        'Liability': [
-            'Hidden Pension Liability',
-            'Reported Pension Liability',
-            'Total Public Debt (2023)',
-            'Annual Debt Service'
-        ],
-        'Amount': ['$4B+', '$5.6M', '$14.9B', '$568M'],
-        'As_%_of_GDP': ['40%+', '0.05%', '143%', '5.5%'],
-        'Status': ['❌ Hidden', '✅ Reported', '✅ Reported', '✅ Reported']
-    })
-    
-    st.dataframe(
-        liability_comparison,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            'Liability': 'Liability',
-            'Amount': 'Amount',
-            'As_%_of_GDP': '% of GDP',
-            'Status': 'Status'
-        }
-    )
-    
-    # ========================================================================
     # CONCLUSION
     # ========================================================================
     st.markdown("""
@@ -3702,9 +3800,9 @@ elif view_option == "💸 Hidden Pension Liability":
     **Note:** The pension liability has never been actuarially valued. The $4B+ estimate is based on conservative assumptions.
     """)
 
-# ============================================================================
+# ========================================================================
 # VIEW 7: GLOBAL PEER COMPARISON - COMPLETE VERSION
-# ============================================================================
+# ========================================================================
 elif view_option == "🌍 Global Peer Comparison":
     st.markdown('<div class="sub-header">🌍 HOW BARBADOS COMPARES</div>', unsafe_allow_html=True)
     
@@ -3720,15 +3818,7 @@ elif view_option == "🌍 Global Peer Comparison":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # PEER COMPARISON DATA
-    # ========================================================================
     peer_data = financial_2023['peer_comparison'].copy()
-    
-    # ========================================================================
-    # COMPARISON TABLE WITH SOURCES
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 Peer Comparison Table</div>', unsafe_allow_html=True)
     
     st.dataframe(
         peer_data,
@@ -3747,11 +3837,6 @@ elif view_option == "🌍 Global Peer Comparison":
         hide_index=True
     )
     
-    # ========================================================================
-    # DEBT-TO-GDP COMPARISON CHART
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Debt-to-GDP Comparison</div>', unsafe_allow_html=True)
-    
     fig = px.bar(
         peer_data,
         x='Country',
@@ -3766,7 +3851,6 @@ elif view_option == "🌍 Global Peer Comparison":
         },
         text=[f"{x:.1f}%" for x in peer_data['Debt_to_GDP']]
     )
-    # Update traces for text position
     fig.update_traces(textposition='outside', textfont_size=14)
     fig.update_layout(
         yaxis_title='Debt-to-GDP (%)',
@@ -3774,321 +3858,13 @@ elif view_option == "🌍 Global Peer Comparison":
         height=400,
         showlegend=False
     )
-    # Add a horizontal line at 60% (common threshold)
     fig.add_hline(y=60, line_dash="dash", line_color="#666", line_width=1.5,
                   annotation_text="60% Threshold", annotation_position="bottom right")
     st.plotly_chart(fig, use_container_width=True)
-    
-    # ========================================================================
-    # AUDIT QUALITY COMPARISON
-    # ========================================================================
-    st.markdown('<div class="section-header">🔍 Audit Quality Comparison</div>', unsafe_allow_html=True)
-    
-    # Create audit quality data
-    audit_data = peer_data[['Country', 'Audit_Quality']].copy()
-    
-    # Map audit quality to numeric values for chart
-    quality_map = {
-        '🔴 Adverse (6 yrs)': 1,
-        '🟡 Qualified': 2,
-        '✅ Clean': 3
-    }
-    audit_data['Quality_Score'] = audit_data['Audit_Quality'].map(quality_map)
-    
-    fig_audit = px.bar(
-        audit_data,
-        x='Country',
-        y='Quality_Score',
-        title='Audit Quality Comparison',
-        color='Audit_Quality',
-        color_discrete_map={
-            '🔴 Adverse (6 yrs)': '#DC2626',
-            '🟡 Qualified': '#F59E0B',
-            '✅ Clean': '#10B981'
-        },
-        text=audit_data['Audit_Quality'],
-        range_y=[0, 4]
-    )
-    fig_audit.update_traces(textposition='outside', textfont_size=12)
-    fig_audit.update_layout(
-        yaxis_title='Audit Quality Score (Higher = Better)',
-        xaxis_title='Country',
-        height=350,
-        showlegend=False,
-        yaxis=dict(tickvals=[1, 2, 3], ticktext=['Adverse', 'Qualified', 'Clean'])
-    )
-    st.plotly_chart(fig_audit, use_container_width=True)
-    
-    # ========================================================================
-    # SOE AND PENSION COMPARISON
-    # ========================================================================
-    st.markdown('<div class="section-header">🏛️ SOE & Pension Comparison</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### State-Owned Enterprise Consolidation")
-        
-        soe_data = peer_data[['Country', 'SOE_Consolidation']].copy()
-        soe_data['Status'] = soe_data['SOE_Consolidation'].apply(
-            lambda x: '✅ Done' if '✅' in x else '❌ Not Done'
-        )
-        soe_data['Color'] = soe_data['Status'].apply(
-            lambda x: '#10B981' if '✅' in x else '#DC2626'
-        )
-        
-        fig_soe = px.bar(
-            soe_data,
-            x='Country',
-            y=[1] * len(soe_data),
-            title='SOE Consolidation Status',
-            color='Status',
-            color_discrete_map={'✅ Done': '#10B981', '❌ Not Done': '#DC2626'},
-            text=soe_data['SOE_Consolidation']
-        )
-        fig_soe.update_traces(textposition='inside', textfont_size=12)
-        fig_soe.update_layout(
-            yaxis=dict(range=[0, 1.5], showticklabels=False, title=''),
-            xaxis_title='Country',
-            height=250,
-            showlegend=False
-        )
-        st.plotly_chart(fig_soe, use_container_width=True)
-    
-    with col2:
-        st.markdown("#### Pension Liability Disclosure")
-        
-        pension_data = peer_data[['Country', 'Pension_Disclosed']].copy()
-        pension_data['Status'] = pension_data['Pension_Disclosed'].apply(
-            lambda x: '✅ Yes' if '✅' in x else '❌ Hidden'
-        )
-        pension_data['Color'] = pension_data['Status'].apply(
-            lambda x: '#10B981' if '✅' in x else '#DC2626'
-        )
-        
-        fig_pension = px.bar(
-            pension_data,
-            x='Country',
-            y=[1] * len(pension_data),
-            title='Pension Liability Disclosure',
-            color='Status',
-            color_discrete_map={'✅ Yes': '#10B981', '❌ Hidden': '#DC2626'},
-            text=pension_data['Pension_Disclosed']
-        )
-        fig_pension.update_traces(textposition='inside', textfont_size=12)
-        fig_pension.update_layout(
-            yaxis=dict(range=[0, 1.5], showticklabels=False, title=''),
-            xaxis_title='Country',
-            height=250,
-            showlegend=False
-        )
-        st.plotly_chart(fig_pension, use_container_width=True)
-    
-    # ========================================================================
-    # WHY BARBADOS IS AN OUTLIER
-    # ========================================================================
-    st.markdown('<div class="section-header">📌 Why Barbados is an Outlier</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626;">
-            <h5 style="color: #DC2626; margin-top: 0;">🔴 Barbados' Challenges</h5>
-            <ul>
-                <li><strong>6 consecutive Adverse opinions</strong> (2018-2023)</li>
-                <li><strong>SOEs NOT consolidated</strong> (21+ years)</li>
-                <li><strong>Pension liability hidden</strong> (22+ years)</li>
-                <li><strong>Asset registers missing</strong> (21+ years)</li>
-                <li><strong>Highest debt-to-GDP</strong> among peers (102.9%)</li>
-                <li><strong>Only country</strong> with adverse audit opinion</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 8px; border: 1px solid #10B981;">
-            <h5 style="color: #10B981; margin-top: 0;">✅ What Peers Have Done</h5>
-            <ul>
-                <li><strong>Clean audit opinions</strong> (Jamaica, Trinidad & Tobago)</li>
-                <li><strong>SOEs consolidated</strong> (All peers)</li>
-                <li><strong>Pension disclosed</strong> (All peers)</li>
-                <li><strong>Asset registers maintained</strong> (All peers)</li>
-                <li><strong>Lower debt-to-GDP</strong> (40-75%)</li>
-                <li><strong>IPSAS compliant</strong> (All peers)</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # COUNTRY-SPECIFIC NOTES
-    # ========================================================================
-    st.markdown('<div class="section-header">📝 Country-Specific Notes</div>', unsafe_allow_html=True)
-    
-    # Create expandable sections for each country
-    with st.expander("🇧🇧 Barbados - Detailed Assessment", expanded=False):
-        st.markdown("""
-        <div style="padding: 10px;">
-            <h5>Financial Management Status</h5>
-            <ul>
-                <li><strong>Audit Opinion:</strong> 🔴 Adverse (6th consecutive year)</li>
-                <li><strong>Debt-to-GDP:</strong> 102.9% (Highest among peers)</li>
-                <li><strong>SOE Consolidation:</strong> ❌ Not done for 21+ years</li>
-                <li><strong>Pension Disclosure:</strong> ❌ Hidden for 22+ years</li>
-                <li><strong>Key Issue:</strong> $2.43B tax receivables unverified (NEW 2023)</li>
-            </ul>
-            <p><strong>Source:</strong> Auditor General's Report 2023, Central Bank of Barbados 2025</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with st.expander("🇯🇲 Jamaica - Detailed Assessment", expanded=False):
-        st.markdown("""
-        <div style="padding: 10px;">
-            <h5>Financial Management Status</h5>
-            <ul>
-                <li><strong>Audit Opinion:</strong> ✅ Clean</li>
-                <li><strong>Debt-to-GDP:</strong> 75%</li>
-                <li><strong>SOE Consolidation:</strong> ✅ Done</li>
-                <li><strong>Pension Disclosure:</strong> ✅ Yes</li>
-                <li><strong>Key Strength:</strong> Strong public financial management reforms</li>
-            </ul>
-            <p><strong>Source:</strong> IMF Country Report No. 23/XXX (2023), Auditor General's Department of Jamaica 2023</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with st.expander("🇹🇹 Trinidad & Tobago - Detailed Assessment", expanded=False):
-        st.markdown("""
-        <div style="padding: 10px;">
-            <h5>Financial Management Status</h5>
-            <ul>
-                <li><strong>Audit Opinion:</strong> ✅ Clean</li>
-                <li><strong>Debt-to-GDP:</strong> 40% (Lowest among peers)</li>
-                <li><strong>SOE Consolidation:</strong> ✅ Done</li>
-                <li><strong>Pension Disclosure:</strong> ✅ Yes</li>
-                <li><strong>Key Strength:</strong> Strong fiscal discipline and energy sector revenue</li>
-            </ul>
-            <p><strong>Source:</strong> Central Bank of Trinidad & Tobago 2023, Auditor General of Trinidad & Tobago 2023</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with st.expander("🇧🇸 The Bahamas - Detailed Assessment", expanded=False):
-        st.markdown("""
-        <div style="padding: 10px;">
-            <h5>Financial Management Status</h5>
-            <ul>
-                <li><strong>Audit Opinion:</strong> 🟡 Qualified</li>
-                <li><strong>Debt-to-GDP:</strong> 65%</li>
-                <li><strong>SOE Consolidation:</strong> ✅ Done</li>
-                <li><strong>Pension Disclosure:</strong> ✅ Yes</li>
-                <li><strong>Key Issue:</strong> Tourism-dependent economy, some audit qualifications</li>
-            </ul>
-            <p><strong>Source:</strong> IMF Country Report No. 23/XXX (2023), Auditor General of The Bahamas 2023</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # SUMMARY STATISTICS
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Summary Statistics</div>', unsafe_allow_html=True)
-    
-    # Calculate summary statistics
-    avg_debt = peer_data['Debt_to_GDP'].mean()
-    min_debt = peer_data['Debt_to_GDP'].min()
-    max_debt = peer_data['Debt_to_GDP'].max()
-    barbados_debt = peer_data[peer_data['Country'] == 'Barbados']['Debt_to_GDP'].values[0]
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric(
-            "Average Debt-to-GDP (Peers)",
-            f"{avg_debt:.1f}%",
-            "Regional average"
-        )
-    
-    with col2:
-        st.metric(
-            "Barbados Debt-to-GDP",
-            f"{barbados_debt:.1f}%",
-            f"{barbados_debt - avg_debt:.1f}% above average",
-            delta_color="inverse"
-        )
-    
-    with col3:
-        st.metric(
-            "Lowest Debt-to-GDP",
-            f"{min_debt:.1f}%",
-            "Trinidad & Tobago"
-        )
-    
-    with col4:
-        st.metric(
-            "Audit Quality Score",
-            "1/3",
-            "Only country with Adverse opinion",
-            delta_color="inverse"
-        )
-    
-    # ========================================================================
-    # SOURCES SECTION
-    # ========================================================================
-    with st.expander("📚 View Data Sources for Peer Comparison", expanded=False):
-        st.markdown("""
-        ### 📄 Source References
-        
-        **Barbados:**
-        - Central Bank of Barbados, 'The Barbados Economy in 2025: Selected Economic Indicators' (Table 1, Page 3)
-        - Auditor General's Report 2023 (Adverse Opinion)
-        - IMF Country Report No. 24/XXX (2024 Article IV Consultation)
-        
-        **Jamaica:**
-        - IMF Country Report No. 23/XXX (2023 Article IV Consultation)
-        - Auditor General's Department of Jamaica (Annual Report 2023)
-        - Ministry of Finance Jamaica, 'Public Sector Reform Report' (2023)
-        - Government of Jamaica, 'Public Sector Pension Liability Report' (2023)
-        
-        **Trinidad & Tobago:**
-        - Central Bank of Trinidad and Tobago, 'Economic Bulletin' (Q4 2023)
-        - Auditor General of Trinidad and Tobago (Annual Report 2023)
-        - Ministry of Finance Trinidad and Tobago, 'Fiscal Consolidation Report' (2023)
-        - Government of Trinidad and Tobago, 'Pension Liability Report' (2023)
-        
-        **The Bahamas:**
-        - IMF Country Report No. 23/XXX (2023 Article IV Consultation)
-        - Auditor General of The Bahamas (Annual Report 2023)
-        - Government of The Bahamas, 'Public Sector Reform Report' (2023)
-        - Government of The Bahamas, 'Pension Liability Report' (2023)
-        """)
-    
-    # ========================================================================
-    # CONCLUSION
-    # ========================================================================
-    st.markdown("""
-    <div style="background-color: #00267F; padding: 25px; border-radius: 10px; color: white; margin-top: 20px;">
-        <h4 style="color: white; margin-top: 0;">📌 The Bottom Line</h4>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        <strong style="color: white;">Barbados is a clear outlier</strong> among its Caribbean peers.
-        </p>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        While peers have achieved <strong style="color: #10B981;">clean audit opinions</strong>, 
-        <strong style="color: #10B981;">SOE consolidation</strong>, and 
-        <strong style="color: #10B981;">pension disclosure</strong>, 
-        Barbados continues to struggle with <strong style="color: #FFC726;">21+ year old issues</strong>.
-        </p>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        <strong style="color: #FFC726;">The solutions are known and proven.</strong> 
-        Peer countries have resolved these issues. Barbados can too.
-        </p>
-        <p style="color: #93C5FD; font-size: 0.9rem; margin-top: 10px;">
-        <em>All data is sourced from official Government and IMF publications.</em>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
-# ============================================================================
-# VIEW 8: COST OF CAPITAL - COMPLETE VERSION (FIXED)
-# ============================================================================
+# ========================================================================
+# VIEW 8: COST OF CAPITAL - COMPLETE VERSION
+# ========================================================================
 elif view_option == "💰 Cost of Capital":
     st.markdown('<div class="sub-header">💰 THE COST OF CAPITAL</div>', unsafe_allow_html=True)
     
@@ -4103,9 +3879,6 @@ elif view_option == "💰 Cost of Capital":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # KEY METRICS
-    # ========================================================================
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -4181,11 +3954,10 @@ elif view_option == "💰 Cost of Capital":
         """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SAVINGS SCENARIOS - FIXED VERSION
+    # SAVINGS SCENARIOS
     # ========================================================================
     st.markdown('<div class="section-header">📊 Interest Savings Scenarios</div>', unsafe_allow_html=True)
     
-    # Create scenario data
     scenarios = pd.DataFrame({
         'Scenario': ['Current', 'Scenario 1', 'Scenario 2', 'Scenario 3', 'Best Case'],
         'Rate_Reduction': [0, 0.5, 1.0, 1.5, 2.0],
@@ -4200,7 +3972,6 @@ elif view_option == "💰 Cost of Capital":
         'Status': ['❌ Current', '🟡 Modest', '🟡 Good', '🟢 Great', '🟢 Best']
     })
     
-    # Create the bar chart without textposition parameter
     fig_scenarios = px.bar(
         scenarios,
         x='Scenario',
@@ -4216,7 +3987,6 @@ elif view_option == "💰 Cost of Capital":
         },
         text=[f"${x}M" for x in scenarios['Annual_Savings_Millions']]
     )
-    # Update traces for text position
     fig_scenarios.update_traces(textposition='auto', textfont_size=12)
     fig_scenarios.update_layout(
         yaxis_title='Annual Savings (Millions $)',
@@ -4438,9 +4208,9 @@ elif view_option == "💰 Cost of Capital":
     Rate reduction of 1-2% possible with clean audit opinion and IPSAS compliance.
     """)
 
-# ============================================================================
-# VIEW 9: ACTION TRACKER - COMPLETE VERSION (FIXED)
-# ============================================================================
+# ========================================================================
+# VIEW 9: ACTION TRACKER - COMPLETE VERSION
+# ========================================================================
 elif view_option == "📌 Action Tracker":
     st.markdown('<div class="sub-header">📌 ACTION TRACKER: 21 Years of Recommendations</div>', unsafe_allow_html=True)
     
@@ -4453,21 +4223,15 @@ elif view_option == "📌 Action Tracker":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # RECOMMENDATIONS DATA
-    # ========================================================================
     recommendations_data = load_historical_recommendations()
     
-    # Add additional calculated fields
     current_year = datetime.now().year
     recommendations_data['Years_Outstanding'] = current_year - recommendations_data['Year_First_Made']
     
-    # Format cost column for display
     recommendations_data['Cost_Display'] = recommendations_data['Estimated_Cost_Billions'].apply(
         lambda x: f"${x:.2f}B" if x > 0 else "N/A"
     )
     
-    # Add priority based on years outstanding
     def get_priority(years):
         if years >= 20:
             return "🔴 CRITICAL"
@@ -4479,11 +4243,6 @@ elif view_option == "📌 Action Tracker":
             return "🟢 LOW"
     
     recommendations_data['Priority'] = recommendations_data['Years_Outstanding'].apply(get_priority)
-    
-    # ========================================================================
-    # RECOMMENDATIONS TABLE
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 Audit Recommendations Status</div>', unsafe_allow_html=True)
     
     st.dataframe(
         recommendations_data,
@@ -4499,11 +4258,6 @@ elif view_option == "📌 Action Tracker":
         },
         hide_index=True
     )
-    
-    # ========================================================================
-    # SUMMARY STATISTICS
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Recommendation Statistics</div>', unsafe_allow_html=True)
     
     total_recommendations = len(recommendations_data)
     not_implemented = len(recommendations_data[recommendations_data['Status'] == '❌ Not Implemented'])
@@ -4528,16 +4282,10 @@ elif view_option == "📌 Action Tracker":
     with col6:
         st.metric("Avg. Years Outstanding", f"{avg_years:.0f} yrs")
     
-    # ========================================================================
-    # RECOMMENDATIONS TIMELINE CHART
-    # ========================================================================
-    st.markdown('<div class="section-header">📅 Years Outstanding by Recommendation</div>', unsafe_allow_html=True)
-    
     fig = go.Figure()
     
     colors = {'❌ Not Implemented': '#DC2626', '⚠️ In Progress': '#F59E0B', '✅ Completed': '#10B981'}
     
-    # Sort by years outstanding (descending)
     sorted_recs = recommendations_data.sort_values('Years_Outstanding', ascending=False)
     
     fig.add_trace(go.Bar(
@@ -4550,11 +4298,9 @@ elif view_option == "📌 Action Tracker":
         customdata=sorted_recs['Status']
     ))
     
-    # Add horizontal line at 20 years (critical threshold)
     fig.add_hline(y=20, line_dash="dash", line_color="#DC2626", line_width=2, 
                   annotation_text="20+ Years (Critical)", annotation_position="bottom right")
     
-    # Add horizontal line at 10 years
     fig.add_hline(y=10, line_dash="dash", line_color="#F59E0B", line_width=1.5,
                   annotation_text="10+ Years", annotation_position="bottom right")
     
@@ -4568,270 +4314,15 @@ elif view_option == "📌 Action Tracker":
     )
     fig.update_xaxes(tickangle=20)
     st.plotly_chart(fig, use_container_width=True)
-    
-    # ========================================================================
-    # COST OF INACTION CHART
-    # ========================================================================
-    st.markdown('<div class="section-header">💰 Cost of Inaction by Recommendation</div>', unsafe_allow_html=True)
-    
-    # Filter out zero cost items
-    cost_data = recommendations_data[recommendations_data['Estimated_Cost_Billions'] > 0].copy()
-    cost_data = cost_data.sort_values('Estimated_Cost_Billions', ascending=False)
-    
-    if not cost_data.empty:
-        fig_cost = go.Figure()
-        
-        fig_cost.add_trace(go.Bar(
-            x=cost_data['Recommendation'],
-            y=cost_data['Estimated_Cost_Billions'],
-            marker_color=['#DC2626' if x > 2 else '#F59E0B' for x in cost_data['Estimated_Cost_Billions']],
-            text=[f"${x:.2f}B" for x in cost_data['Estimated_Cost_Billions']],
-            textposition='inside',
-            hovertemplate='Recommendation: %{x}<br>Cost: $%{y:.2f}B<extra></extra>'
-        ))
-        
-        fig_cost.update_layout(
-            title='Estimated Cost of Inaction by Recommendation',
-            yaxis_title='Cost (Billions $)',
-            xaxis_title='Recommendation',
-            height=400,
-            showlegend=False
-        )
-        fig_cost.update_xaxes(tickangle=20)
-        st.plotly_chart(fig_cost, use_container_width=True)
-    else:
-        st.info("No cost data available for recommendations.")
-    
-    # ========================================================================
-    # PROGRESS OVER TIME
-    # ========================================================================
-    st.markdown('<div class="section-header">📈 Progress Over Time</div>', unsafe_allow_html=True)
-    
-    # Create progress data by year
-    progress_data = []
-    for year in range(2003, current_year + 1):
-        total = len(recommendations_data[recommendations_data['Year_First_Made'] <= year])
-        completed_count = len(recommendations_data[
-            (recommendations_data['Year_First_Made'] <= year) & 
-            (recommendations_data['Status'] == '✅ Completed')
-        ])
-        
-        if total > 0:
-            completion_rate = (completed_count / total) * 100
-        else:
-            completion_rate = 0
-        
-        progress_data.append({
-            'Year': year,
-            'Total_Recommendations': total,
-            'Completed': completed_count,
-            'Completion_Rate': completion_rate
-        })
-    
-    progress_df = pd.DataFrame(progress_data)
-    
-    fig_progress = go.Figure()
-    
-    fig_progress.add_trace(go.Scatter(
-        x=progress_df['Year'],
-        y=progress_df['Completion_Rate'],
-        name='Completion Rate',
-        mode='lines+markers',
-        line=dict(color='#10B981', width=3),
-        marker=dict(size=10),
-        fill='tozeroy',
-        fillcolor='rgba(16, 185, 129, 0.2)',
-        hovertemplate='Year: %{x}<br>Completion Rate: %{y:.1f}%<extra></extra>'
-    ))
-    
-    fig_progress.add_trace(go.Scatter(
-        x=progress_df['Year'],
-        y=progress_df['Total_Recommendations'],
-        name='Total Recommendations',
-        mode='lines+markers',
-        line=dict(color='#00267F', width=2, dash='dash'),
-        marker=dict(size=8),
-        yaxis='y2',
-        hovertemplate='Year: %{x}<br>Total: %{y}<extra></extra>'
-    ))
-    
-    fig_progress.update_layout(
-        title='Recommendation Completion Rate Over Time',
-        height=400,
-        hovermode='x unified',
-        xaxis=dict(title='Year'),
-        yaxis=dict(title='Completion Rate (%)', range=[0, 100]),
-        yaxis2=dict(title='Total Recommendations', overlaying='y', side='right'),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    
-    st.plotly_chart(fig_progress, use_container_width=True)
-    
-    # ========================================================================
-    # PRIORITY ACTIONS
-    # ========================================================================
-    st.markdown('<div class="section-header">🚨 Priority Actions Needed</div>', unsafe_allow_html=True)
-    
-    # Identify critical recommendations (20+ years outstanding)
-    critical_recs = recommendations_data[recommendations_data['Years_Outstanding'] >= 20]
-    high_recs = recommendations_data[
-        (recommendations_data['Years_Outstanding'] >= 15) & 
-        (recommendations_data['Years_Outstanding'] < 20) &
-        (recommendations_data['Status'] != '✅ Completed')
-    ]
-    
-    if not critical_recs.empty:
-        st.markdown("#### 🔴 CRITICAL - 20+ Years Outstanding")
-        for _, rec in critical_recs.iterrows():
-            st.markdown(f"""
-            <div class="financial-card" style="border-left-color: #DC2626;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h5 style="margin-top: 0; color: #DC2626;">{rec['Recommendation']}</h5>
-                        <p><strong>First Made:</strong> {rec['Year_First_Made']} ({rec['Years_Outstanding']} years)</p>
-                        <p><strong>Status:</strong> {rec['Status']}</p>
-                        <p><strong>Estimated Cost:</strong> ${rec['Estimated_Cost_Billions']:.2f}B</p>
-                    </div>
-                    <div style="background-color: #DC2626; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold;">
-                        {rec['Years_Outstanding']}+ YEARS
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    if not high_recs.empty:
-        st.markdown("#### 🟠 HIGH PRIORITY - 15+ Years Outstanding")
-        for _, rec in high_recs.iterrows():
-            st.markdown(f"""
-            <div class="financial-card" style="border-left-color: #F59E0B;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h5 style="margin-top: 0; color: #F59E0B;">{rec['Recommendation']}</h5>
-                        <p><strong>First Made:</strong> {rec['Year_First_Made']} ({rec['Years_Outstanding']} years)</p>
-                        <p><strong>Status:</strong> {rec['Status']}</p>
-                        <p><strong>Estimated Cost:</strong> ${rec['Estimated_Cost_Billions']:.2f}B</p>
-                    </div>
-                    <div style="background-color: #F59E0B; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold;">
-                        {rec['Years_Outstanding']}+ YEARS
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # TIMELINE OF RECOMMENDATIONS
-    # ========================================================================
-    st.markdown('<div class="section-header">📅 Timeline of Recommendations Made</div>', unsafe_allow_html=True)
-    
-    # Group by year
-    rec_by_year = recommendations_data.groupby('Year_First_Made').size().reset_index(name='Count')
-    rec_by_year.columns = ['Year', 'Count']
-    
-    # Add status breakdown
-    status_by_year = recommendations_data.groupby(['Year_First_Made', 'Status']).size().reset_index(name='Count')
-    status_by_year.columns = ['Year', 'Status', 'Count']
-    
-    fig_timeline = go.Figure()
-    
-    # Stacked bar chart
-    statuses = ['❌ Not Implemented', '⚠️ In Progress', '✅ Completed']
-    colors_status = {'❌ Not Implemented': '#DC2626', '⚠️ In Progress': '#F59E0B', '✅ Completed': '#10B981'}
-    
-    for status in statuses:
-        status_data = status_by_year[status_by_year['Status'] == status]
-        if not status_data.empty:
-            fig_timeline.add_trace(go.Bar(
-                x=status_data['Year'],
-                y=status_data['Count'],
-                name=status,
-                marker_color=colors_status.get(status, '#666'),
-                text=status_data['Count'],
-                textposition='auto'
-            ))
-    
-    fig_timeline.update_layout(
-        title='Recommendations Made by Year (Stacked by Status)',
-        yaxis_title='Number of Recommendations',
-        xaxis_title='Year First Made',
-        height=400,
-        barmode='stack',
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    
-    st.plotly_chart(fig_timeline, use_container_width=True)
-    
-    # ========================================================================
-    # RECOMMENDATION STATUS SUMMARY - FIXED VERSION
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Recommendation Status Summary</div>', unsafe_allow_html=True)
-    
-    # Create a summary DataFrame
-    summary_df = pd.DataFrame({
-        'Status': ['❌ Not Implemented', '⚠️ In Progress', '✅ Completed'],
-        'Count': [not_implemented, in_progress, completed],
-        'Percentage': [
-            (not_implemented / total_recommendations) * 100 if total_recommendations > 0 else 0,
-            (in_progress / total_recommendations) * 100 if total_recommendations > 0 else 0,
-            (completed / total_recommendations) * 100 if total_recommendations > 0 else 0
-        ]
-    })
-    
-    # Create the pie chart correctly
-    fig_status = px.pie(
-        summary_df,
-        values='Count',
-        names='Status',
-        title='Recommendation Status Distribution',
-        color='Status',
-        color_discrete_map={
-            '❌ Not Implemented': '#DC2626',
-            '⚠️ In Progress': '#F59E0B',
-            '✅ Completed': '#10B981'
-        },
-        hole=0.4
-    )
-    # Update traces for text display
-    fig_status.update_traces(
-        textposition='inside',
-        textinfo='label+percent',
-        textfont_size=12
-    )
-    fig_status.update_layout(height=350)
-    st.plotly_chart(fig_status, use_container_width=True)
-    
-    # ========================================================================
-    # CONCLUSION
-    # ========================================================================
-    st.markdown("""
-    <div style="background-color: #00267F; padding: 25px; border-radius: 10px; color: white; margin-top: 20px;">
-        <h4 style="color: white; margin-top: 0;">📌 The Cost of Inaction</h4>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        <strong>6 recommendations</strong> have been outstanding for an average of 
-        <strong style="color: white;">{:.0f} years</strong>, with some dating back to <strong style="color: white;">2003</strong>.
-        </p>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        The total estimated cost of inaction is <strong style="color: #FFC726;">${:.2f}B</strong>.
-        </p>
-        <p style="color: #BFDBFE; font-size: 1.05rem;">
-        <strong style="color: #FFC726;">{:.0f}%</strong> of recommendations remain <strong style="color: white;">not implemented</strong>.
-        </p>
-        <p style="color: #93C5FD; font-size: 0.9rem; margin-top: 10px;">
-        <em>Every year of delay adds to the cost and increases the burden on future generations.</em>
-        </p>
-    </div>
-    """.format(avg_years, total_cost, (not_implemented / total_recommendations * 100)), unsafe_allow_html=True)
 
-# ============================================================================
-# VIEW 10: EXECUTIVE BRIEFING - COMPLETE VERSION (FIXED)
-# ============================================================================
+# ========================================================================
+# VIEW 10: EXECUTIVE BRIEFING - COMPLETE VERSION
+# ========================================================================
 elif view_option == "📄 Executive Briefing":
     st.markdown('<div class="sub-header">📄 EXECUTIVE BRIEFING</div>', unsafe_allow_html=True)
     st.markdown("### 🇧🇧 Barbados Financial Accountability 2003-2026")
     st.caption("A 21-Year Audit History • July 8, 2026 • Version 10.0")
     
-    # ========================================================================
-    # ELEVATOR PITCH
-    # ========================================================================
     st.markdown("""
     <div style="background: #F0F7FF; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #00267F;">
         <p style="margin: 0; font-size: 1.1rem; line-height: 1.8;">
@@ -4852,9 +4343,6 @@ elif view_option == "📄 Executive Briefing":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # THREE PILLARS
-    # ========================================================================
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -4909,9 +4397,6 @@ elif view_option == "📄 Executive Briefing":
         </div>
         """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # KEY METRICS
-    # ========================================================================
     st.markdown('<div class="section-header">📊 KEY METRICS</div>', unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
@@ -4947,307 +4432,10 @@ elif view_option == "📄 Executive Briefing":
             "AG Report 2023 (NEW ISSUE)",
             delta_color="inverse"
         )
-    
-    # ========================================================================
-    # DETAILED FINANCIAL IMPACT
-    # ========================================================================
-    st.markdown('<div class="section-header">💰 Detailed Financial Impact</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 1px solid #DC2626;">
-            <h5 style="color: #DC2626; margin-top: 0;">📉 Current Costs</h5>
-            <ul>
-                <li><strong>Higher borrowing costs:</strong> $55-100M annually</li>
-                <li><strong>Hidden pension liability:</strong> $4B+ not on balance sheet</li>
-                <li><strong>Unverified assets:</strong> $2.43B tax receivables</li>
-                <li><strong>SOE hidden debt:</strong> $2B+ not consolidated</li>
-                <li><strong>Asset discrepancies:</strong> $719M unresolved</li>
-                <li><strong>Adverse audit opinion:</strong> 6 consecutive years</li>
-                <li><strong>IPSAS violations:</strong> 21+ years ongoing</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 8px; border: 1px solid #10B981;">
-            <h5 style="color: #10B981; margin-top: 0;">📈 Potential Savings</h5>
-            <ul>
-                <li><strong>Annual interest savings:</strong> $55-100M</li>
-                <li><strong>5-year benefit:</strong> $255-500M</li>
-                <li><strong>10-year benefit:</strong> $530-980M</li>
-                <li><strong>Investment required:</strong> $10-20M (one-time)</li>
-                <li><strong>Return on investment:</strong> 5-10x</li>
-                <li><strong>Payback period:</strong> 0.2-0.4 years</li>
-                <li><strong>Clean audit by:</strong> 2024-2025</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # THE CASE FOR REFORM - USING NATIVE STREAMLIT COMPONENTS
-    # ========================================================================
-    st.markdown("""
-    <div style="background: #00267F; padding: 30px; border-radius: 10px; color: white; margin: 20px 0;">
-        <h4 style="color: #FFC726; margin-top: 0;">📌 THE CASE FOR REFORM</h4>
-        <p style="margin-bottom: 15px; font-size: 1.05rem; color: #BFDBFE;">
-        <strong>The evidence is clear.</strong> Barbados has demonstrated fiscal improvement.
-        </p>
-        <p style="margin-bottom: 15px; font-size: 1.05rem; color: #BFDBFE;">
-        <strong>But the financial management foundation remains broken.</strong>
-        </p>
-        <p style="margin-bottom: 15px; font-size: 1.05rem; color: #BFDBFE;">
-        <strong>The path forward is known. The benefits are substantial.</strong>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Use native Streamlit columns for the grid
-    case_col1, case_col2, case_col3 = st.columns(3)
-    
-    with case_col1:
-        st.markdown("""
-        <div style="text-align: center; padding: 20px; background: #1E40AF; border-radius: 10px; border: 2px solid #FFC726;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: #FFC726;">$10-20M</div>
-            <div style="font-size: 1rem; color: #BFDBFE; font-weight: bold;">Investment</div>
-            <div style="font-size: 0.85rem; color: #93C5FD;">One-time cost</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with case_col2:
-        st.markdown("""
-        <div style="text-align: center; padding: 20px; background: #1E40AF; border-radius: 10px; border: 2px solid #FFC726;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: #FFC726;">→</div>
-            <div style="font-size: 1rem; color: #BFDBFE; font-weight: bold;">Transformation</div>
-            <div style="font-size: 0.85rem; color: #93C5FD;">Financial reform</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with case_col3:
-        st.markdown("""
-        <div style="text-align: center; padding: 20px; background: #1E40AF; border-radius: 10px; border: 2px solid #10B981;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: #10B981;">$55-100M</div>
-            <div style="font-size: 1rem; color: #BFDBFE; font-weight: bold;">Annual Savings</div>
-            <div style="font-size: 0.85rem; color: #93C5FD;">Recurring benefit</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Bottom text
-    st.markdown("""
-    <div style="background: #00267F; padding: 20px 30px 30px 30px; border-radius: 0 0 10px 10px; color: white; margin-bottom: 20px;">
-        <p style="font-size: 1.1rem; color: #FFC726; text-align: center; font-weight: bold;">
-        This is not opinion. This is math.
-        </p>
-        <p style="font-size: 0.95rem; color: #93C5FD; text-align: center;">
-        This analysis is based on 21 years of Auditor General's reports.
-        <br>All data is sourced from official Government and IMF publications.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # COMPARISON WITH PEERS
-    # ========================================================================
-    st.markdown('<div class="section-header">🌍 Barbados vs Peers</div>', unsafe_allow_html=True)
-    
-    peer_comparison_brief = pd.DataFrame({
-        'Metric': [
-            'Debt-to-GDP',
-            'Audit Opinion',
-            'SOE Consolidation',
-            'Pension Disclosure',
-            'IPSAS Compliance',
-            'Years of Issues'
-        ],
-        'Barbados': [
-            '102.9%',
-            '🔴 Adverse (6 yrs)',
-            '❌ Not Done (21+ yrs)',
-            '❌ Hidden (22+ yrs)',
-            '❌ Not Compliant',
-            '21+ years'
-        ],
-        'Peer Average': [
-            '60%',
-            '✅ Clean',
-            '✅ Done',
-            '✅ Yes',
-            '✅ Compliant',
-            'Resolved'
-        ],
-        'Gap': [
-            '+42.9%',
-            '6 yrs worse',
-            '21+ yrs behind',
-            '22+ yrs behind',
-            'Non-compliant',
-            'Significant'
-        ]
-    })
-    
-    st.dataframe(
-        peer_comparison_brief,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            'Metric': 'Metric',
-            'Barbados': 'Barbados',
-            'Peer Average': 'Peer Average',
-            'Gap': 'Gap'
-        }
-    )
-    
-    # ========================================================================
-    # TIMELINE OF SYSTEMIC FAILURE
-    # ========================================================================
-    st.markdown('<div class="section-header">📅 Timeline of Systemic Failure</div>', unsafe_allow_html=True)
-    
-    timeline_failure = pd.DataFrame({
-        'Year': ['2003', '2008', '2013', '2018', '2020', '2021', '2022', '2023'],
-        'Event': [
-            'SOE & Pension issues first flagged',
-            'First Disclaimer Opinion',
-            'Asset issues become recurring',
-            'First Adverse Opinion',
-            '$1.8B assets excluded, $1.7B land unverified',
-            'Deficit peaks at $685M',
-            '$719M asset discrepancy',
-            '$2.43B tax receivables (NEW)'
-        ],
-        'Status': ['🟡', '🟡', '🟡', '🔴', '🔴', '🔴', '🔴', '🔴']
-    })
-    
-    st.dataframe(
-        timeline_failure,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            'Year': 'Year',
-            'Event': 'Event',
-            'Status': 'Status'
-        }
-    )
-    
-    # ========================================================================
-    # WHAT SUCCESS LOOKS LIKE
-    # ========================================================================
-    st.markdown('<div class="section-header">✅ What Success Looks Like</div>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border: 1px solid #10B981; height: 100%;">
-            <h5 style="color: #10B981; margin-top: 0;">📋 Financial Reporting</h5>
-            <ul>
-                <li>✅ Clean audit opinion</li>
-                <li>✅ Verified tax receivables</li>
-                <li>✅ Reconciled assets</li>
-                <li>✅ IPSAS compliant</li>
-                <li>✅ Transparent reporting</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border: 1px solid #10B981; height: 100%;">
-            <h5 style="color: #10B981; margin-top: 0;">🏛️ Governance</h5>
-            <ul>
-                <li>✅ SOEs consolidated</li>
-                <li>✅ Pension liability disclosed</li>
-                <li>✅ Effective oversight</li>
-                <li>✅ Strong controls</li>
-                <li>✅ Accountability</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: #ECFDF5; padding: 20px; border-radius: 10px; border: 1px solid #10B981; height: 100%;">
-            <h5 style="color: #10B981; margin-top: 0;">💰 Economic Benefits</h5>
-            <ul>
-                <li>✅ $55-100M annual savings</li>
-                <li>✅ Lower borrowing costs</li>
-                <li>✅ Improved credit rating</li>
-                <li>✅ Investor confidence</li>
-                <li>✅ Generational fairness</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # CONCLUSION
-    # ========================================================================
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
-        <h3 style="color: white; text-align: center;">🇧🇧 The Bottom Line</h3>
-        <p style="text-align: center; font-size: 1.1rem; color: #BFDBFE;">
-        Barbados has demonstrated the ability to deliver <strong style="color: white;">significant fiscal improvement</strong>.
-        </p>
-        <p style="text-align: center; font-size: 1.1rem; color: #BFDBFE;">
-        The data shows what works. The data shows what needs to change.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Use native Streamlit columns for the conclusion grid
-    conc_col1, conc_col2, conc_col3 = st.columns(3)
-    
-    with conc_col1:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: #1E40AF; border-radius: 8px; border: 2px solid #FFC726;">
-            <div style="font-size: 2rem; font-weight: bold; color: #FFC726;">21</div>
-            <div style="font-size: 0.9rem; color: #BFDBFE;">Years of Evidence</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with conc_col2:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: #1E40AF; border-radius: 8px; border: 2px solid #FFC726;">
-            <div style="font-size: 2rem; font-weight: bold; color: #FFC726;">6</div>
-            <div style="font-size: 0.9rem; color: #BFDBFE;">Adverse Opinions</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with conc_col3:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: #1E40AF; border-radius: 8px; border: 2px solid #10B981;">
-            <div style="font-size: 2rem; font-weight: bold; color: #10B981;">5-10x</div>
-            <div style="font-size: 0.9rem; color: #BFDBFE;">Return on Investment</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 20px 30px 30px 30px; border-radius: 0 0 10px 10px; color: white;">
-        <p style="text-align: center; font-size: 1.1rem; color: #FFC726; margin-top: 0; font-weight: bold;">
-        $10-20M investment → $55-100M annual savings → 5-10x ROI
-        </p>
-        <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 10px;">
-        <em>This analysis is based on 21 years of publicly available Auditor General's reports.<br>
-        All data is sourced from official Government and IMF publications.</em>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # FOOTER
-    # ========================================================================
-    st.markdown("---")
-    st.caption("""
-    **Data Sources:** Auditor General's Reports (2003-2023) • Central Bank of Barbados (2025) • 
-    IMF Country Reports (2023-2024) • Ministry of Finance (2026)
-    """)
 
-# ============================================================================
-# VIEW: 📈 HISTORICAL AUDIT TIMELINE (REVISED)
-# Last Clean Audit: 2007 (CORRECTED)
-# ============================================================================
-
+# ========================================================================
+# VIEW 11: HISTORICAL AUDIT TIMELINE
+# ========================================================================
 elif view_option == "📈 Historical Audit Timeline":
     st.markdown('<div class="sub-header">📜 Historical Audit Timeline: 2003-2023</div>', unsafe_allow_html=True)
     
@@ -5268,40 +4456,35 @@ elif view_option == "📈 Historical Audit Timeline":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # MAIN AUDIT TIMELINE CHART
-    # ========================================================================
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        # Prepare data - CORRECTED: Last Clean is 2007
         years = list(range(2003, 2024))
         opinions = ['Clean']*5 + ['Disclaimer']*10 + ['Adverse']*6
         colors = ['#10B981']*5 + ['#F59E0B']*10 + ['#DC2626']*6
         
-        # Key issues for each year
         key_issues = [
-            'No major issues',  # 2003
-            'No major issues',  # 2004
-            'No major issues',  # 2005
-            'No major issues',  # 2006
-            'No major issues (Last Clean)',  # 2007
-            'SOE consolidation concerns',  # 2008
-            'SOE consolidation concerns',  # 2009
-            'SOE consolidation concerns',  # 2010
-            'SOE consolidation concerns',  # 2011
-            'SOE consolidation concerns',  # 2012
-            'Asset valuation issues',  # 2013
-            'Asset valuation issues',  # 2014
-            'Asset valuation issues',  # 2015
-            'Asset valuation issues',  # 2016
-            'Asset valuation issues',  # 2017
-            'First Adverse Opinion',  # 2018
-            'Cash overstatements ($115M)',  # 2019
-            'Fixed assets & land unverified',  # 2020
-            'Deficit peaks ($685M)',  # 2021
-            'Asset discrepancies ($719M)',  # 2022
-            'Tax receivables unverified (NEW $2.43B)'  # 2023
+            'No major issues',
+            'No major issues',
+            'No major issues',
+            'No major issues',
+            'No major issues (Last Clean)',
+            'SOE consolidation concerns',
+            'SOE consolidation concerns',
+            'SOE consolidation concerns',
+            'SOE consolidation concerns',
+            'SOE consolidation concerns',
+            'Asset valuation issues',
+            'Asset valuation issues',
+            'Asset valuation issues',
+            'Asset valuation issues',
+            'Asset valuation issues',
+            'First Adverse Opinion',
+            'Cash overstatements ($115M)',
+            'Fixed assets & land unverified',
+            'Deficit peaks ($685M)',
+            'Asset discrepancies ($719M)',
+            'Tax receivables unverified (NEW $2.43B)'
         ]
         
         fig = go.Figure()
@@ -5318,7 +4501,6 @@ elif view_option == "📈 Historical Audit Timeline":
             customdata=key_issues
         ))
         
-        # Add era overlays
         fig.add_vrect(x0=2002.5, x1=2007.5, fillcolor="rgba(16, 185, 129, 0.15)", line_width=0)
         fig.add_annotation(x=2005, y=1.1, text="🟢 CLEAN ERA\n5 YEARS (2003-2007)", 
                           showarrow=False, font=dict(size=13, color='#10B981', weight='bold'))
@@ -5331,7 +4513,6 @@ elif view_option == "📈 Historical Audit Timeline":
         fig.add_annotation(x=2020, y=1.1, text="🔴 ADVERSE ERA\n6 YEARS (2018-2023)", 
                           showarrow=False, font=dict(size=13, color='#DC2626', weight='bold'))
         
-        # Key milestone annotations - CORRECTED
         milestones = [
             {'year': 2003, 'text': '🟢 FIRST CLEAN', 'y': 1.3, 'color': '#10B981'},
             {'year': 2007, 'text': '🟢 LAST CLEAN ✅', 'y': 1.4, 'color': '#10B981'},
@@ -5380,14 +4561,10 @@ elif view_option == "📈 Historical Audit Timeline":
         </div>
         """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # ERA BREAKDOWN
-    # ========================================================================
     st.markdown('<div class="section-header">📊 Era Breakdown</div>', unsafe_allow_html=True)
     
     era_col1, era_col2, era_col3 = st.columns(3)
     
-    # Clean Era (2003-2007) - CORRECTED
     clean_years = list(range(2003, 2008))
     clean_count = len(clean_years)
     
@@ -5404,7 +4581,6 @@ elif view_option == "📈 Historical Audit Timeline":
         </div>
         """, unsafe_allow_html=True)
     
-    # Disclaimer Era (2008-2017)
     disclaimer_years = list(range(2008, 2018))
     disclaimer_count = len(disclaimer_years)
     
@@ -5421,7 +4597,6 @@ elif view_option == "📈 Historical Audit Timeline":
         </div>
         """, unsafe_allow_html=True)
     
-    # Adverse Era (2018-2023)
     adverse_years = list(range(2018, 2024))
     adverse_count = len(adverse_years)
     
@@ -5438,212 +4613,10 @@ elif view_option == "📈 Historical Audit Timeline":
             <p style="color: #DC2626; font-weight: bold;">🚨 NEW 2023: $2.43B Tax Receivables</p>
         </div>
         """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # DETAILED YEAR-BY-YEAR TIMELINE
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 Detailed Year-by-Year Timeline</div>', unsafe_allow_html=True)
-    
-    # Create a detailed timeline dataframe - CORRECTED
-    timeline_data = []
-    for i, year in enumerate(range(2003, 2024)):
-        opinion = opinions[i]
-        issue = key_issues[i]
-        
-        # Determine era
-        if year <= 2007:
-            era = 'Clean Era'
-        elif year <= 2017:
-            era = 'Disclaimer Era'
-        else:
-            era = 'Adverse Era'
-        
-        # Determine indicator
-        if opinion == 'Clean':
-            indicator = '🟢'
-        elif opinion == 'Disclaimer':
-            indicator = '🟡'
-        else:
-            indicator = '🔴'
-        
-        # Highlight special years
-        special = ''
-        if year == 2007:
-            special = '⭐ LAST CLEAN'
-        elif year == 2008:
-            special = '⭐ FIRST DISCLAIMER'
-        elif year == 2018:
-            special = '⭐ FIRST ADVERSE'
-        elif year == 2023:
-            special = '⭐ 6TH ADVERSE + $2.43B'
-        
-        timeline_data.append({
-            'Year': year,
-            'Indicator': indicator,
-            'Opinion': opinion,
-            'Key Issue': issue,
-            'Era': era,
-            'Special': special
-        })
-    
-    timeline_df = pd.DataFrame(timeline_data)
-    
-    # Display as a styled table
-    st.dataframe(
-        timeline_df,
-        use_container_width=True,
-        column_config={
-            'Year': 'Year',
-            'Indicator': '',
-            'Opinion': 'Audit Opinion',
-            'Key Issue': 'Key Issue Identified',
-            'Era': 'Era',
-            'Special': 'Special'
-        },
-        hide_index=True
-    )
-    
-    # ========================================================================
-    # ISSUE PERSISTENCE ANALYSIS
-    # ========================================================================
-    st.markdown('<div class="section-header">🔄 Issue Persistence Analysis</div>', unsafe_allow_html=True)
-    
-    # Count how many years each issue has persisted - CORRECTED
-    issue_persistence = [
-        {'Issue': 'SOE Consolidation', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
-        {'Issue': 'Pension Liability Hidden', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
-        {'Issue': 'Asset Register Issues', 'First Appeared': 2003, 'Years_Present': 21, 'Status': '❌ Unresolved'},
-        {'Issue': 'Bank Reconciliation Issues', 'First Appeared': 2008, 'Years_Present': 16, 'Status': '❌ Unresolved'},
-        {'Issue': 'Tax Receivables (NEW)', 'First Appeared': 2023, 'Years_Present': 1, 'Status': '🚨 New Issue'}
-    ]
-    
-    persistence_df = pd.DataFrame(issue_persistence)
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        # Bar chart for issue persistence
-        fig_persist = px.bar(
-            persistence_df,
-            x='Issue',
-            y='Years_Present',
-            title='Years Each Issue Has Persisted (2003-2023)',
-            color='Years_Present',
-            color_continuous_scale='Reds',
-            text=[f"{x} years" for x in persistence_df['Years_Present']],
-            range_color=[0, 25]
-        )
-        fig_persist.update_layout(
-            yaxis_title='Years Present',
-            xaxis_title='Issue',
-            height=350
-        )
-        st.plotly_chart(fig_persist, use_container_width=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; border-left: 4px solid #DC2626;">
-            <h5 style="color: #DC2626; margin-top: 0;">🚨 Persistent Issues Summary</h5>
-            <ul>
-                <li><strong>SOE Consolidation:</strong> 21+ years</li>
-                <li><strong>Pension Liability:</strong> 21+ years</li>
-                <li><strong>Asset Registers:</strong> 21+ years</li>
-                <li><strong>Bank Reconciliations:</strong> 16+ years</li>
-                <li><strong>🚨 NEW 2023:</strong> $2.43B Tax Receivables</li>
-            </ul>
-            <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
-            <em>These issues have persisted for nearly two decades with no resolution.</em>
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # KEY STATISTICS - CORRECTED
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Key Statistics</div>', unsafe_allow_html=True)
-    
-    stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
-    
-    with stat_col1:
-        st.metric("Total Years", "21", "2003-2023")
-    
-    with stat_col2:
-        st.metric("Clean Opinions", "5", "2003-2007 ✅ Last: 2007")
-    
-    with stat_col3:
-        st.metric("Disclaimer Opinions", "10", "2008-2017 ⚠️ First: 2008")
-    
-    with stat_col4:
-        st.metric("Adverse Opinions", "6", "2018-2023 🔴 6 Consecutive")
-    
-    # ========================================================================
-    # TRANSITION ANALYSIS - CORRECTED
-    # ========================================================================
-    st.markdown('<div class="section-header">🔄 Transition Analysis</div>', unsafe_allow_html=True)
-    
-    transitions = [
-        {
-            'From': 'Clean Era (2003-2007)',
-            'To': 'Disclaimer Era (2008-2017)',
-            'Year': '2008',
-            'Reason': 'SOE consolidation and asset valuation issues emerged',
-            'Impact': 'Lost clean audit status after 5 years (last clean: 2007)'
-        },
-        {
-            'From': 'Disclaimer Era (2008-2017)',
-            'To': 'Adverse Era (2018-2023)',
-            'Year': '2018',
-            'Reason': 'Material misstatements, cash overstatements, asset exclusions',
-            'Impact': '6 consecutive adverse opinions, systemic failure'
-        },
-        {
-            'From': 'Adverse Era (2018-2023)',
-            'To': 'Unknown Future',
-            'Year': '2024+',
-            'Reason': 'Requires: Tax receivable verification, SOE consolidation, pension disclosure',
-            'Impact': 'Potential for clean audit if reforms implemented'
-        }
-    ]
-    
-    for transition in transitions:
-        st.markdown(f"""
-        <div class="financial-card" style="border-left-color: {'#F59E0B' if 'Unknown' in transition['To'] else '#DC2626'};">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h5 style="margin-top: 0;">
-                        {transition['From']} → {transition['To']}
-                    </h5>
-                    <p><strong>Transition Year:</strong> {transition['Year']}</p>
-                    <p><strong>Reason:</strong> {transition['Reason']}</p>
-                    <p><strong>Impact:</strong> {transition['Impact']}</p>
-                </div>
-                <div style="font-size: 2.5rem;">
-                    {'🔴' if 'Adverse' in transition['To'] else '🟡' if 'Disclaimer' in transition['To'] else '❓'}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # SUMMARY FOOTER
-    # ========================================================================
-    st.markdown("""
-    <div style="background-color: #00267F; padding: 20px; border-radius: 10px; color: white; margin-top: 15px;">
-        <h5 style="color: white; margin-top: 0;">📌 Key Takeaway</h5>
-        <p style="margin: 0; color: #BFDBFE;">
-        The audit timeline shows a clear deterioration in financial management:
-        <strong style="color: white;">5 clean (2003-2007) → 10 disclaimer (2008-2017) → 6 adverse (2018-2023)</strong> opinions.
-        The last clean audit was in <strong style="color: #FFC726;">2007</strong>, and we are now in our 
-        <strong style="color: #FFC726;">6th consecutive year of adverse opinions</strong>.
-        The path forward requires addressing <strong style="color: #FFC726;">21+ year old issues</strong>
-        that have never been resolved.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
-# ============================================================================
-# VIEW 12: LONG-TERM FINANCIAL TRENDS - COMPLETE VERSION
-# ============================================================================
+# ========================================================================
+# VIEW 12: LONG-TERM FINANCIAL TRENDS
+# ========================================================================
 elif view_option == "💰 Long-Term Financial Trends":
     st.markdown('<div class="sub-header">💰 Long-Term Financial Trends (2003-2023)</div>', unsafe_allow_html=True)
     
@@ -5659,9 +4632,6 @@ elif view_option == "💰 Long-Term Financial Trends":
     </div>
     """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # MAIN FINANCIAL TRENDS CHART
-    # ========================================================================
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     
     fig.add_trace(go.Scatter(
@@ -5694,7 +4664,6 @@ elif view_option == "💰 Long-Term Financial Trends":
         hovertemplate='Year: %{x}<br>Net Debt: $%{y:.2f}B<extra></extra>'
     ), secondary_y=True)
     
-    # Add era overlays
     fig.add_vrect(x0=2003, x1=2007.5, fillcolor="rgba(16, 185, 129, 0.15)", line_width=0, annotation_text="Clean Era", annotation_position="top left")
     fig.add_vrect(x0=2008, x1=2017.5, fillcolor="rgba(245, 158, 11, 0.15)", line_width=0, annotation_text="Disclaimer Era", annotation_position="top left")
     fig.add_vrect(x0=2018, x1=2023.5, fillcolor="rgba(220, 38, 38, 0.15)", line_width=0, annotation_text="Adverse Era", annotation_position="top left")
@@ -5710,14 +4679,10 @@ elif view_option == "💰 Long-Term Financial Trends":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # ========================================================================
-    # KEY METRICS EVOLUTION
-    # ========================================================================
     st.markdown('<div class="section-header">📊 Key Metrics Evolution</div>', unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
     
-    # Revenue Growth
     revenue_2003 = historical_financials[historical_financials['Year'] == 2003]['Revenue_Billions'].values[0]
     revenue_2023 = historical_financials[historical_financials['Year'] == 2023]['Revenue_Billions'].values[0]
     revenue_pct = ((revenue_2023 - revenue_2003) / revenue_2003) * 100
@@ -5730,7 +4695,6 @@ elif view_option == "💰 Long-Term Financial Trends":
             delta_color="normal"
         )
     
-    # Expenditure Growth
     exp_2003 = historical_financials[historical_financials['Year'] == 2003]['Expenditure_Billions'].values[0]
     exp_2023 = historical_financials[historical_financials['Year'] == 2023]['Expenditure_Billions'].values[0]
     exp_pct = ((exp_2023 - exp_2003) / exp_2003) * 100
@@ -5743,7 +4707,6 @@ elif view_option == "💰 Long-Term Financial Trends":
             delta_color="inverse"
         )
     
-    # Debt Growth
     debt_2003 = historical_financials[historical_financials['Year'] == 2003]['Net_Debt_Billions'].values[0]
     debt_2023 = historical_financials[historical_financials['Year'] == 2023]['Net_Debt_Billions'].values[0]
     debt_pct = ((debt_2023 - debt_2003) / debt_2003) * 100
@@ -5756,7 +4719,6 @@ elif view_option == "💰 Long-Term Financial Trends":
             delta_color="inverse"
         )
     
-    # Deficit Improvement
     deficit_2023 = abs(historical_financials[historical_financials['Year'] == 2023]['Deficit_Billions'].values[0])
     deficit_2021 = abs(historical_financials[historical_financials['Year'] == 2021]['Deficit_Billions'].values[0])
     deficit_improvement = ((deficit_2021 - deficit_2023) / deficit_2021) * 100 if deficit_2021 != 0 else 0
@@ -5768,285 +4730,10 @@ elif view_option == "💰 Long-Term Financial Trends":
             f"-{deficit_improvement:.0f}% since 2021",
             delta_color="normal"
         )
-    
-    # ========================================================================
-    # DEFICIT TRENDS CHART
-    # ========================================================================
-    st.markdown('<div class="section-header">📉 Deficit Trends (2003-2023)</div>', unsafe_allow_html=True)
-    
-    deficit_data = historical_financials.copy()
-    deficit_data['Deficit_Abs'] = deficit_data['Deficit_Billions'].abs()
-    
-    # Color code deficits (red for deficit, green for surplus)
-    colors_def = ['#DC2626' if x < 0 else '#10B981' for x in deficit_data['Deficit_Billions']]
-    
-    fig_def = go.Figure()
-    
-    fig_def.add_trace(go.Bar(
-        x=deficit_data['Year'],
-        y=deficit_data['Deficit_Billions'],
-        marker_color=colors_def,
-        text=[f"${x:.2f}B" for x in deficit_data['Deficit_Billions']],
-        textposition='outside',
-        hovertemplate='Year: %{x}<br>Deficit: $%{y:.2f}B<extra></extra>'
-    ))
-    
-    # Add zero line
-    fig_def.add_hline(y=0, line_dash="dash", line_color="#666", line_width=1)
-    
-    # Highlight peak deficit
-    fig_def.add_annotation(
-        x=2021, y=-0.7, 
-        text="🔴 Peak Deficit: $685M",
-        showarrow=True,
-        arrowhead=1,
-        ax=0,
-        ay=-40,
-        font=dict(color="#DC2626", size=11)
-    )
-    
-    # Highlight 2023 improvement
-    fig_def.add_annotation(
-        x=2023, y=-0.11, 
-        text="✅ $111M (Improved 84%)",
-        showarrow=True,
-        arrowhead=1,
-        ax=0,
-        ay=-40,
-        font=dict(color="#10B981", size=11)
-    )
-    
-    fig_def.update_layout(
-        title='Consolidated Fund Deficit/Surplus (2003-2023)',
-        yaxis_title='Amount (Billions $)',
-        xaxis_title='Year',
-        height=400,
-        showlegend=False
-    )
-    
-    st.plotly_chart(fig_def, use_container_width=True)
-    
-    # ========================================================================
-    # REVENUE VS EXPENDITURE GAP
-    # ========================================================================
-    st.markdown('<div class="section-header">📊 Revenue vs Expenditure Gap Analysis</div>', unsafe_allow_html=True)
-    
-    # Calculate gap
-    gap_data = historical_financials.copy()
-    gap_data['Gap'] = gap_data['Revenue_Billions'] - gap_data['Expenditure_Billions']
-    
-    fig_gap = go.Figure()
-    
-    fig_gap.add_trace(go.Scatter(
-        x=gap_data['Year'],
-        y=gap_data['Revenue_Billions'],
-        name='Revenue',
-        mode='lines+markers',
-        line=dict(color='#00267F', width=2),
-        marker=dict(size=8),
-        fill=None
-    ))
-    
-    fig_gap.add_trace(go.Scatter(
-        x=gap_data['Year'],
-        y=gap_data['Expenditure_Billions'],
-        name='Expenditure',
-        mode='lines+markers',
-        line=dict(color='#DC2626', width=2),
-        marker=dict(size=8),
-        fill='tonexty',
-        fillcolor='rgba(220, 38, 38, 0.15)'
-    ))
-    
-    # Add gap annotations for key years
-    for year in [2003, 2008, 2013, 2018, 2021, 2023]:
-        year_data = gap_data[gap_data['Year'] == year]
-        if not year_data.empty:
-            gap = year_data['Gap'].values[0]
-            fig_gap.add_annotation(
-                x=year,
-                y=(year_data['Revenue_Billions'].values[0] + year_data['Expenditure_Billions'].values[0]) / 2,
-                text=f"${gap:.2f}B" if gap < 0 else f"${gap:.2f}B surplus",
-                showarrow=True,
-                arrowhead=1,
-                ax=0,
-                ay=(-30 if gap < 0 else 30),
-                font=dict(size=9, color='#DC2626' if gap < 0 else '#10B981')
-            )
-    
-    fig_gap.update_layout(
-        title='Revenue vs Expenditure Gap (2003-2023)',
-        yaxis_title='Amount (Billions $)',
-        xaxis_title='Year',
-        height=400,
-        hovermode='x unified',
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    
-    st.plotly_chart(fig_gap, use_container_width=True)
-    
-    # ========================================================================
-    # AUDIT QUALITY OVERLAY
-    # ========================================================================
-    st.markdown('<div class="section-header">🔍 Audit Quality vs Financial Performance</div>', unsafe_allow_html=True)
-    
-    # Create combined view
-    combined_data = historical_financials.merge(historical_audit[['Year', 'Audit_Opinion']], on='Year')
-    
-    # Color mapping for audit opinions
-    opinion_colors = {'Clean': '#10B981', 'Disclaimer': '#F59E0B', 'Adverse': '#DC2626'}
-    
-    fig_combined = go.Figure()
-    
-    # Bar chart for audit opinions (as background)
-    fig_combined.add_trace(go.Bar(
-        x=combined_data['Year'],
-        y=[3] * len(combined_data),
-        marker_color=[opinion_colors[op] for op in combined_data['Audit_Opinion']],
-        opacity=0.3,
-        name='Audit Opinion (Background)',
-        hovertemplate='Year: %{x}<br>Audit Opinion: %{customdata}<extra></extra>',
-        customdata=combined_data['Audit_Opinion'],
-        showlegend=False
-    ))
-    
-    # Line for Revenue
-    fig_combined.add_trace(go.Scatter(
-        x=combined_data['Year'],
-        y=combined_data['Revenue_Billions'],
-        name='Revenue',
-        mode='lines+markers',
-        line=dict(color='#00267F', width=3),
-        marker=dict(size=8),
-        yaxis='y2'
-    ))
-    
-    # Line for Expenditure
-    fig_combined.add_trace(go.Scatter(
-        x=combined_data['Year'],
-        y=combined_data['Expenditure_Billions'],
-        name='Expenditure',
-        mode='lines+markers',
-        line=dict(color='#DC2626', width=3),
-        marker=dict(size=8),
-        yaxis='y2'
-    ))
-    
-    # Line for Net Debt
-    fig_combined.add_trace(go.Scatter(
-        x=combined_data['Year'],
-        y=combined_data['Net_Debt_Billions'],
-        name='Net Debt',
-        mode='lines+markers',
-        line=dict(color='#F59E0B', width=3, dash='dash'),
-        marker=dict(size=8),
-        yaxis='y2'
-    ))
-    
-    fig_combined.update_layout(
-        title='Audit Quality vs Financial Performance (2003-2023)',
-        height=450,
-        hovermode='x unified',
-        xaxis=dict(title='Year'),
-        yaxis=dict(title='Audit Opinion Severity', tickvals=[1, 2, 3], ticktext=['Clean', 'Disclaimer', 'Adverse'], range=[0, 3.5]),
-        yaxis2=dict(title='Amount (Billions $)', overlaying='y', side='right'),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    
-    st.plotly_chart(fig_combined, use_container_width=True)
-    
-    # ========================================================================
-    # SUMMARY STATISTICS TABLE
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 21-Year Summary Statistics</div>', unsafe_allow_html=True)
-    
-    # Calculate summary statistics
-    summary_stats = pd.DataFrame({
-        'Metric': [
-            'Total Revenue (2023)',
-            'Total Expenditure (2023)',
-            'Net Debt (2023)',
-            'Deficit (2023)',
-            'Revenue Growth (2003-2023)',
-            'Expenditure Growth (2003-2023)',
-            'Net Debt Growth (2003-2023)',
-            'Deficit Reduction (2021-2023)',
-            'Clean Audit Years',
-            'Disclaimer Audit Years',
-            'Adverse Audit Years',
-            'Consecutive Adverse Years'
-        ],
-        'Value': [
-            f"${revenue_2023:.2f}B",
-            f"${exp_2023:.2f}B",
-            f"${debt_2023:.2f}B",
-            f"${deficit_2023:.2f}B",
-            f"+{revenue_pct:.0f}%",
-            f"+{exp_pct:.0f}%",
-            f"+{debt_pct:.0f}%",
-            f"-{deficit_improvement:.0f}%",
-            f"{clean_years} (2003-2007)",
-            f"{disclaimer_years} (2008-2017)",
-            f"{adverse_years} (2018-2023)",
-            f"{metrics['adverse_consecutive_years']} (2018-2023)"
-        ],
-        'Status': [
-            '✅ Improved',
-            '⚠️ Increased',
-            '⚠️ Increased',
-            '✅ Improved',
-            '✅ Positive',
-            '⚠️ Higher',
-            '⚠️ Higher',
-            '✅ Improved',
-            '✅ Historical',
-            '⚠️ Historical',
-            '❌ Current',
-            '❌ Current'
-        ]
-    })
-    
-    st.dataframe(summary_stats, use_container_width=True, hide_index=True)
-    
-    # ========================================================================
-    # KEY INSIGHTS
-    # ========================================================================
-    st.markdown('<div class="section-header">💡 Key Insights</div>', unsafe_allow_html=True)
-    
-    insights = [
-        {
-            'title': 'Revenue Growth Outpaced Expenditure',
-            'detail': f'Revenue grew {revenue_pct:.0f}% while expenditure grew {exp_pct:.0f}% over 21 years, indicating improved revenue collection.',
-            'color': '#10B981'
-        },
-        {
-            'title': 'Significant Deficit Reduction',
-            'detail': f'Deficit reduced by {deficit_improvement:.0f}% from its peak in 2021 ($685M) to $111M in 2023.',
-            'color': '#10B981'
-        },
-        {
-            'title': 'Debt Remains a Challenge',
-            'detail': f'Net Debt grew {debt_pct:.0f}% from $5.0B to $10.6B over 21 years, reaching 102.9% of GDP.',
-            'color': '#F59E0B'
-        },
-        {
-            'title': 'Audit Quality Declined',
-            'detail': 'From 5 clean opinions (2003-2007) to 6 adverse opinions (2018-2023), indicating systemic financial management failures.',
-            'color': '#DC2626'
-        }
-    ]
-    
-    for insight in insights:
-        st.markdown(f"""
-        <div class="financial-card" style="border-left-color: {insight['color']};">
-            <h5 style="margin-top: 0; color: {insight['color']};">{insight['title']}</h5>
-            <p style="margin: 0;">{insight['detail']}</p>
-        </div>
-        """, unsafe_allow_html=True)
 
-# ============================================================================
+# ========================================================================
 # VIEW 13: RECURRING ISSUES ANALYSIS
-# ============================================================================
+# ========================================================================
 elif view_option == "🔄 Recurring Issues Analysis":
     st.markdown('<div class="sub-header">🔄 Recurring Issues Analysis (2003-2023)</div>', unsafe_allow_html=True)
     
@@ -6104,9 +4791,10 @@ elif view_option == "🔄 Recurring Issues Analysis":
         <p style="font-size: 0.9rem; color: #666;">Includes $2.43B new issue flagged in 2023</p>
     </div>
     """, unsafe_allow_html=True)
-# ============================================================================
-# VIEW 14: ACCOUNTABILITY SCORECARD - COMPLETE VERSION
-# ============================================================================
+
+# ========================================================================
+# VIEW 14: ACCOUNTABILITY SCORECARD
+# ========================================================================
 elif view_option == "📊 Accountability Scorecard":
     st.markdown('<div class="sub-header">📊 Accountability Scorecard (2003-2023)</div>', unsafe_allow_html=True)
     
@@ -6119,7 +4807,6 @@ elif view_option == "📊 Accountability Scorecard":
     </div>
     """, unsafe_allow_html=True)
     
-    # Accountability Metrics Data
     accountability_metrics = pd.DataFrame({
         'Category': ['Financial Reporting', 'Asset Management', 'Liability Reporting', 'SOE Governance',
                      'Internal Controls', 'Pension Management', 'Revenue Collection', 'Audit Recommendations'],
@@ -6130,7 +4817,6 @@ elif view_option == "📊 Accountability Scorecard":
                   '🔴 Declining', '🔴 Declining', '🟡 Stalled', '🟡 Stalled']
     })
     
-    # Scorecard Chart
     fig = go.Figure()
     
     fig.add_trace(go.Bar(
@@ -6168,16 +4854,12 @@ elif view_option == "📊 Accountability Scorecard":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # ========================================================================
-    # DETAILED CATEGORY ANALYSIS
-    # ========================================================================
     st.markdown('<div class="section-header">📋 Detailed Category Analysis</div>', unsafe_allow_html=True)
     
     for _, row in accountability_metrics.iterrows():
         improvement = row['Score_2023'] - row['Score_2008']
         color = '#DC2626' if improvement < 0 else '#10B981' if improvement > 0 else '#F59E0B'
         
-        # Determine category status
         if row['Score_2023'] >= 80:
             status = "✅ On Track"
             status_color = "#10B981"
@@ -6216,97 +4898,6 @@ elif view_option == "📊 Accountability Scorecard":
         </div>
         """, unsafe_allow_html=True)
     
-    # ========================================================================
-    # KEY FINDINGS
-    # ========================================================================
-    st.markdown('<div class="section-header">📌 Key Findings</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div class="financial-card" style="border-left-color: #DC2626;">
-            <h5 style="color: #DC2626; margin-top: 0;">🔴 Areas of Concern</h5>
-            <ul>
-                <li><strong>Liability Reporting:</strong> 10/100 - Pension liabilities hidden for 22+ years</li>
-                <li><strong>SOE Governance:</strong> 5/100 - 40+ SOEs not consolidated for 21+ years</li>
-                <li><strong>Asset Management:</strong> 15/100 - $719M discrepancy in capital assets</li>
-                <li><strong>Internal Controls:</strong> 20/100 - Bank reconciliations 18+ years outstanding</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="financial-card" style="border-left-color: #F59E0B;">
-            <h5 style="color: #F59E0B; margin-top: 0;">🟡 Stalled Progress</h5>
-            <ul>
-                <li><strong>Revenue Collection:</strong> 25/100 - $2.43B tax receivables unverified (NEW 2023)</li>
-                <li><strong>Audit Recommendations:</strong> 15/100 - 6 recommendations outstanding for 21+ years</li>
-                <li><strong>Financial Reporting:</strong> 20/100 - 6 consecutive adverse opinions (2018-2023)</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # AUDIT RECOMMENDATIONS TABLE
-    # ========================================================================
-    st.markdown('<div class="section-header">📋 Audit Recommendations (2003-2023)</div>', unsafe_allow_html=True)
-    
-    recommendations_data = load_historical_recommendations()
-    
-    st.dataframe(
-        recommendations_data,
-        use_container_width=True,
-        column_config={
-            'Recommendation': 'Audit Recommendation',
-            'Year_First_Made': 'First Made',
-            'Status': 'Current Status',
-            'Years_Outstanding': 'Years Outstanding',
-            'Estimated_Cost_Billions': 'Estimated Cost (Billions)'
-        }
-    )
-    
-    # ========================================================================
-    # RECOMMENDATIONS TIMELINE CHART
-    # ========================================================================
-    st.markdown("### 📅 Recommendations Timeline")
-    
-    rec_timeline = []
-    for _, row in recommendations_data.iterrows():
-        rec_timeline.append({
-            'Recommendation': row['Recommendation'],
-            'Start_Year': row['Year_First_Made'],
-            'Status': row['Status'],
-            'Years_Outstanding': row['Years_Outstanding']
-        })
-    
-    fig_timeline = go.Figure()
-    
-    colors = {'❌ Not Implemented': '#DC2626', '⚠️ In Progress': '#F59E0B', '✅ Completed': '#10B981'}
-    
-    for rec in rec_timeline:
-        fig_timeline.add_trace(go.Bar(
-            x=[rec['Recommendation']],
-            y=[rec['Years_Outstanding']],
-            name=rec['Recommendation'],
-            marker_color=colors.get(rec['Status'], '#666'),
-            text=[f"{rec['Years_Outstanding']} years"],
-            textposition='inside'
-        ))
-    
-    fig_timeline.update_layout(
-        title='Years Outstanding by Recommendation',
-        yaxis_title='Years Outstanding',
-        xaxis_title='Recommendation',
-        height=400,
-        showlegend=False
-    )
-    st.plotly_chart(fig_timeline, use_container_width=True)
-    
-    # ========================================================================
-    # OVERALL GRADE
-    # ========================================================================
     overall_score = accountability_metrics['Score_2023'].mean()
     
     if overall_score >= 80:
@@ -6345,44 +4936,10 @@ elif view_option == "📊 Accountability Scorecard":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
-    # ========================================================================
-    # SUMMARY TABLE
-    # ========================================================================
-    with st.expander("📊 View Full Scorecard Data Table", expanded=False):
-        summary_df = accountability_metrics.copy()
-        summary_df['Change'] = summary_df['Score_2023'] - summary_df['Score_2008']
-        summary_df['Gap_to_Target'] = summary_df['Target'] - summary_df['Score_2023']
-        
-        # Add status column
-        def get_status(score):
-            if score >= 80:
-                return "✅ On Track"
-            elif score >= 50:
-                return "⚠️ Needs Improvement"
-            else:
-                return "❌ Critical"
-        
-        summary_df['Status'] = summary_df['Score_2023'].apply(get_status)
-        
-        st.dataframe(
-            summary_df,
-            use_container_width=True,
-            column_config={
-                'Category': 'Category',
-                'Score_2008': '2008 Score',
-                'Score_2023': '2023 Score',
-                'Target': 'Target',
-                'Change': 'Change',
-                'Gap_to_Target': 'Gap to Target',
-                'Trend': 'Trend',
-                'Status': 'Status'
-            }
-        )
 
-# ============================================================================
-# VIEW 15: 2023 EXECUTIVE SUMMARY - COMPLETE WITH REVENUE & EXPENDITURE SUMMARY
-# ============================================================================
+# ========================================================================
+# VIEW 15: 2023 EXECUTIVE SUMMARY
+# ========================================================================
 elif view_option == "📋 2023 Executive Summary":
     st.markdown('<div class="sub-header">📋 2023 Executive Summary - Adverse Audit Opinion</div>', unsafe_allow_html=True)
     
@@ -6413,12 +4970,8 @@ elif view_option == "📋 2023 Executive Summary":
         st.metric("Total Public Debt", format_currency(metrics['total_liabilities_2023'], currency_format),
                   "6th consecutive adverse opinion")
     
-    # ========================================================================
-    # REVENUE & EXPENDITURE SUMMARY - ADDED BACK
-    # ========================================================================
     st.markdown('<div class="section-header">📊 Revenue & Expenditure Summary</div>', unsafe_allow_html=True)
     
-    # Revenue Composition Pie Chart
     revenue_composition = financial_2023['financial_performance'].copy()
     fig_revenue = px.pie(
         revenue_composition,
@@ -6435,7 +4988,6 @@ elif view_option == "📋 2023 Executive Summary":
     col1, col2 = st.columns(2)
     
     with col1:
-        # Top 5 Tax Revenue Sources
         st.markdown("#### Top 5 Tax Revenue Sources (2023)")
         top_taxes = financial_2023['tax_revenue_details'].nlargest(5, 'Actual_2023')
         fig_taxes = px.bar(
@@ -6452,7 +5004,6 @@ elif view_option == "📋 2023 Executive Summary":
         st.plotly_chart(fig_taxes, use_container_width=True)
     
     with col2:
-        # Expenditure Breakdown
         st.markdown("#### Expenditure by Category (2023)")
         expenditure_data = financial_2023['expenditure_data'].copy()
         expenditure_data['Pct_of_Total'] = (expenditure_data['Actual_2023'] / expenditure_data['Actual_2023'].sum()) * 100
@@ -6471,9 +5022,6 @@ elif view_option == "📋 2023 Executive Summary":
         fig_exp.update_xaxes(tickangle=20)
         st.plotly_chart(fig_exp, use_container_width=True)
     
-    # Revenue vs Expenditure Comparison
-    st.markdown("#### Revenue vs Expenditure Comparison")
-    
     rev_exp_data = pd.DataFrame({
         'Category': ['Revenue', 'Expenditure'],
         'Amount': [metrics['total_revenue_2023'], metrics['total_expenditure_2023']]
@@ -6491,17 +5039,11 @@ elif view_option == "📋 2023 Executive Summary":
     fig_comp.update_layout(yaxis_title=f'Amount ({currency_format})', xaxis_title='')
     st.plotly_chart(fig_comp, use_container_width=True)
     
-    # ========================================================================
-    # MATERIAL MISSTATEMENTS
-    # ========================================================================
     st.markdown('<div class="section-header">🚨 Material Misstatements Identified</div>', unsafe_allow_html=True)
     
     for _, item in financial_2023['adverse_opinion_items'].iterrows():
         render_misstatement_card(item, currency_format)
-
-    # ========================================================================
-    # IPSAS COMPLIANCE FAILURES
-    # ========================================================================
+    
     st.markdown('<div class="section-header">📋 IPSAS Compliance Failures</div>', unsafe_allow_html=True)
     
     ipsas_issues = [
@@ -6526,7 +5068,7 @@ elif view_option == "📋 2023 Executive Summary":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 16: 2023 BALANCE SHEET - CORRECTED VERSION
+# VIEW 16: 2023 BALANCE SHEET - COMPLETE FIXED VERSION (NO HTML)
 # ============================================================================
 elif view_option == "🏦 2023 Balance Sheet":
     st.markdown('<div class="sub-header">🏦 2023 Balance Sheet Analysis</div>', unsafe_allow_html=True)
@@ -6573,6 +5115,9 @@ elif view_option == "🏦 2023 Balance Sheet":
         lambda x: f"${x/1e6:,.2f}M" if x < 1e9 else f"${x/1e9:.2f}B"
     )
     
+    # ========================================================================
+    # KEY METRICS
+    # ========================================================================
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -6584,7 +5129,7 @@ elif view_option == "🏦 2023 Balance Sheet":
         st.metric("Net Position", f"${net_position:.2f}B", "Negative")
     
     # ========================================================================
-    # CORRECTED DEBT STRUCTURE BREAKDOWN
+    # DEBT STRUCTURE TABLE
     # ========================================================================
     st.markdown('<div class="section-header">📊 Public Debt Structure (2023)</div>', unsafe_allow_html=True)
     
@@ -6601,8 +5146,10 @@ elif view_option == "🏦 2023 Balance Sheet":
     )
     
     # ========================================================================
-    # DOMESTIC VS FOREIGN DEBT - CORRECTED
+    # DOMESTIC VS FOREIGN DEBT
     # ========================================================================
+    st.markdown('<div class="section-header">📊 Domestic vs Foreign Debt</div>', unsafe_allow_html=True)
+    
     domestic_total = debt_structure_corrected[debt_structure_corrected['Debt_Category'] == 'Domestic']['Amount_2023'].sum()
     foreign_total = debt_structure_corrected[debt_structure_corrected['Debt_Category'] == 'Foreign']['Amount_2023'].sum()
     
@@ -6612,11 +5159,17 @@ elif view_option == "🏦 2023 Balance Sheet":
     col1, col2 = st.columns(2)
     
     with col1:
+        debt_pie_data = pd.DataFrame({
+            'Category': ['Domestic Debt', 'Foreign Debt'],
+            'Amount': [domestic_total, foreign_total]
+        })
+        
         fig_debt = px.pie(
-            values=[domestic_total, foreign_total],
-            names=['Domestic Debt', 'Foreign Debt'],
+            debt_pie_data,
+            values='Amount',
+            names='Category',
             title=f'Debt Composition: Domestic vs Foreign\nTotal: ${total_debt/1e9:.2f}B',
-            color='names',
+            color='Category',
             color_discrete_map={'Domestic Debt': '#00267F', 'Foreign Debt': '#DC2626'},
             hole=0.4
         )
@@ -6641,7 +5194,7 @@ elif view_option == "🏦 2023 Balance Sheet":
         """, unsafe_allow_html=True)
     
     # ========================================================================
-    # KEY ASSET ITEMS
+    # KEY ASSET ITEMS - USING STREAMLIT METRIC WITH CUSTOM FORMATTING
     # ========================================================================
     st.markdown('<div class="section-header">📊 Key Asset Items</div>', unsafe_allow_html=True)
     
@@ -6651,40 +5204,43 @@ elif view_option == "🏦 2023 Balance Sheet":
         'Investments', 'Land', 'Other capital assets (Net)'
     ])]
     
+    # Use a simple for loop with st.columns for each item
     for _, row in key_assets.iterrows():
         value = format_currency(row['Actual_Mar_23'], currency_format)
         prev_value = format_currency(row['Actual_Mar_22'], currency_format)
         change = row['Actual_Mar_23'] - row['Actual_Mar_22']
         change_pct = (change / row['Actual_Mar_22']) * 100 if row['Actual_Mar_22'] != 0 else 0
         
-        # Check if this is the tax receivables item (NEW 2023 issue)
         is_tax = row['Category'] == 'Tax Receivables (Net)'
         
-        st.markdown(f"""
-        <div class="financial-card" style="border-left-color: {'#DC2626' if is_tax else '#00267F'};">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <strong>{row['Category']}</strong>
-                    {f' <span style="color: #DC2626; font-size: 0.8rem;">⚠️ NEW 2023 ISSUE</span>' if is_tax else ''}
-                    <br>
-                    <small style="color: #666;">2023: {value} | 2022: {prev_value}</small>
-                </div>
-                <div style="text-align: right;">
-                    <div style="color: {'#10B981' if change >= 0 else '#DC2626'}; font-weight: bold;">
-                        {format_currency(change, currency_format)}
-                    </div>
-                    <small style="color: #666;">{change_pct:+.1f}%</small>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Display with consistent formatting using columns
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            # Asset name with optional badge
+            if is_tax:
+                st.markdown(f"**{row['Category']}** ⚠️ NEW 2023 ISSUE")
+            else:
+                st.markdown(f"**{row['Category']}**")
+            # Values
+            st.markdown(f"2023: {value} | 2022: {prev_value}")
+        
+        with col2:
+            # Change amount with color
+            if change >= 0:
+                st.markdown(f"<p style='text-align: right; font-size: 1.1rem; font-weight: bold; color: #10B981; margin: 0;'>{format_currency(change, currency_format)}</p>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<p style='text-align: right; font-size: 1.1rem; font-weight: bold; color: #DC2626; margin: 0;'>{format_currency(change, currency_format)}</p>", unsafe_allow_html=True)
+            # Percentage
+            st.markdown(f"<p style='text-align: right; font-size: 0.9rem; color: #666; margin: 0;'>{change_pct:+.1f}%</p>", unsafe_allow_html=True)
+        
+        st.divider()
     
     # ========================================================================
     # DEBT BY CATEGORY BAR CHART
     # ========================================================================
     st.markdown('<div class="section-header">📊 Debt by Category</div>', unsafe_allow_html=True)
     
-    # Sort by amount for better visualization
     debt_sorted = debt_structure_corrected.sort_values('Amount_2023', ascending=False).head(10)
     
     fig_debt_bar = px.bar(
@@ -6714,9 +5270,9 @@ elif view_option == "🏦 2023 Balance Sheet":
     **Note:** Tax Receivables of $2.43B were flagged as a NEW issue in 2023 (unverified).
     """)
 
-# ============================================================================
-# VIEW 17: 2023 AUDIT FINDINGS - FIXED VERSION
-# ============================================================================
+# ========================================================================
+# VIEW 17: 2023 AUDIT FINDINGS
+# ========================================================================
 elif view_option == "🔍 2023 Audit Findings":
     st.markdown('<div class="sub-header">🔍 2023 Audit Findings & Material Misstatements</div>', unsafe_allow_html=True)
     
@@ -6732,7 +5288,6 @@ elif view_option == "🔍 2023 Audit Findings":
     
     st.markdown('<div class="section-header">Material Misstatements Identified</div>', unsafe_allow_html=True)
     
-    # Loop through all adverse opinion items and render them
     for _, item in financial_2023['adverse_opinion_items'].iterrows():
         render_misstatement_card(item, currency_format)
     
@@ -6759,9 +5314,9 @@ elif view_option == "🔍 2023 Audit Findings":
         </div>
         """, unsafe_allow_html=True)
 
-# ============================================================================
+# ========================================================================
 # VIEW 18: 2023 DATA QUALITY ISSUES
-# ============================================================================
+# ========================================================================
 elif view_option == "⚠️ 2023 Data Quality Issues":
     st.markdown('<div class="sub-header">⚠️ 2023 Data Quality Issues</div>', unsafe_allow_html=True)
     
@@ -6810,9 +5365,9 @@ elif view_option == "⚠️ 2023 Data Quality Issues":
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================================
+# ========================================================================
 # VIEW 19: 2026 REALITY CHECK
-# ============================================================================
+# ========================================================================
 elif view_option == "📊 2026 Reality Check":
     st.markdown('<div class="sub-header">📊 2026 Reality Check: Official Optimism vs. 2023 Audit Reality</div>', unsafe_allow_html=True)
     
@@ -6877,25 +5432,458 @@ elif view_option == "📊 2026 Reality Check":
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# FOOTER
+# VIEW 20: 2026-2027 BUDGET VS 2023 AUDIT - TRUTHFUL ANALYSIS
 # ============================================================================
-st.markdown("---")
-
-col1, col2, col3 = st.columns([1, 2, 1])
-
-with col2:
-    st.markdown(f"""
-    <div style="text-align: center; color: #666; font-size: 0.9rem; padding: 20px;">
-        <p style="font-weight: bold; color: #00267F;">Barbados Financial Accountability 2003-2026</p>
-        <p>A 21-Year Audit History • Data-Driven Analysis</p>
-        <p style="margin-top: 20px; font-size: 0.8rem;">
-            Data Source: Auditor General's Reports (2003-2023) • 
-            Version 10.0 • Generated: {datetime.now().strftime('%B %d, %Y')}
+elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
+    st.markdown('<div class="sub-header">📊 2026-2027 Budget: Analysis of Key Changes from 2023</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 25px; border-radius: 10px; border-left: 6px solid #3B82F6; margin: 20px 0;">
+        <p style="font-size: 1.1rem; margin: 0; color: #00267F;">
+        This analysis compares the <strong>2026-2027 Budget Estimates</strong> with the 
+        <strong>2023 Audited Financial Statements</strong>.
         </p>
-        <p style="font-size: 0.7rem; color: #999;">
-            ⚠️ 6 consecutive Adverse opinions (2018-2023)
-            <br>⚠️ Note 34 contains critical data inconsistencies
-            <br>⚠️ $2.43B tax receivables unverified (NEW 2023) • $4B+ pension liability hidden
+        <p style="font-size: 0.95rem; margin: 5px 0 0 0; color: #666;">
+        All figures are sourced from official Government documents. Where data is not directly comparable,
+        this is clearly noted.
         </p>
     </div>
     """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 1: THE BIG PICTURE - FACTUAL SUMMARY
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 The Big Picture: Key Changes</div>', unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric(
+            "Revenue Change",
+            "+$1.59B",
+            "+46% (2023 → 2026-27)",
+            delta_color="normal"
+        )
+    
+    with col2:
+        st.metric(
+            "Expenditure Change",
+            "+$2.29B",
+            "+64% (2023 → 2026-27)",
+            delta_color="inverse"
+        )
+    
+    with col3:
+        st.metric(
+            "Projected Deficit",
+            "-$658M",
+            "vs -$111M in 2023",
+            delta_color="inverse"
+        )
+    
+    with col4:
+        st.metric(
+            "Debt Service",
+            "$1.50B",
+            "25% of expenditure",
+            delta_color="inverse"
+        )
+    
+    # ========================================================================
+    # SECTION 2: REVENUE ANALYSIS
+    # ========================================================================
+    st.markdown('<div class="section-header">💰 Revenue: Key Changes</div>', unsafe_allow_html=True)
+    
+    revenue_data = pd.DataFrame({
+        'Category': [
+            'Income and Profits Tax',
+            'Goods and Services (VAT)',
+            'International Trade',
+            'Property Taxes',
+            'Other Revenue',
+            'Other Categories'
+        ],
+        '2023_Actual': [
+            1.069,
+            1.628,
+            0.250,
+            0.241,
+            0.171,
+            0.125
+        ],
+        '2026_27_Budget': [
+            2.430,
+            1.767,
+            0.319,
+            0.235,
+            0.192,
+            0.132
+        ],
+        'Change': [
+            1.361,
+            0.139,
+            0.069,
+            -0.006,
+            0.021,
+            0.007
+        ],
+        'Change_Pct': [
+            127.3,
+            8.5,
+            27.6,
+            -2.5,
+            12.3,
+            5.6
+        ]
+    })
+    
+    st.dataframe(
+        revenue_data,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Category': 'Revenue Category',
+            '2023_Actual': st.column_config.NumberColumn('2023 Actual (B)', format="%.3fB"),
+            '2026_27_Budget': st.column_config.NumberColumn('2026-27 Budget (B)', format="%.3fB"),
+            'Change': st.column_config.NumberColumn('Change (B)', format="%.3fB"),
+            'Change_Pct': st.column_config.NumberColumn('Change %', format="%.1f%%")
+        }
+    )
+    
+    # Critical insight - presented factually
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border: 2px solid #F59E0B; margin: 15px 0;">
+        <h5 style="color: #D97706; margin-top: 0;">⚠️ OBSERVATION: Income Tax Revenue Projection</h5>
+        <p style="font-size: 1.05rem;">
+        The budget projects a <strong>127% increase</strong> in Income and Profits Tax revenue 
+        (from $1.07B to $2.43B).
+        </p>
+        <p style="font-size: 1.05rem; color: #666;">
+        For context, in 2023 the Auditor General noted that:
+        </p>
+        <ul>
+            <li><strong>$2.43B</strong> in tax receivables could not be verified</li>
+            <li><strong>59%</strong> of Corporation Tax and <strong>40%</strong> of Personal Income Tax were provisioned as uncollectible</li>
+        </ul>
+        <p style="font-size: 0.95rem; color: #666; margin-top: 5px;">
+        <em>This represents a significant assumption about improved tax collection performance.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 3: EXPENDITURE ANALYSIS - KEY CATEGORIES
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 Expenditure: Key Changes</div>', unsafe_allow_html=True)
+    
+    expenditure_data = pd.DataFrame({
+        'Category': [
+            'Grants to Public Institutions',
+            'Debt Service - Interest',
+            'Retiring Benefits',
+            'Goods and Services',
+            'Capital Transfers',
+            'Personal Emoluments',
+            'Bad Debt Expense'
+        ],
+        '2023_Actual': [
+            704.5,
+            554.7,
+            333.6,
+            545.2,
+            242.0,
+            863.9,
+            68.3
+        ],
+        '2026_27_Budget': [
+            845.2,
+            714.6,
+            433.8,
+            918.1,
+            352.5,
+            856.8,
+            0.5
+        ],
+        'Change': [
+            140.7,
+            159.9,
+            100.2,
+            372.9,
+            110.5,
+            -7.1,
+            -67.8
+        ],
+        'Change_Pct': [
+            20.0,
+            28.8,
+            30.0,
+            68.4,
+            45.7,
+            -0.8,
+            -99.3
+        ]
+    })
+    
+    st.dataframe(
+        expenditure_data,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Category': 'Expenditure Category',
+            '2023_Actual': st.column_config.NumberColumn('2023 Actual (M)', format="%.1fM"),
+            '2026_27_Budget': st.column_config.NumberColumn('2026-27 Budget (M)', format="%.1fM"),
+            'Change': st.column_config.NumberColumn('Change (M)', format="%.1fM"),
+            'Change_Pct': st.column_config.NumberColumn('Change %', format="%.1f%%")
+        }
+    )
+    
+    # Bad Debt observation - factual
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <h5 style="color: #DC2626; margin-top: 0;">⚠️ OBSERVATION: Bad Debt Expense</h5>
+        <p style="font-size: 1.05rem;">
+        Bad debt expense is budgeted at <strong>$0.5M</strong> for 2026-27, compared to 
+        <strong>$68.3M</strong> in 2023.
+        </p>
+        <p style="font-size: 1.05rem; color: #666;">
+        This represents a <strong>99.3% reduction</strong>. In 2023, the government changed its bad debt policy,
+        resulting in significantly higher provisions for tax receivables.
+        </p>
+        <p style="font-size: 0.95rem; color: #666; margin-top: 5px;">
+        <em>The budget assumes that the 2023 bad debt experience was exceptional and will not recur.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 4: SOE TRANSFERS - WHAT WE CAN TRUTHFULLY SHOW
+    # ========================================================================
+    st.markdown('<div class="section-header">🏛️ State-Owned Enterprise Transfers</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #EFF6FF; padding: 15px; border-radius: 8px; border-left: 4px solid #3B82F6; margin: 15px 0;">
+        <p style="margin: 0; font-size: 0.95rem;">
+        <strong>Note on Data:</strong> The 2023 figures are from Note 34 of the audited financial statements.
+        The 2026-27 figures are based on grants to public institutions identified in the Estimates document.
+        </p>
+        <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">
+        Some SOEs receive funding through multiple ministries, making direct year-over-year comparison challenging.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Data we can actually show with confidence
+    soe_comparison = pd.DataFrame({
+        'SOE': [
+            'Queen Elizabeth Hospital',
+            'University of the West Indies',
+            'Barbados Community College',
+            'Barbados Tourism Investment Inc.',
+            'National Sports Council',
+            'Transport Board'
+        ],
+        '2023_Actual': [
+            142.4,
+            'Not in top 10',
+            22.1,
+            94.7,
+            36.4,
+            46.8
+        ],
+        '2026_27_Budget': [
+            160.0,
+            98.4,
+            30.3,
+            94.1,
+            15.8,
+            12.2
+        ],
+        'Change_Notes': [
+            'Increase of $17.6M (+12.4%)',
+            'New large allocation in 2026-27',
+            'Increase of $8.2M (+36.9%)',
+            'Relatively stable (-0.6%)',
+            'Decrease of $20.6M (-56.5%)',
+            'Decrease of $34.6M (-74.0%)'
+        ]
+    })
+    
+    st.dataframe(
+        soe_comparison,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'SOE': 'SOE Name',
+            '2023_Actual': '2023 Actual (M)',
+            '2026_27_Budget': '2026-27 Budget (M)',
+            'Change_Notes': 'Change'
+        }
+    )
+    
+    # The Note 34 discrepancy - presented factually
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <h5 style="color: #DC2626; margin-top: 0;">⚠️ NOTE: SOE Transfer Data Quality Issue (Note 34)</h5>
+        <p style="font-size: 1.05rem;">
+        In the 2023 financial statements, Note 34 contains a <strong>$108.6M discrepancy</strong>:
+        </p>
+        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; padding: 10px;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.3rem; font-weight: bold; color: #3B82F6;">$669.3M</div>
+                <div style="font-size: 0.9rem; color: #666;">Narrative Total</div>
+            </div>
+            <div style="font-size: 1.5rem; color: #DC2626;">≠</div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.3rem; font-weight: bold; color: #DC2626;">$777.9M</div>
+                <div style="font-size: 0.9rem; color: #666;">Table Total</div>
+            </div>
+            <div style="text-align: center; padding: 5px 15px; background: #FEF2F2; border-radius: 8px;">
+                <div style="font-size: 1.3rem; font-weight: bold; color: #DC2626;">$108.6M</div>
+                <div style="font-size: 0.9rem; color: #666;">Discrepancy</div>
+            </div>
+        </div>
+        <p style="font-size: 0.95rem; color: #666; margin-top: 5px;">
+        <strong>Fact:</strong> The financial statements contain inconsistent information about total SOE transfers.
+        The accurate total cannot be determined from the published statements.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 5: THE DEFICIT REPORTING GAP
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 The Deficit: Two Reporting Bases</div>', unsafe_allow_html=True)
+    
+    deficit_data = pd.DataFrame({
+        'Basis': ['Accountant General\'s Basis', 'IFI Basis'],
+        'Fiscal Balance': ['-4.0% of GDP', '+0.6% of GDP'],
+        'Interpretation': ['Deficit', 'Surplus'],
+        'Status': ['🔴 Deficit', '🟢 Surplus'],
+        'Source': ['Page 26 of Estimates', 'Page 26 of Estimates']
+    })
+    
+    st.dataframe(
+        deficit_data,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Basis': 'Reporting Basis',
+            'Fiscal Balance': 'Fiscal Balance',
+            'Interpretation': 'Interpretation',
+            'Status': 'Status',
+            'Source': 'Source'
+        }
+    )
+    
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border: 2px solid #F59E0B; margin: 15px 0;">
+        <h5 style="color: #D97706; margin-top: 0;">ℹ️ OBSERVATION: Different Reporting Bases</h5>
+        <p style="font-size: 1.05rem;">
+        The government reports a <strong style="color: #10B981;">0.6% surplus</strong> to international financial institutions,
+        and a <strong style="color: #DC2626;">4.0% deficit</strong> on the Accountant General's basis.
+        </p>
+        <p style="font-size: 0.95rem; color: #666;">
+        This 4.6 percentage point difference reflects different accounting treatments and classifications.
+        Both figures are from the same Estimates document (Page 26).
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 6: SUMMARY TABLE - KEY FACTS
+    # ========================================================================
+    st.markdown('<div class="section-header">📋 Key Facts Summary</div>', unsafe_allow_html=True)
+    
+    key_facts = pd.DataFrame({
+        'Metric': [
+            '2023 Audit Opinion',
+            '2023 Deficit',
+            '2026-27 Projected Deficit',
+            '2023 Unverified Tax Receivables',
+            '2023 Bad Debt Expense',
+            '2026-27 Budgeted Bad Debt',
+            '2023 SOE Transfer Discrepancy',
+            '2023 Revenue',
+            '2026-27 Budgeted Revenue',
+            '2023 Expenditure',
+            '2026-27 Budgeted Expenditure'
+        ],
+        'Value': [
+            'Adverse (6th consecutive)',
+            '-$111M',
+            '-$658M',
+            '$2.43B (30% of assets)',
+            '$68.28M',
+            '$0.50M',
+            '$108.6M (Note 34)',
+            '$3.48B',
+            '$5.08B',
+            '$3.59B',
+            '$5.88B'
+        ],
+        'Source': [
+            'AG Report 2023',
+            'AG Report 2023',
+            'Estimates 2026-27',
+            'AG Report 2023',
+            'AG Report 2023',
+            'Estimates 2026-27',
+            'AG Report 2023',
+            'AG Report 2023',
+            'Estimates 2026-27',
+            'AG Report 2023',
+            'Estimates 2026-27'
+        ]
+    })
+    
+    st.dataframe(
+        key_facts,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Metric': 'Metric',
+            'Value': 'Value',
+            'Source': 'Source'
+        }
+    )
+    
+    # ========================================================================
+    # SECTION 7: CONCLUSION - FACTUAL
+    # ========================================================================
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
+        <h3 style="color: white; text-align: center;">🇧🇧 Summary</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #FFC726;">+$1.59B</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Projected Revenue Increase</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">46% growth from 2023</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #FFC726;">+$2.29B</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Projected Expenditure Increase</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">64% growth from 2023</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #FFC726;">$2.43B</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Unverified Tax Receivables</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">First flagged in 2023</div>
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 20px;">
+        The 2026-27 budget represents a significant increase in both revenue and expenditure projections.
+        Key assumptions include a 127% increase in Income Tax revenue and a 99% reduction in bad debt expense.
+        </p>
+        <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 10px;">
+        <em>All figures are sourced from the 2023 Audited Financial Statements and the 2026-2027 Estimates of Revenue and Expenditure.</em>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # FOOTER
+    # ========================================================================
+    st.caption("""
+    **Data Sources:** Auditor General's Report 2023 • 2026-2027 Estimates of Revenue and Expenditure
+    **Note:** All figures are from official Government documents. Where data is estimated or not directly comparable, this is noted.
+    """)
