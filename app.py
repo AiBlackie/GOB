@@ -5996,7 +5996,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 9: THE COST OF COMPLACENCY - NEW
+    # SECTION 9: THE COST OF COMPLACENCY
     # ========================================================================
     st.markdown('<div class="section-header">💰 The Cost of Complacency: What You\'re Paying</div>', unsafe_allow_html=True)
     
@@ -6035,7 +6035,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 10: THE LOGICAL QUESTION - NEW
+    # SECTION 10: THE LOGICAL QUESTION
     # ========================================================================
     st.markdown('<div class="section-header">🤔 If the Budget is 96.3% Unreliable...</div>', unsafe_allow_html=True)
     
@@ -6267,7 +6267,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 13: ACTION REQUIRED - NEW
+    # SECTION 13: ACTION REQUIRED
     # ========================================================================
     st.markdown('<div class="section-header">📌 What Needs to Happen</div>', unsafe_allow_html=True)
     
@@ -6318,7 +6318,80 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 14: CONCLUSION - FACTUAL
+    # SECTION 14: SYSTEMIC RISK INDICATORS - NEW
+    # ========================================================================
+    st.markdown('<div class="section-header">🔴 Systemic Risk Indicators: What the Data Reveals</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 25px; border-radius: 10px; border: 2px solid #DC2626; margin: 20px 0;">
+        <p style="font-size: 1.1rem; margin: 0 0 15px 0; font-weight: bold; color: #DC2626;">
+        When you connect the evidence across 21 years of audit history, a pattern emerges:
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">Financial Statements</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">6 consecutive adverse opinions (2018-2023)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Reports 2018-2023</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">Asset Verification</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">$2.43B unverified (30% of all assets)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Report 2023, Note 14</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">Pension Liability</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">$4B+ hidden from balance sheet (22+ years)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Reports 2003-2023</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">SOE Oversight</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">40+ SOEs not consolidated (21+ years)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Reports 2003-2023</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">Budget Document</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">96.3% unreliable ($2.03B+ discrepancies)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">Estimates 2026-27</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">Audit Office Capacity</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">Severely understaffed (27-year-old reform ignored)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Report 2024</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #F59E0B;">
+                <p style="margin: 0; font-weight: bold; color: #D97706;">State-Owned Enterprises</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">GAIA: Going concern warning • Transport Board: Disclaimer</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">GAIA Financials 2024 • AG Report 2024</p>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #F59E0B;">
+                <p style="margin: 0; font-weight: bold; color: #D97706;">Institutional Reform</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">Integrity legislation not passed (promised since 2018)</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: #666;">AG Report 2024 • BERT Plans 2018-2026</p>
+            </div>
+        </div>
+        <div style="background: #DC2626; padding: 20px; border-radius: 8px; text-align: center;">
+            <p style="margin: 0; font-size: 1.1rem; font-weight: bold; color: white;">
+            If the government cannot produce reliable financial statements, cannot verify 30% of its assets, 
+            has hidden $4B+ in liabilities, and has ignored audit findings for 20+ years...
+            </p>
+            <p style="margin: 10px 0 0 0; font-size: 1.3rem; font-weight: bold; color: #FFC726;">
+            How can the currency peg be considered safe?
+            </p>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 15px;">
+        <strong>A currency peg is only as strong as the institutions that support it.</strong> 
+        When financial statements are unreliable, assets cannot be verified, liabilities are hidden, 
+        and oversight institutions are underfunded... the peg is vulnerable.
+        </p>
+        <p style="font-size: 0.85rem; color: #999; margin-top: 5px;">
+        <strong>Source:</strong> All indicators are derived from official documents: Auditor General's Reports (2003-2024), 
+        Financial Statements of Government (2023), GAIA Financial Statements (2024), Estimates of Revenue and Expenditure (2026-27).
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 15: CONCLUSION - FACTUAL
     # ========================================================================
     st.markdown("""
     <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
