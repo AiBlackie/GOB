@@ -5451,7 +5451,41 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 1: THE BIG PICTURE - FACTUAL SUMMARY
+    # SECTION 1: DATA QUALITY WARNING - CORRECTED
+    # ========================================================================
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 25px; border-radius: 10px; border: 3px solid #DC2626; margin: 20px 0;">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+            <span style="font-size: 2.5rem;">⚠️</span>
+            <h4 style="color: #DC2626; margin: 0;">DATA QUALITY WARNING</h4>
+        </div>
+        <p style="font-size: 1.05rem; margin: 0 0 10px 0;">
+        The 2026-2027 Estimates document contains <strong style="color: #DC2626;">material inconsistencies</strong>. 
+        The "Particulars of Service" (narrative) and Budget Tables frequently report different figures.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <div style="text-align: center; padding: 15px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">$2.03B+</div>
+                <div style="font-size: 0.9rem; color: #666;">Total Discrepancy</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">26 of 27</div>
+                <div style="font-size: 0.9rem; color: #666;">Heads Affected (96.3%)</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(220, 38, 38, 0.1); border-radius: 8px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">3.7%</div>
+                <div style="font-size: 0.9rem; color: #666;">Reliability Score</div>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0 0;">
+        <strong>Only 1 Head</strong> (Parliament, Head 12) has perfect alignment between words and figures.
+        All discrepancies are documented and verifiable from the official Estimates document.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 2: THE BIG PICTURE - FACTUAL SUMMARY
     # ========================================================================
     st.markdown('<div class="section-header">📊 The Big Picture: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5490,7 +5524,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         )
     
     # ========================================================================
-    # SECTION 2: REVENUE ANALYSIS
+    # SECTION 3: REVENUE ANALYSIS
     # ========================================================================
     st.markdown('<div class="section-header">💰 Revenue: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5572,7 +5606,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 3: EXPENDITURE ANALYSIS - KEY CATEGORIES
+    # SECTION 4: EXPENDITURE ANALYSIS - KEY CATEGORIES
     # ========================================================================
     st.markdown('<div class="section-header">📊 Expenditure: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5656,7 +5690,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 4: SOE TRANSFERS - WHAT WE CAN TRUTHFULLY SHOW
+    # SECTION 5: SOE TRANSFERS - WHAT WE CAN TRUTHFULLY SHOW
     # ========================================================================
     st.markdown('<div class="section-header">🏛️ State-Owned Enterprise Transfers</div>', unsafe_allow_html=True)
     
@@ -5750,7 +5784,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 5: THE DEFICIT REPORTING GAP
+    # SECTION 6: THE DEFICIT REPORTING GAP
     # ========================================================================
     st.markdown('<div class="section-header">📊 The Deficit: Two Reporting Bases</div>', unsafe_allow_html=True)
     
@@ -5790,7 +5824,170 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 6: SUMMARY TABLE - KEY FACTS
+    # SECTION 7: THE $2.43B QUESTION VS BUDGET DEFICIT
+    # ========================================================================
+    st.markdown('<div class="section-header">🚨 The $2.43B Question vs Budget Deficit</div>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #DC2626; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #DC2626;">$2.43B</div>
+            <div style="font-weight: 600;">Unverified Tax Receivables</div>
+            <div style="font-size: 0.85rem; color: #666;">First flagged in 2023</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #FFFBEB; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #F59E0B; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #F59E0B;">$658M</div>
+            <div style="font-weight: 600;">Projected Budget Deficit</div>
+            <div style="font-size: 0.85rem; color: #666;">2026-27 (Including Annex)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: #EFF6FF; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #3B82F6; height: 100%;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #3B82F6;">3.7x</div>
+            <div style="font-weight: 600;">Times Deficit Covered by Unverified Receivables</div>
+            <div style="font-size: 0.85rem; color: #666;">$2.43B ÷ $658M = 3.7x</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 8: THE HONEST BUDGET CALCULATOR
+    # ========================================================================
+    st.markdown('<div class="section-header">📊 The Honest Budget Calculator</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 20px; border-radius: 10px; border-left: 6px solid #F59E0B; margin: 15px 0;">
+        <p style="font-size: 1.05rem; margin: 0;">
+        The <strong>$2.43B</strong> in tax receivables <strong>cannot be verified</strong> by the Auditor General.
+        </p>
+        <p style="font-size: 1.05rem; margin: 5px 0 0 0; color: #666;">
+        Use the slider below to estimate what percentage is <strong>actually collectible</strong>.
+        The calculator will show the impact on the budget deficit and debt-to-GDP ratio.
+        </p>
+        <p style="font-size: 0.9rem; margin: 10px 0 0 0; color: #D97706;">
+        <strong>⚠️ This is a "what if" scenario tool. The actual collectible amount is unknown.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Input: Collectible Percentage
+    collectible_pct = st.slider(
+        "What percentage of the $2.43B tax receivables is collectible?",
+        min_value=0,
+        max_value=100,
+        value=50,
+        step=5,
+        help="This is your estimate. The Auditor General could not verify these receivables."
+    )
+    
+    # Calculations
+    tax_receivables = 2.43  # $2.43B
+    write_off = tax_receivables * (1 - collectible_pct / 100)
+    collectible_amount = tax_receivables * (collectible_pct / 100)
+    
+    projected_deficit = 0.658  # $658M
+    adjusted_deficit = projected_deficit + write_off
+    
+    current_debt_to_gdp = 102.9  # %
+    total_assets = 8.07  # $8.07B
+    debt_impact_pct = (write_off / total_assets) * current_debt_to_gdp
+    adjusted_debt_to_gdp = current_debt_to_gdp + debt_impact_pct
+    
+    # Display Results
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric(
+            "Collectible Amount",
+            f"${collectible_amount:.2f}B",
+            f"{collectible_pct:.0f}% of total",
+            delta_color="normal"
+        )
+    
+    with col2:
+        delta_color = "normal" if write_off == 0 else "inverse"
+        st.metric(
+            "Write-Off Amount",
+            f"${write_off:.2f}B",
+            f"{100 - collectible_pct:.0f}% of total",
+            delta_color=delta_color
+        )
+    
+    with col3:
+        st.metric(
+            "Adjusted Deficit",
+            f"${adjusted_deficit:.2f}B",
+            f"{adjusted_deficit - projected_deficit:+.2f}B vs projected",
+            delta_color="inverse"
+        )
+    
+    with col4:
+        st.metric(
+            "Adjusted Debt-to-GDP",
+            f"{adjusted_debt_to_gdp:.1f}%",
+            f"{adjusted_debt_to_gdp - current_debt_to_gdp:+.1f}% vs current",
+            delta_color="inverse" if adjusted_debt_to_gdp > current_debt_to_gdp else "normal"
+        )
+    
+    # Scenario Table
+    st.markdown('<div class="section-header" style="font-size: 1.0rem;">📋 Scenario Comparison</div>', unsafe_allow_html=True)
+    
+    scenarios = []
+    scenario_labels = ['Worst Case', 'Pessimistic', 'Concerned', 'Cautious', 'Optimistic']
+    pct_values = [0, 25, 50, 75, 100]
+    
+    for i, pct in enumerate(pct_values):
+        w_off = tax_receivables * (1 - pct / 100)
+        adj_def = projected_deficit + w_off
+        adj_dtg = current_debt_to_gdp + (w_off / total_assets) * current_debt_to_gdp
+        scenarios.append({
+            'Scenario': scenario_labels[i],
+            'Collectible %': f'{pct}%',
+            'Write-Off': f'${w_off:.2f}B',
+            'Adjusted Deficit': f'${adj_def:.2f}B',
+            'Adjusted Debt-to-GDP': f'{adj_dtg:.1f}%'
+        })
+    
+    scenario_df = pd.DataFrame(scenarios)
+    st.dataframe(
+        scenario_df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            'Scenario': 'Scenario',
+            'Collectible %': 'Collectible %',
+            'Write-Off': 'Write-Off',
+            'Adjusted Deficit': 'Adjusted Deficit',
+            'Adjusted Debt-to-GDP': 'Adjusted Debt-to-GDP'
+        }
+    )
+    
+    # Key Insight
+    st.markdown(f"""
+    <div style="background: {'#FEF2F2' if write_off > 0 else '#ECFDF5'}; padding: 20px; border-radius: 8px; border: 2px solid {'#DC2626' if write_off > 0 else '#10B981'}; margin: 15px 0;">
+        <h5 style="color: {'#DC2626' if write_off > 0 else '#10B981'}; margin-top: 0;">🔑 Key Insight</h5>
+        <p style="font-size: 1.05rem; margin: 0;">
+        If <strong>{100 - collectible_pct:.0f}%</strong> of the $2.43B tax receivables are uncollectible:
+        </p>
+        <ul>
+            <li>The budget deficit increases from <strong>${projected_deficit:.2f}B</strong> to <strong>${adjusted_deficit:.2f}B</strong></li>
+            <li>The debt-to-GDP ratio increases from <strong>{current_debt_to_gdp:.1f}%</strong> to <strong>{adjusted_debt_to_gdp:.1f}%</strong></li>
+        </ul>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+        <strong>Note:</strong> The Auditor General could not verify these receivables. The actual impact is unknown.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 9: SUMMARY TABLE - KEY FACTS
     # ========================================================================
     st.markdown('<div class="section-header">📋 Key Facts Summary</div>', unsafe_allow_html=True)
     
@@ -5848,7 +6045,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     )
     
     # ========================================================================
-    # SECTION 7: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
+    # SECTION 10: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
     # ========================================================================
     st.markdown('<div class="section-header">⚠️ Document Quality: The Estimates Document Itself</div>', unsafe_allow_html=True)
     
@@ -5856,14 +6053,13 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
         <h5 style="color: #DC2626; margin-top: 0;">🚨 CRITICAL: The 2026-27 Estimates Document Contains Material Errors</h5>
         <p style="font-size: 1.05rem;">
-        A systematic review of the 2026-2027 Estimates document reveals <strong>25 material discrepancies</strong> 
-        between the narrative "Particulars of Service" amounts and the Budget Table figures.
+        A systematic review of the 2026-2027 Estimates document reveals that only <strong>1 of 27 Heads</strong> (Parliament, Head 12) has perfect alignment between the "Particulars of Service" narrative and the Budget Table figures.
         </p>
         <p style="font-size: 1.05rem; color: #666;">
-        <strong>Total discrepancy: $2.55B+</strong> across 89% of all spending Heads.
+        <strong>Total discrepancy: $2.03B+</strong> across 26 spending Heads.
         </p>
         <p style="font-size: 0.95rem; color: #666;">
-        <strong>Only 1 Head</strong> (Parliament, Head 12) has perfect alignment between words and figures.
+        <strong>Reliability Score: 3.7%</strong> - The document is 96.3% unreliable.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -5872,54 +6068,54 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     st.markdown('<div class="section-header">📋 Top 10 Discrepancies: Words vs Figures</div>', unsafe_allow_html=True)
     
     top_discrepancies = pd.DataFrame({
-        'Head': [19, 14, 96, 39, 33, 40, 50, 13, 63, 83],
+        'Head': [19, 14, 96, 86, 39, 33, 40, 13, 50, 83],
         'Ministry': [
             'Treasury',
             'Ministry of Finance',
             'Educational Transformation',
+            'Health and Wellness',
             'Legal Affairs & Criminal Justice',
             'Home Affairs, Information & Public Affairs',
             'Transport & Works',
-            'Post Office',
             "Prime Minister's Office",
-            'Technological & Vocational Training',
+            'Post Office',
             'Agriculture, Food & Nutritional Security'
         ],
         'Words': [
             '$54.0M',
             '$325.9M',
             '$285.4M',
+            '$395.3M',
             '$194.8M',
             '$84.2M',
             '$159.9M',
-            '$13.7M',
             '$355.0M',
-            '$270.5M',
+            '$13.7M',
             '$94.3M'
         ],
         'Figures': [
             '$1,653.6M',
             '$781.5M',
-            '$453.9M',
+            '$525.2M',
+            '$502.5M',
             '$278.1M',
-            '$128.0M',
+            '$134.1M',
             '$186.1M',
-            '$30.8M',
             '$380.2M',
-            '$285.9M',
-            '$106.8M'
+            '$32.7M',
+            '$112.0M'
         ],
         'Discrepancy': [
             '$1.60B',
             '$455.6M',
-            '$168.5M',
+            '$239.8M',
+            '$107.2M',
             '$83.4M',
-            '$43.8M',
+            '$49.9M',
             '$26.3M',
-            '$17.1M',
             '$25.2M',
-            '$15.4M',
-            '$12.6M'
+            '$19.0M',
+            '$17.8M'
         ]
     })
     
@@ -5935,6 +6131,33 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
             'Discrepancy': 'Discrepancy'
         }
     )
+    
+    # Reliability Index
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border: 2px solid #F59E0B; margin: 15px 0;">
+        <h5 style="color: #D97706; margin-top: 0;">📊 RELIABILITY INDEX</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #10B981;">1</div>
+                <div style="font-size: 0.9rem; color: #666;">Head with Perfect Alignment</div>
+                <div style="font-size: 0.8rem; color: #666;">Parliament (Head 12)</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">26</div>
+                <div style="font-size: 0.9rem; color: #666;">Heads with Discrepancies</div>
+                <div style="font-size: 0.8rem; color: #666;">96.3% of all Heads</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">3.7%</div>
+                <div style="font-size: 0.9rem; color: #666;">Reliability Score</div>
+                <div style="font-size: 0.8rem; color: #666;">96.3% Unreliable</div>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+        <strong>Interpretation:</strong> The Estimates document is 96.3% unreliable. Only Parliament's budget is internally consistent.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Critical errors detail
     st.markdown("""
@@ -5953,8 +6176,8 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
             </div>
             <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #DC2626;">
                 <strong>Head 96: Educational Transformation</strong><br>
-                Words: $285M → Figures: $454M<br>
-                <span style="color: #DC2626; font-weight: bold;">Discrepancy: $168M</span>
+                Words: $285M → Figures: $525M<br>
+                <span style="color: #DC2626; font-weight: bold;">Discrepancy: $240M</span>
             </div>
         </div>
         <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
@@ -5965,7 +6188,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 8: CONCLUSION - FACTUAL
+    # SECTION 11: CONCLUSION - FACTUAL
     # ========================================================================
     st.markdown("""
     <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
@@ -5987,15 +6210,15 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
                 <div style="font-size: 0.8rem; color: #93C5FD;">First flagged in 2023</div>
             </div>
             <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$2.55B+</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$2.03B+</div>
                 <div style="font-size: 0.9rem; color: #BFDBFE;">Estimates Document Discrepancies</div>
-                <div style="font-size: 0.8rem; color: #93C5FD;">89% of Heads affected</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">96.3% of Heads affected</div>
             </div>
         </div>
         <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 20px;">
         The 2026-27 budget represents a significant increase in both revenue and expenditure projections.
-        However, the budget document itself contains <strong style="color: #FFC726;">25 material discrepancies</strong> 
-        totaling <strong style="color: #FFC726;">$2.55B+</strong>, calling its credibility into question.
+        However, the budget document itself contains <strong style="color: #FFC726;">26 material discrepancies</strong> 
+        totaling <strong style="color: #FFC726;">$2.03B+</strong>, with a <strong style="color: #FFC726;">reliability score of just 3.7%</strong>.
         </p>
         <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 10px;">
         <em>All figures are sourced from the 2023 Audited Financial Statements and the 2026-2027 Estimates of Revenue and Expenditure.</em>
