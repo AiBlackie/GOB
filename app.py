@@ -5477,8 +5477,17 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
                 <div style="font-size: 0.9rem; color: #666;">Reliability Score</div>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0 0;">
-        <strong>Only 1 Head</strong> (Parliament, Head 12) has perfect alignment between words and figures.
+        <div style="background: #ECFDF5; padding: 15px; border-radius: 8px; border-left: 4px solid #10B981; margin-top: 10px;">
+            <p style="margin: 0; font-size: 0.95rem; color: #065F46;">
+            ✅ <strong>HEAD 12: PARLIAMENT</strong> — The only Head with perfect alignment.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px; font-size: 0.9rem;">
+                <div><strong>Words:</strong> $17,190,950</div>
+                <div><strong>Figures:</strong> $17,190,950</div>
+                <div style="color: #10B981;"><strong>Status:</strong> ✅ PERFECT</div>
+            </div>
+        </div>
+        <p style="font-size: 0.85rem; color: #666; margin: 10px 0 0 0;">
         All discrepancies are documented and verifiable from the official Estimates document.
         </p>
     </div>
@@ -5987,7 +5996,77 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 9: SUMMARY TABLE - KEY FACTS
+    # SECTION 9: THE COST OF COMPLACENCY - NEW
+    # ========================================================================
+    st.markdown('<div class="section-header">💰 The Cost of Complacency: What You\'re Paying</div>', unsafe_allow_html=True)
+    
+    # Calculate per household cost
+    households = 100000  # ~100,000 households in Barbados
+    annual_savings_low = 55  # $55M
+    annual_savings_high = 100  # $100M
+    cost_per_household_low = (annual_savings_low * 1_000_000) / households
+    cost_per_household_high = (annual_savings_high * 1_000_000) / households
+    
+    st.markdown(f"""
+    <div style="background: #F8FAFC; padding: 20px; border-radius: 8px; border: 1px solid #E2E8F0; margin: 15px 0;">
+        <h5 style="margin-top: 0; color: #00267F;">🏠 The Cost to Every Barbadian Household</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px; border: 1px solid #E2E8F0;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">${annual_savings_low}M - ${annual_savings_high}M</div>
+                <div style="font-size: 0.9rem; color: #666;">Annual Cost of Audit Failure</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px; border: 1px solid #E2E8F0;">
+                <div style="font-size: 2rem; font-weight: bold; color: #DC2626;">${cost_per_household_low:,.0f} - ${cost_per_household_high:,.0f}</div>
+                <div style="font-size: 0.9rem; color: #666;">Per Household Per Year</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 6px; border: 1px solid #E2E8F0;">
+                <div style="font-size: 2rem; font-weight: bold; color: #10B981;">5-10x</div>
+                <div style="font-size: 0.9rem; color: #666;">Return on Investment</div>
+            </div>
+        </div>
+        <p style="font-size: 0.95rem; color: #666; margin-top: 10px;">
+        <strong>Every Barbadian household is paying $550-$1,000 per year</strong> in higher borrowing costs 
+        because the government cannot produce reliable financial statements.
+        </p>
+        <p style="font-size: 0.9rem; color: #666;">
+        A $10-20M investment in financial reform would save $55-100M annually — a <strong>5-10x return</strong>.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 10: THE LOGICAL QUESTION - NEW
+    # ========================================================================
+    st.markdown('<div class="section-header">🤔 If the Budget is 96.3% Unreliable...</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">1. How can the government accurately plan spending?</p>
+                <p style="margin: 5px 0 0 0; color: #666;">If the budget document is internally inconsistent, spending plans cannot be trusted.</p>
+            </div>
+            <div style="padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">2. How can Parliament properly scrutinize the budget?</p>
+                <p style="margin: 5px 0 0 0; color: #666;">If the document contains $2.03B in contradictions, meaningful oversight is impossible.</p>
+            </div>
+            <div style="padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">3. How can citizens trust the fiscal projections?</p>
+                <p style="margin: 5px 0 0 0; color: #666;">If the budget is 96.3% unreliable, the public cannot have confidence in the numbers.</p>
+            </div>
+            <div style="padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">4. How can international investors have confidence?</p>
+                <p style="margin: 5px 0 0 0; color: #666;">If the government cannot produce a reliable budget, how can it be trusted with borrowed money?</p>
+            </div>
+        </div>
+        <div style="text-align: center; padding: 15px; margin-top: 10px; background: #DC2626; border-radius: 6px;">
+            <p style="margin: 0; font-size: 1.3rem; font-weight: bold; color: white;">THE ANSWER: THEY CAN'T.</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 11: SUMMARY TABLE - KEY FACTS
     # ========================================================================
     st.markdown('<div class="section-header">📋 Key Facts Summary</div>', unsafe_allow_html=True)
     
@@ -6006,10 +6085,10 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
             '2026-27 Budgeted Expenditure'
         ],
         'Value': [
-            'Adverse (6th consecutive)',
+            '🔴 Adverse (6th consecutive)',
             '-$111M',
             '-$658M',
-            '$2.43B (30% of assets)',
+            '$2.43B (30% of assets) ⚠️ NEW 2023',
             '$68.28M',
             '$0.50M',
             '$108.6M (Note 34)',
@@ -6045,7 +6124,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     )
     
     # ========================================================================
-    # SECTION 10: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
+    # SECTION 12: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
     # ========================================================================
     st.markdown('<div class="section-header">⚠️ Document Quality: The Estimates Document Itself</div>', unsafe_allow_html=True)
     
@@ -6059,7 +6138,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         <strong>Total discrepancy: $2.03B+</strong> across 26 spending Heads.
         </p>
         <p style="font-size: 0.95rem; color: #666;">
-        <strong>Reliability Score: 3.7%</strong> - The document is 96.3% unreliable.
+        <strong>Reliability Score: 3.7%</strong> — The document is 96.3% unreliable.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -6188,7 +6267,58 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 11: CONCLUSION - FACTUAL
+    # SECTION 13: ACTION REQUIRED - NEW
+    # ========================================================================
+    st.markdown('<div class="section-header">📌 What Needs to Happen</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="background: #F0F7FF; padding: 20px; border-radius: 8px; border: 2px solid #3B82F6; margin: 15px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">1. Fix the $2.03B+ Discrepancies</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Reconcile all 26 Heads with misaligned numbers</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #DC2626;">⏱️ IMMEDIATE</p>
+            </div>
+            <div style="padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #DC2626;">
+                <p style="margin: 0; font-weight: bold; color: #DC2626;">2. Verify the $2.43B Tax Receivables</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Determine how much is collectible vs uncollectible</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #DC2626;">⏱️ WITHIN 6 MONTHS</p>
+            </div>
+            <div style="padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #F59E0B;">
+                <p style="margin: 0; font-weight: bold; color: #D97706;">3. Consolidate All 40+ SOEs</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">End 21+ years of IPSAS violations</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #D97706;">⏱️ WITHIN 12 MONTHS</p>
+            </div>
+            <div style="padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #F59E0B;">
+                <p style="margin: 0; font-weight: bold; color: #D97706;">4. Disclose the $4B+ Pension Liability</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Complete actuarial study and include on balance sheet</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #D97706;">⏱️ WITHIN 12 MONTHS</p>
+            </div>
+            <div style="padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #10B981; grid-column: span 2;">
+                <p style="margin: 0; font-weight: bold; color: #10B981;">5. Achieve a Clean Audit Opinion</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">End 6 consecutive adverse opinions</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #10B981;">⏱️ BY 2027</p>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #E2E8F0;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$10-20M</div>
+                <div style="font-size: 0.9rem; color: #666;">Estimated Cost</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #10B981;">$55-100M</div>
+                <div style="font-size: 0.9rem; color: #666;">Annual Savings</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #10B981;">5-10x</div>
+                <div style="font-size: 0.9rem; color: #666;">Return on Investment</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 14: CONCLUSION - FACTUAL
     # ========================================================================
     st.markdown("""
     <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
@@ -6210,15 +6340,18 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
                 <div style="font-size: 0.8rem; color: #93C5FD;">First flagged in 2023</div>
             </div>
             <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">$2.03B+</div>
-                <div style="font-size: 0.9rem; color: #BFDBFE;">Estimates Document Discrepancies</div>
-                <div style="font-size: 0.8rem; color: #93C5FD;">96.3% of Heads affected</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">96.3%</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Unreliable Budget Document</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">$2.03B+ in discrepancies</div>
             </div>
         </div>
         <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 20px;">
         The 2026-27 budget represents a significant increase in both revenue and expenditure projections.
         However, the budget document itself contains <strong style="color: #FFC726;">26 material discrepancies</strong> 
         totaling <strong style="color: #FFC726;">$2.03B+</strong>, with a <strong style="color: #FFC726;">reliability score of just 3.7%</strong>.
+        </p>
+        <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 10px;">
+        <strong style="color: #FFC726;">Only Parliament's budget (Head 12) is internally consistent.</strong>
         </p>
         <p style="text-align: center; font-size: 0.9rem; color: #93C5FD; margin-top: 10px;">
         <em>All figures are sourced from the 2023 Audited Financial Statements and the 2026-2027 Estimates of Revenue and Expenditure.</em>
