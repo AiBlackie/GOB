@@ -2818,7 +2818,9 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     </div>
     """, unsafe_allow_html=True)
     
-    # ACTUAL data from Note 14 (from the image)
+    # ========================================================================
+    # CORRECTED DATA FROM NOTE 14
+    # ========================================================================
     tax_breakdown_actual = pd.DataFrame({
         'Category': [
             'Value Added Tax (VAT)',
@@ -2858,8 +2860,8 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     # Sort by Net Amount descending
     tax_breakdown_actual = tax_breakdown_actual.sort_values('Net_Amount', ascending=False).reset_index(drop=True)
     
-    # Calculate percentages
-    total_net = tax_breakdown_actual['Net_Amount'].sum()  # $2,428,596,085
+    # Calculate percentages based on total from Note 14
+    total_net = 2428696065  # $2,428,696,065 - from Note 14
     tax_breakdown_actual['Percentage'] = (tax_breakdown_actual['Net_Amount'] / total_net * 100).round(1)
     
     # Add provision rates from Note 14a
@@ -2875,7 +2877,9 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     }
     tax_breakdown_actual['Provision_Rate'] = tax_breakdown_actual['Category'].map(provision_rates)
     
-    # Display the table with actual data
+    # ========================================================================
+    # DISPLAY THE TABLE
+    # ========================================================================
     st.dataframe(
         tax_breakdown_actual[['Category', 'Gross_Amount', 'Provision_Amount', 'Net_Amount', 'Percentage', 'Provision_Rate']],
         use_container_width=True,
@@ -2891,7 +2895,7 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     )
     
     # ========================================================================
-    # PIE CHART - ACTUAL DATA
+    # PIE CHART
     # ========================================================================
     fig_breakdown = px.pie(
         tax_breakdown_actual,
@@ -2913,7 +2917,7 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     st.plotly_chart(fig_breakdown, use_container_width=True)
     
     # ========================================================================
-    # BAR CHART - COMPARISON
+    # BAR CHART
     # ========================================================================
     fig_comparison = px.bar(
         tax_breakdown_actual,
@@ -2977,11 +2981,10 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
         """, unsafe_allow_html=True)
     
     # ========================================================================
-    # COMPARISON TABLE - BREAKDOWN BY CATEGORY
+    # SUMMARY TABLE - BREAKDOWN BY CATEGORY
     # ========================================================================
     st.markdown('<div class="section-header">📊 Summary: Tax Receivables Breakdown</div>', unsafe_allow_html=True)
     
-    # Create a comparison table
     summary_data = [
         {
             'Category': 'VAT',
@@ -3030,7 +3033,6 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     </div>
     """, unsafe_allow_html=True)
     
-    # Actual provision data from Note 14a
     provision_data = pd.DataFrame({
         'Tax Type': [
             'Value Added Tax (VAT)',
@@ -3090,7 +3092,7 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     st.plotly_chart(fig_provision, use_container_width=True)
     
     # ========================================================================
-    # HIGHLIGHT THE MOST SIGNIFICANT CHANGES
+    # CRITICAL FINDINGS FROM NOTE 14A
     # ========================================================================
     st.markdown("""
     <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
@@ -3163,7 +3165,7 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     faqs = [
         {
             'q': 'What is the actual breakdown of the $2.43B?',
-            'a': f'From Note 14: VAT (${vat_amount/1e9:.2f}B, {vat_pct:.1f}%), Income Tax ($0.581B, 23.9%), Land Tax ($0.396B, 16.3%), Corporation Tax ($0.259B, 10.7%), and Other Taxes ($0.059B, 2.4%).'
+            'a': f'From Note 14: VAT (${vat_amount/1e9:.2f}B, {vat_pct:.1f}%), Income Tax ($0.581B, 23.9%), Land Tax ($0.396B, 16.3%), Corporation Tax ($0.159B, 6.6%), and Other Taxes ($0.059B, 2.4%).'
         },
         {
             'q': 'Why is VAT the largest component?',
@@ -3233,8 +3235,9 @@ elif view_option == "🔴 The $2.43B Question (NEW 2023)":
     # ========================================================================
     st.caption("""
     **Data Source:** Auditor General's Report 2023 (Adverse Opinion, Note 14) • Financial Statements of the Government of Barbados (2023)
-    **Note:** Data is from Note 14 of the Financial Statements (Page 26). VAT is the largest component at $1.133B (46.7%).
-    The Auditor General could not verify these amounts due to "the absence of sufficient supporting documentation."
+    **Note:** Data is from Note 14 of the Financial Statements (Page 26). Total tax receivables (net) is $2.43B. 
+    VAT is the largest component at $1.133B (46.7%). The Auditor General could not verify these amounts due to 
+    "the absence of sufficient supporting documentation."
     """)
 
 # ============================================================================
@@ -5432,7 +5435,7 @@ elif view_option == "📊 2026 Reality Check":
     """, unsafe_allow_html=True)
 
 # ============================================================================
-# VIEW 20: 2026-2027 BUDGET VS 2023 AUDIT - TRUTHFUL ANALYSIS
+# VIEW 20: 2026-2027 BUDGET VS 2023 AUDIT REALITY
 # ============================================================================
 elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     st.markdown('<div class="sub-header">📊 2026-2027 Budget: Analysis of Key Changes from 2023</div>', unsafe_allow_html=True)
@@ -5451,7 +5454,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 1: DATA QUALITY WARNING - CORRECTED
+    # SECTION 1: DATA QUALITY WARNING
     # ========================================================================
     st.markdown("""
     <div style="background: #FEF2F2; padding: 25px; border-radius: 10px; border: 3px solid #DC2626; margin: 20px 0;">
@@ -5492,9 +5495,161 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         </p>
     </div>
     """, unsafe_allow_html=True)
+
+    # ========================================================================
+    # SECTION 1.5: THE RESTAURANT MENU ANALOGY + PEG LOGIC
+    # ========================================================================
+    
+    st.markdown("## 🇧🇧 THE BUDGET DOESN'T ADD UP")
+    
+    st.markdown("### 🍽️ THE RESTAURANT MENU")
+    
+    st.markdown("""
+    Imagine you go to a restaurant. The menu says your meal costs **$50**.
+    But when the bill comes, it says **$60**.
+    You ask the waiter: *"Which one is correct?"* The waiter shrugs and walks away.
+
+    **Now imagine that happens for 26 out of 27 government ministries.**
+
+    That is Barbados' budget.
+    """)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: #FEF2F2; border-radius: 8px; border: 1px solid #DC2626;">
+            <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">26 of 27</div>
+            <div style="font-size: 0.9rem; color: #666;">Heads with Errors</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: #FEF2F2; border-radius: 8px; border: 1px solid #DC2626;">
+            <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">$2.03B+</div>
+            <div style="font-size: 0.9rem; color: #666;">Total Discrepancy</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: #ECFDF5; border-radius: 8px; border: 1px solid #10B981;">
+            <div style="font-size: 1.8rem; font-weight: bold; color: #10B981;">1</div>
+            <div style="font-size: 0.9rem; color: #666;">Head with Perfect Alignment</div>
+            <div style="font-size: 0.8rem; color: #666;">Parliament (Head 12)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.info("💡 **The Logic:** If the government can't produce a consistent budget document — one where the menu matches the bill — Parliament cannot scrutinize spending, the public cannot trust the numbers, and investors cannot have confidence.")
+    
+    st.divider()
+    
+    st.markdown("### 💰 THE PEG: NOT JUST ABOUT RESERVES")
+    
+    st.markdown("""
+    Most people think the peg is about **reserves**:
+    *"Barbados has $3.3B in reserves, so the peg is safe."*
+
+    **But that's only half the story.**
+
+    A currency peg also requires **trust**. People must believe the government can maintain the exchange rate.
+
+    **If the government cannot produce reliable financial information, trust is eroded.**
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #EFF6FF; padding: 15px; border-radius: 8px; border-left: 4px solid #3B82F6;">
+            <div style="font-weight: bold; color: #3B82F6;">📊 What Most People See</div>
+            <div style="font-size: 0.95rem; color: #333; margin-top: 8px;">
+                <strong>Reserves:</strong> $3.3B<br>
+                <strong>Conclusion:</strong> The peg is safe
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #FEF2F2; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626;">
+            <div style="font-weight: bold; color: #DC2626;">🔴 What They Don't See</div>
+            <div style="font-size: 0.95rem; color: #333; margin-top: 8px;">
+                <strong>6 adverse opinions</strong><br>
+                <strong>$2.43B</strong> unverified assets<br>
+                <strong>$4B+</strong> hidden liabilities<br>
+                <strong>$2.03B</strong> budget gap<br>
+                <strong>Conclusion:</strong> The foundation is broken
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.info("💡 **The Logic:** Reserves are only part of the story. The other part is trust. If the government cannot produce reliable financial information, trust is eroded. If trust is eroded, the peg is vulnerable.")
+    
+    st.divider()
+    
+    st.markdown("""
+    <div style="background: #FEF2F2; padding: 30px; border-radius: 10px; border: 4px solid #DC2626;">
+        <div style="text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #DC2626;">💣</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626; margin-top: 5px;">
+                THE QUESTION THAT KILLS
+            </div>
+            <div style="font-size: 1.1rem; color: #333; line-height: 1.8; margin-top: 15px;">
+                If the government cannot produce a consistent budget document — one where the menu matches the bill —<br><br>
+                cannot verify <strong style="color: #DC2626;">$2.43B</strong> of its assets (30% of total),<br>
+                has hidden <strong style="color: #DC2626;">$4B+</strong> in pension liabilities for 22 years,<br>
+                has ignored <strong style="color: #DC2626;">40+ SOEs</strong> consolidation for 21 years,<br>
+                and has received <strong style="color: #DC2626;">6 consecutive adverse opinions</strong>...
+            </div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626; margin-top: 20px;">
+                How can the currency peg be considered safe?
+            </div>
+            <div style="font-size: 0.95rem; color: #666; margin-top: 15px;">
+                <em>A currency peg is only as strong as the institutions that support it.</em>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
     
     # ========================================================================
-    # SECTION 2: THE BIG PICTURE - FACTUAL SUMMARY
+    # SECTION 2: IPSAS NON-COMPLIANCE — THE 40+ SOEs
+    # ========================================================================
+    st.markdown("""
+    <div style="background: #FFFBEB; padding: 25px; border-radius: 10px; border: 2px solid #F59E0B; margin: 20px 0;">
+        <h4 style="color: #D97706; margin-top: 0;">🏛️ IPSAS NON-COMPLIANCE: 40+ SOEs NOT CONSOLIDATED</h4>
+        <p style="font-size: 1.05rem;">
+        The Government of Barbados has adopted IPSAS since 2008. However, <strong style="color: #DC2626;">16+ years later</strong>, 
+        the financial statements still <strong style="color: #DC2626;">exclude financial information from the majority of State-Owned Entities</strong>.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">40+</div>
+                <div style="font-size: 0.9rem; color: #666;">SOEs Not Consolidated</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">$777M+</div>
+                <div style="font-size: 0.9rem; color: #666;">Annual Transfers (2023)</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <div style="font-size: 1.8rem; font-weight: bold; color: #DC2626;">16+</div>
+                <div style="font-size: 0.9rem; color: #666;">Years of Non-Compliance</div>
+            </div>
+        </div>
+        <div style="background: #FEF2F2; padding: 15px; border-radius: 8px; border-left: 4px solid #DC2626; margin-top: 10px;">
+            <p style="margin: 0; font-size: 0.95rem; color: #666;">
+            <strong>From the Auditor General's Report 2024:</strong><br>
+            <em>"The statements presented excluded financial information from the majority of the relevant boards and other state bodies owned and controlled by the Government and were not in conformity to the standards. The Treasury Department has acknowledged this issue on numerous occasions but so far has not presented the statements in the form required."</em>
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ========================================================================
+    # SECTION 3: THE BIG PICTURE - FACTUAL SUMMARY
     # ========================================================================
     st.markdown('<div class="section-header">📊 The Big Picture: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5533,7 +5688,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         )
     
     # ========================================================================
-    # SECTION 3: REVENUE ANALYSIS
+    # SECTION 4: REVENUE ANALYSIS
     # ========================================================================
     st.markdown('<div class="section-header">💰 Revenue: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5593,7 +5748,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         }
     )
     
-    # Critical insight - presented factually
     st.markdown("""
     <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border: 2px solid #F59E0B; margin: 15px 0;">
         <h5 style="color: #D97706; margin-top: 0;">⚠️ OBSERVATION: Income Tax Revenue Projection</h5>
@@ -5615,7 +5769,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 4: EXPENDITURE ANALYSIS - KEY CATEGORIES
+    # SECTION 5: EXPENDITURE ANALYSIS - KEY CATEGORIES
     # ========================================================================
     st.markdown('<div class="section-header">📊 Expenditure: Key Changes</div>', unsafe_allow_html=True)
     
@@ -5680,7 +5834,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         }
     )
     
-    # Bad Debt observation - factual
     st.markdown("""
     <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
         <h5 style="color: #DC2626; margin-top: 0;">⚠️ OBSERVATION: Bad Debt Expense</h5>
@@ -5699,7 +5852,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 5: SOE TRANSFERS - WHAT WE CAN TRUTHFULLY SHOW
+    # SECTION 6: SOE TRANSFERS
     # ========================================================================
     st.markdown('<div class="section-header">🏛️ State-Owned Enterprise Transfers</div>', unsafe_allow_html=True)
     
@@ -5715,7 +5868,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     </div>
     """, unsafe_allow_html=True)
     
-    # Data we can actually show with confidence
     soe_comparison = pd.DataFrame({
         'SOE': [
             'Queen Elizabeth Hospital',
@@ -5763,7 +5915,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         }
     )
     
-    # The Note 34 discrepancy - presented factually
     st.markdown("""
     <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
         <h5 style="color: #DC2626; margin-top: 0;">⚠️ NOTE: SOE Transfer Data Quality Issue (Note 34)</h5>
@@ -5793,7 +5944,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 6: THE DEFICIT REPORTING GAP
+    # SECTION 7: THE DEFICIT REPORTING GAP
     # ========================================================================
     st.markdown('<div class="section-header">📊 The Deficit: Two Reporting Bases</div>', unsafe_allow_html=True)
     
@@ -5833,7 +5984,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 7: THE $2.43B QUESTION VS BUDGET DEFICIT
+    # SECTION 8: THE $2.43B QUESTION VS BUDGET DEFICIT
     # ========================================================================
     st.markdown('<div class="section-header">🚨 The $2.43B Question vs Budget Deficit</div>', unsafe_allow_html=True)
     
@@ -5867,7 +6018,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 8: THE HONEST BUDGET CALCULATOR
+    # SECTION 9: THE HONEST BUDGET CALCULATOR
     # ========================================================================
     st.markdown('<div class="section-header">📊 The Honest Budget Calculator</div>', unsafe_allow_html=True)
     
@@ -5886,7 +6037,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     </div>
     """, unsafe_allow_html=True)
     
-    # Input: Collectible Percentage
     collectible_pct = st.slider(
         "What percentage of the $2.43B tax receivables is collectible?",
         min_value=0,
@@ -5896,20 +6046,18 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         help="This is your estimate. The Auditor General could not verify these receivables."
     )
     
-    # Calculations
-    tax_receivables = 2.43  # $2.43B
+    tax_receivables = 2.43
     write_off = tax_receivables * (1 - collectible_pct / 100)
     collectible_amount = tax_receivables * (collectible_pct / 100)
     
-    projected_deficit = 0.658  # $658M
+    projected_deficit = 0.658
     adjusted_deficit = projected_deficit + write_off
     
-    current_debt_to_gdp = 102.9  # %
-    total_assets = 8.07  # $8.07B
+    current_debt_to_gdp = 102.9
+    total_assets = 8.07
     debt_impact_pct = (write_off / total_assets) * current_debt_to_gdp
     adjusted_debt_to_gdp = current_debt_to_gdp + debt_impact_pct
     
-    # Display Results
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -5945,7 +6093,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
             delta_color="inverse" if adjusted_debt_to_gdp > current_debt_to_gdp else "normal"
         )
     
-    # Scenario Table
     st.markdown('<div class="section-header" style="font-size: 1.0rem;">📋 Scenario Comparison</div>', unsafe_allow_html=True)
     
     scenarios = []
@@ -5978,7 +6125,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         }
     )
     
-    # Key Insight
     st.markdown(f"""
     <div style="background: {'#FEF2F2' if write_off > 0 else '#ECFDF5'}; padding: 20px; border-radius: 8px; border: 2px solid {'#DC2626' if write_off > 0 else '#10B981'}; margin: 15px 0;">
         <h5 style="color: {'#DC2626' if write_off > 0 else '#10B981'}; margin-top: 0;">🔑 Key Insight</h5>
@@ -5996,14 +6142,13 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 9: THE COST OF COMPLACENCY
+    # SECTION 10: THE COST OF COMPLACENCY
     # ========================================================================
     st.markdown('<div class="section-header">💰 The Cost of Complacency: What You\'re Paying</div>', unsafe_allow_html=True)
     
-    # Calculate per household cost
-    households = 100000  # ~100,000 households in Barbados
-    annual_savings_low = 55  # $55M
-    annual_savings_high = 100  # $100M
+    households = 100000
+    annual_savings_low = 55
+    annual_savings_high = 100
     cost_per_household_low = (annual_savings_low * 1_000_000) / households
     cost_per_household_high = (annual_savings_high * 1_000_000) / households
     
@@ -6035,7 +6180,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 10: THE LOGICAL QUESTION
+    # SECTION 11: THE LOGICAL QUESTION
     # ========================================================================
     st.markdown('<div class="section-header">🤔 If the Budget is 96.3% Unreliable...</div>', unsafe_allow_html=True)
     
@@ -6066,7 +6211,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 11: SUMMARY TABLE - KEY FACTS
+    # SECTION 12: KEY FACTS SUMMARY
     # ========================================================================
     st.markdown('<div class="section-header">📋 Key Facts Summary</div>', unsafe_allow_html=True)
     
@@ -6124,7 +6269,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     )
     
     # ========================================================================
-    # SECTION 12: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
+    # SECTION 13: DOCUMENT QUALITY - THE ESTIMATES DOCUMENT ITSELF
     # ========================================================================
     st.markdown('<div class="section-header">⚠️ Document Quality: The Estimates Document Itself</div>', unsafe_allow_html=True)
     
@@ -6143,7 +6288,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     </div>
     """, unsafe_allow_html=True)
     
-    # Top discrepancies summary
     st.markdown('<div class="section-header">📋 Top 10 Discrepancies: Words vs Figures</div>', unsafe_allow_html=True)
     
     top_discrepancies = pd.DataFrame({
@@ -6211,7 +6355,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
         }
     )
     
-    # Reliability Index
     st.markdown("""
     <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border: 2px solid #F59E0B; margin: 15px 0;">
         <h5 style="color: #D97706; margin-top: 0;">📊 RELIABILITY INDEX</h5>
@@ -6238,7 +6381,6 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     </div>
     """, unsafe_allow_html=True)
     
-    # Critical errors detail
     st.markdown("""
     <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; border: 2px solid #DC2626; margin: 15px 0;">
         <h5 style="color: #DC2626; margin-top: 0;">🔴 CRITICAL ERRORS (>$100M)</h5>
@@ -6267,7 +6409,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 13: ACTION REQUIRED
+    # SECTION 14: ACTION REQUIRED
     # ========================================================================
     st.markdown('<div class="section-header">📌 What Needs to Happen</div>', unsafe_allow_html=True)
     
@@ -6318,7 +6460,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 14: SYSTEMIC RISK INDICATORS - NEW
+    # SECTION 15: SYSTEMIC RISK INDICATORS
     # ========================================================================
     st.markdown('<div class="section-header">🔴 Systemic Risk Indicators: What the Data Reveals</div>', unsafe_allow_html=True)
     
@@ -6391,7 +6533,7 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
     """, unsafe_allow_html=True)
     
     # ========================================================================
-    # SECTION 15: CONCLUSION - FACTUAL
+    # SECTION 16: CONCLUSION
     # ========================================================================
     st.markdown("""
     <div style="background: linear-gradient(135deg, #00267F 0%, #1E40AF 100%); padding: 30px; border-radius: 10px; color: white; margin-top: 20px;">
@@ -6413,9 +6555,9 @@ elif view_option == "📊 2026-2027 Budget vs 2023 Audit Reality":
                 <div style="font-size: 0.8rem; color: #93C5FD;">First flagged in 2023</div>
             </div>
             <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                <div style="font-size: 1.5rem; font-weight: bold; color: #DC2626;">96.3%</div>
-                <div style="font-size: 0.9rem; color: #BFDBFE;">Unreliable Budget Document</div>
-                <div style="font-size: 0.8rem; color: #93C5FD;">$2.03B+ in discrepancies</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #FFC726;">3.7%</div>
+                <div style="font-size: 0.9rem; color: #BFDBFE;">Reliability Score</div>
+                <div style="font-size: 0.8rem; color: #93C5FD;">96.3% Unreliable</div>
             </div>
         </div>
         <p style="text-align: center; font-size: 1rem; color: #93C5FD; margin-top: 20px;">
